@@ -1,0 +1,99 @@
+unit uFrmConfig;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, DB, StdCtrls, Mask, DBCtrls, Buttons;
+
+type
+  TFrmConfig = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Label1: TLabel;
+    DBEdit1: TDBEdit;
+    dsCadastro: TDataSource;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label3: TLabel;
+    dbeCertificado: TDBEdit;
+    DBRadioGroup1: TDBRadioGroup;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmConfig: TFrmConfig;
+
+implementation
+
+uses udmDados, uFrmPlusPdvNfe, uFuncoes;
+
+{$R *.dfm}
+
+procedure TFrmConfig.BitBtn1Click(Sender: TObject);
+begin
+     dsCadastro.DataSet.Cancel;
+end;
+
+procedure TFrmConfig.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+     dsCadastro.DataSet.Close;
+end;
+
+procedure TFrmConfig.FormShow(Sender: TObject);
+begin
+     Try
+        dmDados.FilterCDS(dmDados.cdsEmpresa, fsInteger, InttoStr(uFrmPlusPdvNfe.idEmpresa));
+        if not (dmDados.cdsEmpresa.IsEmpty) Then
+        begin
+             dmDados.cdsEmpresa.Edit;
+             if ufuncoes.Empty(dsCadastro.DataSet.fieldByname('ambiente_nfe').AsString) Then
+                dsCadastro.DataSet.fieldByname('ambiente_nfe').AsString := '2';
+        End
+        Else
+        begin
+              Application.MessageBox(PChar('Usuário não está associado a nenhuma empresa.'),
+                 'ATENÇÃO', MB_OK+MB_ICONWARNING+MB_APPLMODAL);
+              Close;
+        End;
+     Except
+          on e: exception do
+          begin
+              Application.MessageBox(PChar('Erro na abertura de Base de Dados! Erro:'+#13
+                      + E.Message), 'ATENÇÃO', MB_OK+MB_ICONSTOP+MB_APPLMODAL);
+          End;
+     End;
+end;
+
+procedure TFrmConfig.BitBtn2Click(Sender: TObject);
+begin
+     if uFuncoes.Empty(dbeCertificado.Text) Then
+      begin
+           Application.MessageBox(PChar('Digite o  Número de série do certificado digital.'),
+                           'ATENÇÃO', MB_OK+MB_ICONWARNING+MB_APPLMODAL );
+           dbeCertificado.SetFocus;
+           Exit;
+      End;
+     dmDados.cdsEmpresa.ApplyUpdates(0);
+     ModalResult := mrOk;
+end;
+
+procedure TFrmConfig.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+     if (dsCadastro.DataSet.State = dsEdit) Then
+        dsCadastro.DataSet.Cancel;
+end;
+
+end.

@@ -1,0 +1,72 @@
+inherited FrmLocalizarNCM: TFrmLocalizarNCM
+  Caption = 'Localizar NCM'
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel1: TPanel
+    inherited edtConsultar: TEdit
+      Width = 486
+    end
+  end
+  inherited Panel2: TPanel
+    inherited grdConsultar: TDBGrid
+      Columns = <
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'NCM_CODIGO'
+          Title.Alignment = taCenter
+          Title.Caption = 'C'#243'digo'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Width = 55
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'NCM_DESCRICAO'
+          Title.Caption = 'Descri'#231#227'o'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Visible = True
+        end>
+    end
+  end
+  inherited dstConsultar: TSQLDataSet
+    CommandText = 
+      'select NCM_CODIGO, NCM_DESCRICAO from NCM where (NCM_DESCRICAO l' +
+      'ike :pNOME) order by NCM_DESCRICAO'
+    Params = <
+      item
+        DataType = ftString
+        Name = 'pNOME'
+        ParamType = ptInput
+      end>
+    SQLConnection = dmDados.sqlConexao
+  end
+  inherited cdsConsultar: TClientDataSet
+    Params = <
+      item
+        DataType = ftString
+        Name = 'pNOME'
+        ParamType = ptInput
+      end>
+    object cdsConsultarNCM_CODIGO: TStringField
+      FieldName = 'NCM_CODIGO'
+      Required = True
+      FixedChar = True
+      Size = 8
+    end
+    object cdsConsultarNCM_DESCRICAO: TStringField
+      FieldName = 'NCM_DESCRICAO'
+      Required = True
+      Size = 120
+    end
+  end
+end

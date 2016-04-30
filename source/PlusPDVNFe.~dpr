@@ -1,0 +1,58 @@
+program PlusPDVNFe;
+
+uses
+  Forms,
+  Windows,
+  Dialogs,
+  Controls,
+  SysUtils,
+  uFrmPlusPdvNfe in 'source\uFrmPlusPdvNfe.pas' {FrmMainNFe},
+  udmDados in 'source\udmDados.pas' {dmDados: TDataModule},
+  uFuncoes in 'source\uFuncoes.pas',
+  udmNFe in 'source\udmNFe.pas' {dmNFe: TDataModule},
+  uFrmNFENew in 'source\uFrmNFENew.pas' {FrmNotaFiscalEletronicaNovo},
+  uFrmLocPadrao in 'source\uFrmLocPadrao.pas' {frmLocPadrao},
+  uFrmLocalizaCliente in 'source\uFrmLocalizaCliente.pas' {frmLocalizarCliente},
+  uFrmLocPadraoNFe in 'source\uFrmLocPadraoNFe.pas' {frmLocPadraoNFe},
+  uFrmLocProdutoServico in 'source\uFrmLocProdutoServico.pas',
+  uFrmLocCFOP in 'source\uFrmLocCFOP.pas' {frmLocCFOP},
+  uFrmLocalizarNCM in 'source\uFrmLocalizarNCM.pas' {FrmLocalizarNCM},
+  uFrmCadDuplicata in 'source\uFrmCadDuplicata.pas' {frmCadDuplicata},
+  uFrmCadVolumes in 'source\uFrmCadVolumes.pas' {frmCadVolumes},
+  uFrmLocVenda in 'source\uFrmLocVenda.pas' {FrmLocVenda},
+  uFrmCupomVinculado in 'source\uFrmCupomVinculado.pas' {FrmCupomVinculado},
+  uFrmEditarNotaRef in 'source\uFrmEditarNotaRef.pas' {FrmEditarNotaReferencia},
+  uFrmLogin in 'source\uFrmLogin.pas' {frmLogin},
+  wcrypt2 in 'source\wcrypt2.pas',
+  uFrmCadItemNota in 'source\uFrmCadItemNota.pas' {FrmCadItemNota},
+  uFrmLocTransportadora in 'source\uFrmLocTransportadora.pas' {FrmLocTransportadora},
+  uFrmGerenciarNotas in 'source\uFrmGerenciarNotas.pas' {FrmGerenciarNotas},
+  uFrmInutilizarNum in 'source\uFrmInutilizarNum.pas' {frmInutilizarNum},
+  uFrmCartaCorrecao in 'source\uFrmCartaCorrecao.pas' {FrmCartaCorrecao},
+  uFrmConfig in 'source\uFrmConfig.pas' {FrmConfig},
+  uNewEnviarEmail in 'source\uNewEnviarEmail.pas' {FrmNewEmailSend},
+  uEmailSynalist in 'source\uEmailSynalist.pas',
+  uInterfaceEmail in 'source\uInterfaceEmail.pas',
+  uSobreNFe in 'source\uSobreNFe.pas' {frmSobre};
+
+{$R *.res}
+
+begin
+     Application.Initialize;
+     Application.CreateForm(TdmDados, dmDados);
+  Application.CreateForm(TdmNFe, dmNFe);
+  Application.CreateForm(TFrmMainNFe, FrmMainNFe);
+  frmLogin := TfrmLogin.Create(nil);
+     if frmLogin.ShowModal = mrOk then
+      begin
+           FreeAndNil(frmLogin);
+           Application.Run;
+      end
+      else
+      begin
+           FreeAndNil(dmNFe);
+           FreeAndNil(dmDados);
+           //
+           Application.Terminate;
+      End;
+end.

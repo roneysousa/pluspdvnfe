@@ -1,0 +1,25 @@
+unit uFrmLocTransportadora;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, uFrmLocPadrao, FMTBcd, SqlExpr, DB, DBClient, Provider,
+  ComCtrls, Grids, DBGrids, StdCtrls, ExtCtrls;
+
+type
+  TfrmLocPadrao1 = class(TfrmLocPadrao)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmLocPadrao1: TfrmLocPadrao1;
+
+implementation
+
+{$R *.dfm}
+
+end.
