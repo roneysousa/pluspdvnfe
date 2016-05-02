@@ -2504,7 +2504,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           object Label110: TLabel
             Left = 16
             Top = 455
-            Width = 821
+            Width = 806
             Height = 26
             Anchors = [akLeft, akRight, akBottom]
             Caption = 

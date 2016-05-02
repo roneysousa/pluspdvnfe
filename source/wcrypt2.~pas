@@ -7866,5 +7866,3 @@ function CertAddEncodedCertificateToSystemStore; external CRYPT32 name 'CertAddE
 {$ENDIF} // !UNICODE
 function FindCertsByIssuer; external SOFTPUB name 'FindCertsByIssuer';
 end.
-
-

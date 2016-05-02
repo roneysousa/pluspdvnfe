@@ -137,6 +137,7 @@ end;
 procedure TFrmEditarNotaReferencia.btnOkClick(Sender: TObject);
 Var
    iItem,  iTipoNF : Integer;
+   aCNPJ : String;
 begin
      if (ValidarCampos()) Then
      begin
@@ -146,6 +147,24 @@ begin
            1 :  iTipoNF := 2;
            2 :  iTipoNF := 3;
          End;
+         //
+         if (rgTipo.ItemIndex = 2) Then
+         begin
+              aCNPJ :=  uFuncoes.RemoveChar(edtCNPJ.Text);
+              If not (uFuncoes.CGC(aCNPJ)) Then
+              Begin
+                  MessageDlg('CNPJ inválido!!!', mtWarning, [mbOk], 0);
+                  edtCNPJ.SetFocus;
+                  Exit;
+             End;
+             //
+             If  (uFuncoes.RemoveChar(aCNPJ) = '00000000000000') Then
+              Begin
+                  MessageDlg('CNPJ inválido!!!', mtWarning, [mbOk], 0);
+                  edtCNPJ.SetFocus;
+                  Exit;
+             End;
+          End;
          //
          if (dmNFe.cdsListaNT_Ref.Active) and (dmNFe.cdsListaNT_Ref.RecordCount = 0) Then
              iItem := 1

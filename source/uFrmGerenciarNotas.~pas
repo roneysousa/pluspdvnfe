@@ -1391,7 +1391,7 @@ begin
                                      DmDados.AddRegistroInutilizacaoNumeracao(aCNPJ, Justificativa, aHora, aProtocolo,
                                            StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial),StrToInt(NumeroFinal),
                                            uFrmPlusPdvNfe.idUsuario, aDataMov);
-                                     dmNFe.SetStatusdaNotaInutilizada(iCodStatusInut, StrToInt(NumeroInicial),StrToInt(NumeroFinal), aProtocolo, iLoja);
+                                     dmNFe.SetStatusdaNotaInutilizada(iCodStatusInut, StrToInt(NumeroInicial),StrToInt(NumeroFinal), aProtocolo, iLoja, Serie);
                                      //
                                      If (dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat = 102) Then
                                          Application.MessageBox(PChar('Inutilização de número homologado.'),

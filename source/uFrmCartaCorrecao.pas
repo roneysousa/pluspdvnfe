@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, Buttons, DB, Mask, DBCtrls, ACBrNFe, ACBrNFeUtil,
+  Dialogs, ExtCtrls, StdCtrls, Buttons, DB, Mask, DBCtrls, ACBrNFe,
   pcnConversao, OleCtrls, SHDocVw, ComCtrls, pcnAuxiliar;
 
 type
@@ -150,7 +150,7 @@ begin
                infEvento.detEvento.xCorrecao := Correcao;
            end;
           // envio da carta de correção
-          if dmNFe.ACBrNFe1.EnviarEventoNFe(StrToInt(idLote)) then
+          if dmNFe.ACBrNFe1.EnviarEvento(StrToInt(idLote)) then
            begin
 
               MemoResp.Lines.Text := UTF8Encode(dmNFe.ACBrNFe1.WebServices.EnvEvento.RetWS);

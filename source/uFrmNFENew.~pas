@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, ComCtrls, StdCtrls, Buttons, DB, Grids, DBGrids,
   DBClient, ToolEdit, RXDBCtrl, Mask, DBCtrls, CurrEdit, Menus, DBTables,
-  pcnNFeRTXT,  ACBrNFeUtil, pcnConversao, FMTBcd, SqlExpr;
+  pcnNFeRTXT,  pcnConversao, FMTBcd, SqlExpr;
 
 type
   TFrmNotaFiscalEletronicaNovo = class(TForm)

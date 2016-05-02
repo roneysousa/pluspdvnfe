@@ -393,7 +393,7 @@ begin
      OpenDialog.Title := 'Selecione a NFE';
      OpenDialog.DefaultExt := '*-nfe.XML';
      OpenDialog.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML';
-     OpenDialog.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+     OpenDialog.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
 
    try
      if OpenDialog.Execute then

@@ -145,8 +145,6 @@ begin
                infEvento.dhEvento := now;
                idCodOrgaoReceptor := UFparaCodigo(dmNFe.cdsNotaFiscalemitente_uf.AsString);
                infEvento.cOrgao   := idCodOrgaoReceptor;
-               // dmNFe.GetOrgaoReceptorNfe(dmNFe.cdsNotaFiscalemitente_uf.AsString);
-               ShowMessage('Orgão : '+ InttoStr(idCodOrgaoReceptor));
                infEvento.tpEvento := teCCe;
                infEvento.nSeqEvento := StrToInt(nSeqEvento);
                infEvento.detEvento.xCorrecao := Correcao;

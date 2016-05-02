@@ -52,7 +52,6 @@ begin
       begin
            FreeAndNil(dmNFe);
            FreeAndNil(dmDados);
-           //
            Application.Terminate;
       End;
 end.

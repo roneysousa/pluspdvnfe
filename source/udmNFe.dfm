@@ -1,88 +1,21 @@
 object dmNFe: TdmNFe
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 238
-  Top = 109
+  Left = 223
+  Top = 149
   Height = 522
   Width = 916
   object ACBrNFe1: TACBrNFe
-    Configuracoes.Geral.PathSalvar = 'C:\Program Files (x86)\Borland\Delphi7\Bin\'
-    Configuracoes.Geral.ExibirErroSchema = True
+    Configuracoes.Geral.SSLLib = libCapicom
     Configuracoes.Geral.FormatoAlerta = 'TAG:%TAGNIVEL% ID:%ID%/%TAG%(%DESCRICAO%) - %MSG%.'
-    Configuracoes.Geral.RetirarAcentos = True
     Configuracoes.Geral.ValidarDigest = False
+    Configuracoes.Geral.IncluirQRCodeXMLNFCe = False
+    Configuracoes.Arquivos.SalvarEvento = True
     Configuracoes.WebServices.UF = 'SP'
     Configuracoes.WebServices.AguardarConsultaRet = 0
-    Configuracoes.WebServices.IntervaloTentativas = 0
-    Configuracoes.WebServices.AjustaAguardaConsultaRet = False
+    Configuracoes.WebServices.QuebradeLinha = '|'
     DANFE = ACBrNFeDANFERaveCB1
     Left = 32
-    Top = 16
-  end
-  object ACBrNFeDANFERave1: TACBrNFeDANFERave
-    MostrarPreview = True
-    MostrarStatus = True
-    TipoDANFE = tiSemGeracao
-    NumCopias = 1
-    ImprimirDescPorc = False
-    ImprimirTotalLiquido = False
-    MargemInferior = 0.800000000000000000
-    MargemSuperior = 0.800000000000000000
-    MargemEsquerda = 0.600000000000000000
-    MargemDireita = 0.510000000000000000
-    CasasDecimais._qCom = 2
-    CasasDecimais._vUnCom = 2
-    ExibirResumoCanhoto = False
-    FormularioContinuo = False
-    TamanhoFonte_DemaisCampos = 10
-    ProdutosPorPagina = 0
-    ImprimirDetalhamentoEspecifico = True
-    NFeCancelada = False
-    LocalImpCanhoto = 0
-    ImprimeItens = True
-    ViaConsumidor = True
-    EspessuraBorda = 1
-    TamanhoFonte_RazaoSocial = 12
-    TamanhoFonte_ANTT = 10
-    TributosPercentual = ptValorProdutos
-    Left = 128
-    Top = 24
-  end
-  object ACBrNFeDANFERaveCB1: TACBrNFeDANFERaveCB
-    ACBrNFe = ACBrNFe1
-    PathPDF = 'C:\Program Files (x86)\Borland\Delphi7\Bin\'
-    MostrarPreview = True
-    MostrarStatus = True
-    TipoDANFE = tiSemGeracao
-    NumCopias = 1
-    ImprimirDescPorc = False
-    ImprimirTotalLiquido = False
-    MargemInferior = 0.800000000000000000
-    MargemSuperior = 0.800000000000000000
-    MargemEsquerda = 0.600000000000000000
-    MargemDireita = 0.510000000000000000
-    CasasDecimais._qCom = 2
-    CasasDecimais._vUnCom = 2
-    ExibirResumoCanhoto = False
-    FormularioContinuo = False
-    TamanhoFonte_DemaisCampos = 10
-    ProdutosPorPagina = 0
-    ImprimirDetalhamentoEspecifico = True
-    NFeCancelada = False
-    LocalImpCanhoto = 0
-    ImprimeItens = True
-    ViaConsumidor = True
-    TamanhoCampoCodigo = 0
-    TamanhoCampoVlUnit = 0
-    TamanhoFonte_ANTT = 10
-    Fonte = ftTimes
-    EspessuraBorda = 2
-    ExpandirDadosAdicionaisAuto = False
-    MostrarSetup = False
-    TributosPercentual = ptValorProdutos
-    ImprimirDesconto = True
-    ImprimirTributosItem = False
-    Left = 264
     Top = 16
   end
   object dstNotaFiscal: TSQLDataSet
@@ -4491,5 +4424,46 @@ object dmNFe: TdmNFe
       FieldName = 'descricao'
       Size = 120
     end
+  end
+  object ACBrNFeDANFERaveCB1: TACBrNFeDANFeRL
+    ACBrNFe = ACBrNFe1
+    MostrarPreview = True
+    MostrarStatus = True
+    TipoDANFE = tiRetrato
+    NumCopias = 1
+    ImprimeNomeFantasia = False
+    ImprimirDescPorc = False
+    ImprimirTotalLiquido = True
+    MargemInferior = 0.700000000000000000
+    MargemSuperior = 0.700000000000000000
+    MargemEsquerda = 0.700000000000000000
+    MargemDireita = 0.700000000000000000
+    CasasDecimais.Formato = tdetInteger
+    CasasDecimais._qCom = 4
+    CasasDecimais._vUnCom = 4
+    CasasDecimais._Mask_qCom = '###,###,###,##0.00'
+    CasasDecimais._Mask_vUnCom = '###,###,###,##0.00'
+    ExibirResumoCanhoto = False
+    FormularioContinuo = False
+    TamanhoFonte_DemaisCampos = 10
+    ProdutosPorPagina = 0
+    ImprimirDetalhamentoEspecifico = True
+    NFeCancelada = False
+    ImprimirItens = True
+    ViaConsumidor = True
+    TamanhoLogoHeight = 0
+    TamanhoLogoWidth = 0
+    RecuoEndereco = 0
+    RecuoEmpresa = 0
+    LogoemCima = False
+    TamanhoFonteEndereco = 0
+    RecuoLogo = 0
+    TributosSeparadamente = False
+    LarguraCodProd = 54
+    ExibirEAN = False
+    QuebraLinhaEmDetalhamentoEspecifico = True
+    ExibeCampoFatura = False
+    Left = 136
+    Top = 24
   end
 end

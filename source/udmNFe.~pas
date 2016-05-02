@@ -3,17 +3,15 @@ unit udmNFe;
 interface
 
 uses
-  SysUtils, Classes, ACBrNFeDANFERaveCB, ACBrNFeDANFEClass, Forms,
-  ACBrNFeDANFERave, ACBrNFe, FMTBcd, DB, SqlExpr, DBClient, Provider, Math,
+  SysUtils, Classes, ACBrNFeDANFEClass, Forms,
+  ACBrNFe, FMTBcd, DB, SqlExpr, DBClient, Provider, Math,
   Windows, Messages, Variants, XMLDoc, XMLIntf, xmldom,
-  msxmldom,  ACBrNFeUtil, pcnConversao, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls, OleCtrls, SHDocVw;
+  msxmldom,  pcnConversao, Dialogs, ExtCtrls, StdCtrls, pcnConversaoNFe,
+  ComCtrls, OleCtrls, SHDocVw, ACBrNFeDANFeRLClass, ACBrBase, ACBrDFe;
 
 type
   TdmNFe = class(TDataModule)
     ACBrNFe1: TACBrNFe;
-    ACBrNFeDANFERave1: TACBrNFeDANFERave;
-    ACBrNFeDANFERaveCB1: TACBrNFeDANFERaveCB;
     dstNotaFiscal: TSQLDataSet;
     dstNotaFiscalItens: TSQLDataSet;
     dspNotaFiscal: TDataSetProvider;
@@ -772,6 +770,7 @@ type
     cdsMotivoDesoneracaoid: TIntegerField;
     cdsMotivoDesoneracaodescricao: TStringField;
     cdsItemsNotaFiscalCDS_DESC_MOT_DESONER_ICMS: TStringField;
+    ACBrNFeDANFERaveCB1: TACBrNFeDANFeRL;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
@@ -874,7 +873,7 @@ type
     Function GetTipoDanfe(iCodigoNfe : Integer): Integer;
     Function GetVerificarDescricaoSit(aDescricao : String): Integer;
     Function SetStatusdaNotaInutilizada(iStatus, iNotaInicial, iNotaFinal : Integer;
-             aProtocolo : String; idEmitente : Integer) : Boolean;
+             aProtocolo : String; idEmitente : Integer; aSerie : String) : Boolean;
     Function SetInutizarNFe(aNumeroNFe, aSerie, aProtocolo : String; idEmitente : Integer): Boolean;
 
     Function ExcluirItemNfe(idSeqNFe : Integer): Boolean;
@@ -2056,7 +2055,7 @@ Var
    DirCan, DirNFe, DirInu, DirEvento, DirMDe, DirCCe: string;
 begin   
     DirCan := ExtractFilePath( Application.ExeName )+'CancelamentoNfe';
-    DirNFe := ExtractFilePath( Application.ExeName )+'RetornoNfe';
+    DirNFe := ExtractFilePath( Application.ExeName )+'XML';    // RetornoNfe
     DirInu := ExtractFilePath( Application.ExeName )+'InutilizacaoNfe';
     DirEvento := ExtractFilePath( Application.ExeName )+'EventoNfe';
     DirMDe  := ExtractFilePath( Application.ExeName )+'MDe';
@@ -2084,18 +2083,18 @@ begin
     //
     if DirectoryExists(DirNFe) then
         ACBrNFe1.Configuracoes.Arquivos.PathNFe := DirNFe;
-    if DirectoryExists(DirCan) then
-        ACBrNFe1.Configuracoes.Arquivos.PathCan := DirCan;
+    {if DirectoryExists(DirCan) then
+        ACBrNFe1.Configuracoes.Arquivos.PathCan := DirCan;}
     if DirectoryExists(DirInu) then
         ACBrNFe1.Configuracoes.Arquivos.PathInu := DirInu;
     if DirectoryExists(DirEvento) then
         ACBrNFe1.Configuracoes.Arquivos.PathEvento := DirEvento;
-    if DirectoryExists(DirMDe) Then
+    {if DirectoryExists(DirMDe) Then
        ACBrNFe1.Configuracoes.Arquivos.PathMDe  := DirMDe;
     if DirectoryExists(DirCCe) Then
-       ACBrNFe1.Configuracoes.Arquivos.PathCCe  := DirCCe;
+       ACBrNFe1.Configuracoes.Arquivos.PathCCe  := DirCCe;}
     //
-    ACBrNFe1.Configuracoes.Arquivos.PastaMensal := true;
+    //ACBrNFe1.Configuracoes.Arquivos.PastaMensal := true;
     ACBrNFe1.Configuracoes.Arquivos.Salvar      := true;
     //
     dstListas.CommandText := '';
@@ -2622,8 +2621,8 @@ begin
     //
     if (idQuantCasas > 2) Then
     begin
-         ACBrNFeDANFERave1.CasasDecimais._qCom     :=  idQuantCasas;
-         ACBrNFeDANFERave1.CasasDecimais._vUnCom   :=  idQuantCasas;
+         {ACBrNFeDANFERave1.CasasDecimais._qCom     :=  idQuantCasas;
+         ACBrNFeDANFERave1.CasasDecimais._vUnCom   :=  idQuantCasas;}
          //
          ACBrNFeDANFERaveCB1.CasasDecimais._qCom   :=  idQuantCasas;
          ACBrNFeDANFERaveCB1.CasasDecimais._vUnCom :=  idQuantCasas;
@@ -2631,7 +2630,7 @@ begin
          //
          if (idQuantCasas > 4) Then
           begin
-               ACBrNFeDANFERave1.CasasDecimais._qCom   := 4;
+               //ACBrNFeDANFERave1.CasasDecimais._qCom   := 4;
                ACBrNFeDANFERaveCB1.CasasDecimais._qCom := 4;
           End;
     End;
@@ -3665,18 +3664,15 @@ end;
 
 procedure TdmNFe.PathACBrNFeDANFERave;
 begin
-     ACBrNFeDANFERave1.PathPDF   := ExtractFilePath( Application.ExeName )+'PDF\';
-     ACBrNFeDANFERave1.RavFile   := ExtractFilePath( Application.ExeName )+'Report\DANFE_Rave513.rav';
+     {ACBrNFeDANFERave1.PathPDF   := ExtractFilePath( Application.ExeName )+'PDF\';
+     ACBrNFeDANFERave1.RavFile   := ExtractFilePath( Application.ExeName )+'Report\DANFE_Rave513.rav';}
      //
-     ACBrNFeDANFERaveCB1.PathPDF :=  ACBrNFeDANFERave1.PathPDF;
+     ACBrNFeDANFERaveCB1.PathPDF :=  ExtractFilePath( Application.ExeName )+'PDF\';
      //
-     ACBrNFeDANFERave1.MostrarPreview := true;
-     ACBrNFeDANFERave1.MostrarStatus  := true;
+     ACBrNFeDANFERaveCB1.MostrarPreview := true;
+     ACBrNFeDANFERaveCB1.MostrarStatus  := true;
      //
-     ACBrNFeDANFERave1.MostrarPreview := true;
-     ACBrNFeDANFERave1.MostrarStatus := true;  
-     //
-     ACBrNFe1.Configuracoes.Geral.PathSalvar := ExtractFilePath( Application.ExeName )+'XML\';
+     ACBrNFe1.Configuracoes.Arquivos.PathSalvar := ExtractFilePath( Application.ExeName )+'XML\';
      ACBrNFe1.DANFE.Sistema := 'InfoG2';
      ACBrNFe1.DANFE.Usuario := 'PlusPdvNFe';
      //
@@ -3752,7 +3748,7 @@ begin
        OpenDialog1.Title  := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        //
        DMDados.FilterCDS(cdsNotaFiscal, fsInteger, InttoStr(iCodigo));
        iCodigoNFe := iCodigo;
@@ -3864,7 +3860,7 @@ begin
 end;
 
 function TdmNFe.SetStatusdaNotaInutilizada(iStatus, iNotaInicial,
-  iNotaFinal: Integer; aProtocolo: String; idEmitente: Integer): Boolean;
+  iNotaFinal: Integer; aProtocolo: String; idEmitente: Integer; aSerie : String): Boolean;
 Var
    Cont, iCodStatus, idNota : Integer;
 begin
@@ -3874,14 +3870,14 @@ begin
      try
           For Cont := iNotaInicial to iNotaFinal do
           begin
-              idNota := dmDados.GetIdRegistoNFe(Cont, idEmitente, '1'): Integer;
+              idNota := dmDados.GetIdRegistoNFe(Cont, idEmitente, aSerie);
               if (idNota <> -1) Then
                begin
-                  if (GetStatusdaNota(Cont, idEmitente) <> 2) Then
+                  if (GetStatusdaNota(idNota, idEmitente) <> 2) Then
                    begin
-                       if not (SetInutizarNFe(InttoStr(Cont), '1', aProtocolo, idEmitente)) Then
-                          ShowMessage('Erro ao tentar gravar dados! Erro:'+#13+
-                                      'NF-e : '+ InttoStr(Cont));
+                       if not (SetInutizarNFe(InttoStr(idNota), '1', aProtocolo, idEmitente)) Then
+                           ShowMessage('Erro ao tentar gravar dados! Erro:'+#13+
+                                       'NF-e : '+ InttoStr(Cont)+'  Série: ');
                    End;
                End; // if (idNota <> -1) Then
            End;     // fim-do-para
@@ -3955,7 +3951,7 @@ var qraux : TSQLquery;
     texto : string;
 begin
   texto := 'select id, sequencia_cce from nota_fiscal Where (id = :pCODIGO)';
-  QrAux := TSQLquery.Create(nil);
+  QrAux := TSQLquery.Create(Self);
   with QrAux do
     try
       SQLConnection := DmDados.sqlConexao;
@@ -4266,7 +4262,7 @@ begin
                          begin
                               With Ide.NFref.Add do
                               begin
-                                RefNF.cUF    := NotaUtil.UFtoCUF(cdsListaNT_RefCDR_UF.AsString);
+                                RefNF.cUF    := UFtoCUF(cdsListaNT_RefCDR_UF.AsString);
                                 RefNF.AAMM   := Copy(cdsListaNT_RefCDR_MESANO.AsString,3,2)+Copy(cdsListaNT_RefCDR_MESANO.AsString,1,2);
                                 RefNF.CNPJ   := cdsListaNT_RefCDR_CNPJ.AsString;
                                 RefNF.modelo := cdsListaNT_RefCDR_MODELO.AsInteger;
@@ -5156,15 +5152,19 @@ begin
            End;  // With ACBrNFe1.NotasFiscais.Add.NFe do
            //
            ACBrNFe1.NotasFiscais.GerarNFe;
+
            If (aSoImprimir = 'N') Then
                  ACBrNFe1.NotasFiscais.Assinar;
-           ACBrNFe1.NotasFiscais.Items[0].SaveToFile;
-           aArquivo := ACBrNFe1.NotasFiscais.Items[0].NomeArq;
+
+           aChave := uFuncoes.FilterChars(ACBrNFe1.NotasFiscais.Items[0].NFe.infNFe.ID, ['0'..'9']);
+           aArquivo := aChave+'-nfe.xml';  // ExtractFilePath( Application.ExeName ) +'xml\'+
+           ACBrNFe1.NotasFiscais.Items[0].NomeArq := aArquivo;
+           //ACBrNFe1.NotasFiscais.Items[0].GravarXML(aArquivo); // SaveToFile;
            //
            ACBrNFe1.NotasFiscais.Clear;
-           ACBrNFe1.NotasFiscais.LoadFromFile(aArquivo);
+           ACBrNFe1.NotasFiscais.LoadFromFile(ACBrNFe1.Configuracoes.Arquivos.PathNFe+'\'+aArquivo);
            If (aSoImprimir = 'N') Then
-                ACBrNFe1.NotasFiscais.Valida;
+                ACBrNFe1.NotasFiscais.Validar;
            //
            If FileExists('logo.bmp') Then
                ACBrNFe1.DANFE.Logo := 'logo.bmp';
@@ -5176,8 +5176,6 @@ begin
            //ACBrNFe1.DANFE.TipoDANFE := tiPaisagem;
            //
            aArquivo := ACBrNFe1.NotasFiscais.Items[0].NomeArq;
-           //
-           aChave := uFuncoes.FilterChars(ACBrNFe1.NotasFiscais.Items[0].NFe.infNFe.ID, ['0'..'9']);
            //
            If (GetChaveNotaFiscal(iCodigoNfe)) Then
                SetChaveNotaFiscal(iCodigoNfe, idUsuario, aChave);

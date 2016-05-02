@@ -9,7 +9,7 @@ uses
   pcnConversao, Menus, ppDB, ppDBPipe, ppComm, ppRelatv, ppProd, ppClass,
   ppReport, ppPrnabl, ppCtrls, ppBands, ppCache, ppVar, xmldom, XMLIntf,
   msxmldom, XMLDoc, pcnAuxiliar, comOBJ, Mapi, OleServer, OutlookXP, DateUtils,
-  ImgList, ACBrNFeDANFEClass, ACBrNFeDANFERave, ACBrNFe, SHELLAPI,
+  ImgList, ACBrNFeDANFEClass, ACBrNFe, SHELLAPI,   //ACBrNFeDANFERave
   ppStrtch, ppSubRpt;
 
 type
@@ -1000,7 +1000,7 @@ begin
                                infEvento.detEvento.nProt := Protocolo;
                           end;
                           // Enviar o evento de cancelamento
-                         if  dmNFe.ACBrNFe1.EnviarEventoNFe(StrtoInt(idLote)) then
+                         if  dmNFe.ACBrNFe1.EnviarEvento(StrtoInt(idLote)) then
                          begin
                              with dmNFe.ACBrNFe1.WebServices.EnvEvento do
                              begin
@@ -1124,7 +1124,7 @@ begin
        OpenDialog1.Title  := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        //
        aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
        //
@@ -1221,11 +1221,11 @@ begin
        End;
        //
        dmNFe.PathACBrNFeDANFERave();
-       dmNFe.ACBrNFeDANFERave1.NumCopias := 2;
+       dmNFe.ACBrNFeDANFERaveCB1.NumCopias := 2;
        OpenDialog1.Title := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
        {if OpenDialog1.Execute then
        begin}
@@ -1273,12 +1273,12 @@ begin
          //
          If not uFuncoes.Empty(cdsConsultanumero_protocolo.AsString) Then
              dmNFe.ACBrNFe1.DANFE.ProtocoloNFe := cdsConsultanumero_nota_fiscal.AsString;
-         if dmNFe.ACBrNFe1.NotasFiscais.Items[0].NFe.Ide.tpEmis = teDPEC then
+         {if dmNFe.ACBrNFe1.NotasFiscais.Items[0].NFe.Ide.tpEmis = teDPEC then
           begin
             dmNFe.ACBrNFe1.WebServices.ConsultaDPEC.NFeChave := dmNFe.ACBrNFe1.NotasFiscais.Items[0].NFe.infNFe.ID;
             dmNFe.ACBrNFe1.WebServices.ConsultaDPEC.Executar;
             dmNFe.ACBrNFe1.DANFE.ProtocoloNFe := dmNFe.ACBrNFe1.WebServices.ConsultaDPEC.nRegDPEC +' '+ DateTimeToStr(dmNFe.ACBrNFe1.WebServices.ConsultaDPEC.dhRegDPEC);  //  retDPEC.dhRegDPEC
-          end;
+          end;}
          //
          dmNFe.ACBrNFe1.NotasFiscais.Imprimir;
        //end;
@@ -1551,7 +1551,7 @@ begin
   OpenDialog1.Title := 'Selecione a NFE';
   OpenDialog1.DefaultExt := '*-nfe.XML';
   OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-  OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+  OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
   if OpenDialog1.Execute then
   begin
     dmNFe.ACBrNFe1.NotasFiscais.Clear;
@@ -1583,7 +1583,7 @@ begin
        OpenDialog1.Title := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
        dmNFe.ACBrNFe1.DANFE.PathPDF := Dir;
          OpenDialog1.FileName := aArquivo;
@@ -1914,7 +1914,7 @@ begin
        OpenDialog1.Title := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
        dmNFe.ACBrNFe1.DANFE.PathPDF := Dir;
          OpenDialog1.FileName := aArquivo;
@@ -2255,7 +2255,7 @@ begin
                End;
                First;
                EnableControls;
-               dmNFe.ACBrNFeDANFERave1.MostrarPreview := True;
+               dmNFe.ACBrNFeDANFERaveCB1.MostrarPreview := True;
                //
                //KillTask('AcroRd32.exe');
           End;
@@ -2284,7 +2284,7 @@ begin
        OpenDialog1.Title := 'Selecione a NFE';
        OpenDialog1.DefaultExt := '*-nfe.XML';
        OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+       OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
        aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
        //
        Dir := 'C:\INFOG2\PDF';
@@ -2299,8 +2299,8 @@ begin
            dmNFe.ACBrNFe1.DANFE.TipoDANFE := tiPaisagem;
        {dmNFe.ACBrNFeDANFERave1.MostrarPreview := False;
        dmNFe.ACBrNFeDANFERave1.MostrarStatus  := False; }
-       dmNFe.ACBrNFeDANFERave1.MostrarPreview := false;
-       dmNFe.ACBrNFeDANFERave1.MostrarStatus := false;
+       dmNFe.ACBrNFeDANFERaveCB1.MostrarPreview := false;
+       dmNFe.ACBrNFeDANFERaveCB1.MostrarStatus := false;
        dmNFe.ACBrNFe1.DANFE.PathPDF := Dir;
        dmNFe.ACBrNFeDANFERaveCB1.NumCopias := 2;
        //
@@ -2451,7 +2451,8 @@ begin
                                               //
                                               dmNFe.ACBrNFe1.NotasFiscais.Clear;
                                               dmNFe.ACBrNFe1.NotasFiscais.LoadFromStream(wXML);
-                                              dmNFe.ACBrNFe1.NotasFiscais.SaveToFile(aNomePasta+'\'+aNomeArquivo);
+                                              dmNFe.ACBrNFe1.NotasFiscais.GravarXML(aNomePasta+'\'+aNomeArquivo);
+                                              //(aNomePasta+'\'+aNomeArquivo);
                                               //
                                               //Memo1.Lines.Add(aNomePasta+'\'+aNomeArquivo);
                                          End;
@@ -2617,7 +2618,7 @@ begin
               OpenDialog1.Title := 'Selecione a NFE';
               OpenDialog1.DefaultExt := '*-nfe.XML';
               OpenDialog1.Filter := 'Arquivos NFE (*-nfe.XML)|*-nfe.XML|Arquivos XML (*.XML)|*.XML|Todos os Arquivos (*.*)|*.*';
-              OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Geral.PathSalvar;
+              OpenDialog1.InitialDir := dmNFe.ACBrNFe1.Configuracoes.Arquivos.PathSalvar;
               aArquivo := OpenDialog1.InitialDir+'\'+cdsConsultachave_acesso.AsString+'-NFe.XML';
 
               OpenDialog1.FileName := aArquivo;
