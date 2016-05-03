@@ -877,6 +877,9 @@ begin
      dmNFe.CarregarlistaCST_COFINS();
      dmNFe.CarregarlistaCST_SIMPLES();
      dmNFe.CarregarlistaOrigemProduto();
+     //
+     dmNFe.CarregarListaModalidadesBC_ICMS();
+     dmNFe.CarregarListaModalidadesBC_ICMS_ST();
      //edtDescricao.Text := dm.GetNomeProduto(dmNFe.cdsItensNotaNFI_PRODUTO.AsString);
      tsbSimples.TabVisible    := False;
      tsMedicamento.TabVisible := False;

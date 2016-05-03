@@ -243,7 +243,8 @@ begin
                   if (FieldByName('situacao').AsString = 'C') Then
                      raise Exception.Create('Venda cancelada!!!');
                   if not uFuncoes.Empty(FieldByName('numero_nfe').AsString) Then
-                     raise Exception.Create('Venda da NF-e :'+FieldByName('numero_nfe').AsString);
+                      If (FieldByName('numero_nfe').AsInteger > 0) Then
+                          raise Exception.Create('Venda da NF-e : '+FieldByName('numero_nfe').AsString);
                   Result := True;
              End;
        finally

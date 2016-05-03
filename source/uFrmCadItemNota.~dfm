@@ -456,6 +456,7 @@ object FrmCadItemNota: TFrmCadItemNota
             Caption = 'Valor ICMS Desonerado'
             FocusControl = dbeICMSDesonerado
             Transparent = True
+            Visible = False
           end
           object Label37: TLabel
             Left = 160
@@ -465,6 +466,7 @@ object FrmCadItemNota: TFrmCadItemNota
             Caption = 'Motivo da Desonera'#231#227'o do ICMS'
             FocusControl = DBLookupComboBox1
             Transparent = True
+            Visible = False
           end
           object dbeBCIcms: TDBEdit
             Left = 16
@@ -512,6 +514,7 @@ object FrmCadItemNota: TFrmCadItemNota
             DataField = 'CDS_VALOR_ICMS_DESONERADO'
             DataSource = dsCadastroItem
             TabOrder = 3
+            Visible = False
           end
           object DBLookupComboBox1: TDBLookupComboBox
             Left = 160
@@ -521,6 +524,7 @@ object FrmCadItemNota: TFrmCadItemNota
             DataField = 'CDS_DESC_MOT_DESONER_ICMS'
             DataSource = dsCadastroItem
             TabOrder = 4
+            Visible = False
           end
         end
         object gbxIcmsSt: TGroupBox

@@ -111,12 +111,10 @@ type
     dstVendadata_venda: TSQLTimeStampField;
     dstVendadata_cancelamento: TSQLTimeStampField;
     dstVendamotivo_cancelamento: TStringField;
-    dstVendaid_produto_tab_precos: TIntegerField;
     dstVendavalor_mercadorias: TFMTBCDField;
     dstVendavalor_entrada: TFMTBCDField;
     dstVendavalor_desconto: TFMTBCDField;
     dstVendavalor_acrescimo: TFMTBCDField;
-    dstVendavalor_devolucao: TFMTBCDField;
     dstVendavalor_troco: TFMTBCDField;
     dstVendaid_ecf: TIntegerField;
     dstVendanumero_nfe: TIntegerField;
@@ -137,12 +135,10 @@ type
     cdsVendadata_venda: TSQLTimeStampField;
     cdsVendadata_cancelamento: TSQLTimeStampField;
     cdsVendamotivo_cancelamento: TStringField;
-    cdsVendaid_produto_tab_precos: TIntegerField;
     cdsVendavalor_mercadorias: TFMTBCDField;
     cdsVendavalor_entrada: TFMTBCDField;
     cdsVendavalor_desconto: TFMTBCDField;
     cdsVendavalor_acrescimo: TFMTBCDField;
-    cdsVendavalor_devolucao: TFMTBCDField;
     cdsVendavalor_troco: TFMTBCDField;
     cdsVendaid_ecf: TIntegerField;
     cdsVendanumero_nfe: TIntegerField;

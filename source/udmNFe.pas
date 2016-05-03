@@ -297,7 +297,6 @@ type
     cdsItemsNotaFiscalCDS_BC_COFINS: TFloatField;
     cdsItemsNotaFiscalCDS_ALIQ_COFINS: TFloatField;
     cdsItemsNotaFiscalCDS_VALOR_COFINS: TFloatField;
-    cdsItemsNotaFiscalCDS_MODALIDADE_BC_ICMS: TStringField;
     cdsItemsNotaFiscalCDS_TAXA_REDUCAO_BC_ICMS: TFloatField;
     cdsItemsNotaFiscalCDS_ALIQUOTA_CREDITO_ICMS_SN: TFloatField;
     cdsItemsNotaFiscalCDS_VALOR_CREDITO_ICMS_SN: TFloatField;
@@ -771,6 +770,15 @@ type
     cdsMotivoDesoneracaodescricao: TStringField;
     cdsItemsNotaFiscalCDS_DESC_MOT_DESONER_ICMS: TStringField;
     ACBrNFeDANFERaveCB1: TACBrNFeDANFeRL;
+    cdsItemsNotaFiscalCDS_MODALIDADE_BC_ICMS: TIntegerField;
+    cdsListaModbcICMS: TClientDataSet;
+    cdsListaModbcICMS_ST: TClientDataSet;
+    cdsListaModbcICMSMBC_CODIGO: TIntegerField;
+    cdsListaModbcICMSMBC_DESCRICAO: TStringField;
+    cdsListaModbcICMS_STMBC_CODIGO: TIntegerField;
+    cdsListaModbcICMS_STMBC_DESCRICAO: TStringField;
+    cdsItemsNotaFiscalCDS_MOD_BC_ICMS_DESCRICAO: TStringField;
+    cdsItemsNotaFiscalCDS_MOD_BC_ICMS_ST_DESCRICAO: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
@@ -905,6 +913,8 @@ type
     Procedure CarregarListaUFVeiculo();
     Procedure CarregarListaUFReboque();
     Procedure CarregarListaMotivosDesoneracao();
+    Procedure CarregarListaModalidadesBC_ICMS();
+    Procedure CarregarListaModalidadesBC_ICMS_ST();
     Function GetUf(aCodigo : String; aCdsLista : TClientDataSet): String;
     Function GetCodigoUF(aUF : String; aCdsLista : TClientDataSet): String;
   end;
@@ -2236,7 +2246,6 @@ begin
            if not (IsEmpty) then
               Result := true;
            EnableControls;
-           //
       End;
 end;
 
@@ -5886,6 +5895,74 @@ begin
           FieldByName('descricao').asString  := 'Olimpíadas Rio 2016';
           Post;  
      End;
+end;
+
+procedure TdmNFe.CarregarListaModalidadesBC_ICMS;
+begin
+     dmDados.RefreshCDS(cdsListaModbcICMS);
+     cdsListaModbcICMS.EmptyDataSet;
+     With cdsListaModbcICMS do
+      begin
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 0;
+          FieldByName('MBC_DESCRICAO').asString := 'Margem Valor Agregado (%)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 1;
+          FieldByName('MBC_DESCRICAO').asString := 'Pauta (Valor)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 2;
+          FieldByName('MBC_DESCRICAO').asString := 'Preço Tabelado Máx. (valor)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 3;
+          FieldByName('MBC_DESCRICAO').asString := 'Valor da operação';
+          Post;
+      End;
+end;
+
+procedure TdmNFe.CarregarListaModalidadesBC_ICMS_ST;
+begin
+     dmDados.RefreshCDS(cdsListaModbcICMS_ST);
+     cdsListaModbcICMS_ST.EmptyDataSet;
+     With cdsListaModbcICMS_ST do
+      begin
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 0;
+          FieldByName('MBC_DESCRICAO').asString := 'Preço tabelado ou máximo sugerido';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 1;
+          FieldByName('MBC_DESCRICAO').asString := 'Lista Negativa (valor)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 2;
+          FieldByName('MBC_DESCRICAO').asString := 'Lista Positiva (valor)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 3;
+          FieldByName('MBC_DESCRICAO').asString := 'Lista Neutra (valor)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 4;
+          FieldByName('MBC_DESCRICAO').asString := 'Margem Valor Agregado (%)';
+          Post;
+          //
+          Append;
+          FieldByName('MBC_CODIGO').asInteger   := 5;
+          FieldByName('MBC_DESCRICAO').asString := 'Pauta (valor)';
+          Post;
+      End;
 end;
 
 end.

@@ -533,7 +533,7 @@ begin
      {if (DM.CdsConfigcfg_mostrar_botao.AsString = 'S') Then
         btnVenda.Visible := true;}
      //                              
-     btnImportaXML.Visible := True;
+     btnImportaXML.Visible := False;
      //
      lblItens.Caption := '';
      pnlDetalheDados.Enabled := False;
@@ -3488,7 +3488,7 @@ begin
                                         dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcfcodigo_modelo.AsString;
                                     End;
                                     //
-                                    dsCadastro.DataSet.FieldByName('informacoes_adicionais_contribuite').AsString :=
+                                    dsCadastro.DataSet.FieldByName('informacoes_adicionais_contribu').AsString :=
                                          ' MOD.REF: '+ dmNFe.cdsNotaFiscalmodelo_ecf.AsString+';'+
                                          'NT. FISCAL C/ICMS RECOLHIDO NO PDV/CUPOM:'+dmNFe.cdsNotaFiscalnum_ecf.AsString+'/'+M_ECFCOO+';'+
                                          'DATA CUPOM: '+aDataCupom +';'

@@ -34,9 +34,6 @@ type
     dstConsulta: TSQLDataSet;
     dspConsulta: TDataSetProvider;
     cdsVenda: TClientDataSet;
-    PopupMenu1: TPopupMenu;
-    mnuClienteItem: TMenuItem;
-    mnuProdutosItem: TMenuItem;
     cdsVendaid: TIntegerField;
     cdsVendadata_venda: TSQLTimeStampField;
     cdsVendasituacao: TStringField;

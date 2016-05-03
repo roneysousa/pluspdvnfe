@@ -1,6 +1,6 @@
 object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
-  Left = 275
-  Top = 31
+  Left = 249
+  Top = 52
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Emiss'#227'o de Nota Fiscal Eletr'#244'nica'
@@ -3706,7 +3706,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
         object Label111: TLabel
           Left = 373
           Top = 244
-          Width = 44
+          Width = 43
           Height = 19
           Caption = 'Total:'
           Font.Charset = ANSI_CHARSET

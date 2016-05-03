@@ -8,9 +8,6 @@ uses
 
 type
   TTypeLocalizar = (fsInteger, fsString);
-  TSituacaoNotaFiscal = (Assinada = 1, Autorizada = 2, Cancelada = 3, Denegada = 4, EmDigitacao = 5,
-       EmProcessamentonaSefaz = 6, Rejeitada = 7, TransmitidacomPendencia = 8, Validada = 9,
-       NotaInutilizada = 10, NotadeEntrada = 99);
   TdmDados = class(TDataModule)
     sqlConexao: TSQLConnection;
     dstPadrao: TSQLDataSet;
