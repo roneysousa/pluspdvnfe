@@ -378,6 +378,14 @@ object FrmCadItemNota: TFrmCadItemNota
             ParentFont = False
             Transparent = True
           end
+          object Label38: TLabel
+            Left = 632
+            Top = 8
+            Width = 49
+            Height = 13
+            Caption = 'CDS_CST'
+            FocusControl = DBEdit1
+          end
           object cmbCstICMS: TDBLookupComboBox
             Left = 16
             Top = 22
@@ -396,6 +404,15 @@ object FrmCadItemNota: TFrmCadItemNota
             DataField = 'CDS_DESC_ORIGEM_PRODUTO'
             DataSource = dsCadastroItem
             TabOrder = 1
+          end
+          object DBEdit1: TDBEdit
+            Left = 632
+            Top = 24
+            Width = 80
+            Height = 21
+            DataField = 'CDS_CST'
+            DataSource = dsCadastroItem
+            TabOrder = 2
           end
         end
         object gbxIcms: TGroupBox
@@ -450,7 +467,7 @@ object FrmCadItemNota: TFrmCadItemNota
           end
           object Label36: TLabel
             Left = 160
-            Top = 24
+            Top = 64
             Width = 114
             Height = 13
             Caption = 'Valor ICMS Desonerado'
@@ -460,13 +477,22 @@ object FrmCadItemNota: TFrmCadItemNota
           end
           object Label37: TLabel
             Left = 160
-            Top = 64
+            Top = 104
             Width = 158
             Height = 13
             Caption = 'Motivo da Desonera'#231#227'o do ICMS'
             FocusControl = DBLookupComboBox1
             Transparent = True
             Visible = False
+          end
+          object lblReducao: TLabel
+            Left = 160
+            Top = 24
+            Width = 111
+            Height = 13
+            Caption = '% redu'#231#227'o da BC ICMS'
+            FocusControl = dbeReducaoICMS
+            Transparent = True
           end
           object dbeBCIcms: TDBEdit
             Left = 16
@@ -485,7 +511,7 @@ object FrmCadItemNota: TFrmCadItemNota
             Height = 21
             DataField = 'CDS_ALIQICMS'
             DataSource = dsCadastroItem
-            TabOrder = 1
+            TabOrder = 2
             OnExit = edtAliquotaICMSExit
           end
           object dbeValorIcms: TDBEdit
@@ -504,11 +530,11 @@ object FrmCadItemNota: TFrmCadItemNota
             Font.Style = [fsBold]
             ParentFont = False
             ReadOnly = True
-            TabOrder = 2
+            TabOrder = 5
           end
           object dbeICMSDesonerado: TDBEdit
             Left = 160
-            Top = 40
+            Top = 80
             Width = 134
             Height = 21
             DataField = 'CDS_VALOR_ICMS_DESONERADO'
@@ -518,13 +544,23 @@ object FrmCadItemNota: TFrmCadItemNota
           end
           object DBLookupComboBox1: TDBLookupComboBox
             Left = 160
-            Top = 80
+            Top = 120
             Width = 225
             Height = 21
             DataField = 'CDS_DESC_MOT_DESONER_ICMS'
             DataSource = dsCadastroItem
             TabOrder = 4
             Visible = False
+          end
+          object dbeReducaoICMS: TDBEdit
+            Left = 160
+            Top = 40
+            Width = 134
+            Height = 21
+            DataField = 'CDS_PEREDUCAO'
+            DataSource = dsCadastroItem
+            TabOrder = 1
+            OnExit = dbeReducaoICMSExit
           end
         end
         object gbxIcmsSt: TGroupBox

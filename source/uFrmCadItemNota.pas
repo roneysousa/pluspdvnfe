@@ -102,6 +102,10 @@ type
     dbeICMSDesonerado: TDBEdit;
     Label37: TLabel;
     DBLookupComboBox1: TDBLookupComboBox;
+    lblReducao: TLabel;
+    dbeReducaoICMS: TDBEdit;
+    Label38: TLabel;
+    DBEdit1: TDBEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
@@ -138,10 +142,13 @@ type
     procedure dbeDataFabExit(Sender: TObject);
     procedure dbeDataVctExit(Sender: TObject);
     procedure dsCadastroItemDataChange(Sender: TObject; Field: TField);
+    procedure dbeReducaoICMSExit(Sender: TObject);
   private
     { Private declarations }
     procedure Calcular;
     Function ValidarDataVct(): Boolean;
+    Procedure CamposReducaoICMS(bStatus : Boolean);
+    Procedure VerificaCST_ICMS_Reducao();
   public
     { Public declarations }
   end;
@@ -505,6 +512,7 @@ procedure TFrmCadItemNota.Calcular;
 Var
     M_VLSUBT, M_VLDESC, M_VLACRE, fPercentualAcrescimo : Double;
     M_VLUNIT, M_QTPROD, M_MARGE_LUCRO_ST, M_BCIPI, M_BC_ICMSST, M_VLICMS_ST : Double;
+    fPercReducaoBC_ICMS : Double;
 begin
      If not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').asString) Then
      begin
@@ -516,6 +524,7 @@ begin
      Else
          gbxIcmsSt.Visible := False;
      //
+     fPercReducaoBC_ICMS := 0;
      M_VLSUBT := 0;
      M_VLUNIT := dsCadastroItem.DataSet.fieldByname('CDS_VLUNITARIO').AsFloat;
      M_QTPROD := dsCadastroItem.DataSet.fieldByname('CDS_QTDECOM').AsFloat;
@@ -537,12 +546,25 @@ begin
      //
      dsCadastroItem.DataSet.FieldByName('CDS_SUBTOTAL').AsFloat :=  M_VLSUBT;
      //
+     if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20)
+       and (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0) Then
+            fPercReducaoBC_ICMS := dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat;
      //  Valor Icms
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
       begin
           if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) Then
-             if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger <> 20) Then
-               dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+           begin
+               if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
+                 begin
+                      if (fPercReducaoBC_ICMS > 0) Then
+                          dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := uFuncoes.Arredondar(M_VLSUBT - (M_VLSUBT * (fPercReducaoBC_ICMS/100)),2)
+                      Else
+                         dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+                 End
+               Else
+                   dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+           End;
+
           //
           dsCadastroItem.DataSet.FieldByName('CDS_VLICMS').AsFloat := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat),2);
           //
@@ -951,6 +973,7 @@ begin
       begin
            edtCodigo.Enabled := False;
            edtCodigo.Visible := true;
+           VerificaCST_ICMS_Reducao();
            dsCadastroItem.DataSet.FieldByName('CDS_INDTOT').AsInteger := 1;
            dbeCFOP.SetFocus;
       End;
@@ -958,62 +981,77 @@ end;
 
 procedure TFrmCadItemNota.dbeBCIcmsExit(Sender: TObject);
 begin
-    Calcular;
+    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.edtAliquotaICMSExit(Sender: TObject);
 begin
-     Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeMargemICMS_STExit(Sender: TObject);
 begin
-     Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeBaseICMS_STExit(Sender: TObject);
 begin
+   if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
      Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeAliquotaICMS_STExit(Sender: TObject);
 begin
+    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
      Calcular;
 end;
 
 procedure TFrmCadItemNota.cmbCstICMSExit(Sender: TObject);
 begin
-    Calcular;
+   if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+   begin
+     VerificaCST_ICMS_Reducao();
+     Calcular;
+   End;
 end;
 
 procedure TFrmCadItemNota.cmbCstIpiExit(Sender: TObject);
 begin
-    Calcular;
+   if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+       Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeBCIPIExit(Sender: TObject);
 begin
-    Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+       Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeAliquotaIPIExit(Sender: TObject);
 begin
-    Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.cmbCstCofinsExit(Sender: TObject);
 begin
-    Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeValorBsCofinsExit(Sender: TObject);
 begin
-    Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+       Calcular;
 end;
 
 procedure TFrmCadItemNota.DBEdit3Exit(Sender: TObject);
 begin
-    Calcular;
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 procedure TFrmCadItemNota.dbeCFOPEnter(Sender: TObject);
@@ -1060,6 +1098,29 @@ procedure TFrmCadItemNota.dsCadastroItemDataChange(Sender: TObject;
   Field: TField);
 begin
     edtCodigo.ReadOnly := dsCadastroItem.DataSet.State in [dsEdit];
+end;
+
+procedure TFrmCadItemNota.CamposReducaoICMS(bStatus: Boolean);
+begin
+    lblReducao.Visible := bStatus;
+    dbeReducaoICMS.Visible := bStatus;
+end;
+
+procedure TFrmCadItemNota.VerificaCST_ICMS_Reducao;
+begin
+     CamposReducaoICMS(false);
+     if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
+          CamposReducaoICMS(True)
+     Else
+         if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit])
+            and (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0)  Then
+                dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat := 0;
+end;
+
+procedure TFrmCadItemNota.dbeReducaoICMSExit(Sender: TObject);
+begin
+    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        Calcular;
 end;
 
 end.
