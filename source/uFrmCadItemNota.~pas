@@ -104,8 +104,6 @@ type
     DBLookupComboBox1: TDBLookupComboBox;
     lblReducao: TLabel;
     dbeReducaoICMS: TDBEdit;
-    Label38: TLabel;
-    DBEdit1: TDBEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
@@ -546,15 +544,25 @@ begin
      //
      dsCadastroItem.DataSet.FieldByName('CDS_SUBTOTAL').AsFloat :=  M_VLSUBT;
      //
-     if (dsCadastroItem.DataSet.FieldByName('CST').AsInteger = 20)
+     if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20)
        and (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0) Then
             fPercReducaoBC_ICMS := dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat;
      //  Valor Icms
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
       begin
           if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) Then
-             if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger <> 20) Then
-               dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+           begin
+               if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
+                 begin
+                      if (fPercReducaoBC_ICMS > 0) Then
+                          dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := uFuncoes.Arredondar(M_VLSUBT - (M_VLSUBT * (fPercReducaoBC_ICMS/100)),2)
+                      Else
+                         dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+                 End
+               Else
+                   dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+           End;
+
           //
           dsCadastroItem.DataSet.FieldByName('CDS_VLICMS').AsFloat := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat),2);
           //

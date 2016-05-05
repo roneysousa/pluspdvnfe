@@ -4,7 +4,7 @@ object dmDados: TdmDados
   OnDestroy = DataModuleDestroy
   Left = 316
   Top = 133
-  Height = 389
+  Height = 401
   Width = 640
   object sqlConexao: TSQLConnection
     ConnectionName = 'pluspdv_nfe'
@@ -520,98 +520,114 @@ object dmDados: TdmDados
     Top = 200
     object cdsVendaid: TIntegerField
       FieldName = 'id'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
     end
     object cdsVendaid_empresa: TIntegerField
       FieldName = 'id_empresa'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendacoo: TIntegerField
       FieldName = 'coo'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendaccf: TIntegerField
       FieldName = 'ccf'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendaatacado: TBooleanField
       FieldName = 'atacado'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendasituacao: TStringField
       FieldName = 'situacao'
+      ProviderFlags = [pfInUpdate]
       FixedChar = True
       Size = 1
     end
     object cdsVendaid_cliente: TIntegerField
       FieldName = 'id_cliente'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendanum_dependente: TIntegerField
       FieldName = 'num_dependente'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendaid_consumidor: TStringField
       FieldName = 'id_consumidor'
+      ProviderFlags = [pfInUpdate]
       Size = 14
     end
     object cdsVendaid_entrega: TIntegerField
       FieldName = 'id_entrega'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendadata_venda: TSQLTimeStampField
       FieldName = 'data_venda'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendadata_cancelamento: TSQLTimeStampField
       FieldName = 'data_cancelamento'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendamotivo_cancelamento: TStringField
       FieldName = 'motivo_cancelamento'
+      ProviderFlags = [pfInUpdate]
       Size = 50
-    end
-    object cdsVendaid_produto_tab_precos: TIntegerField
-      FieldName = 'id_produto_tab_precos'
     end
     object cdsVendavalor_mercadorias: TFMTBCDField
       FieldName = 'valor_mercadorias'
+      ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2
     end
     object cdsVendavalor_entrada: TFMTBCDField
       FieldName = 'valor_entrada'
+      ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2
     end
     object cdsVendavalor_desconto: TFMTBCDField
       FieldName = 'valor_desconto'
+      ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2
     end
     object cdsVendavalor_acrescimo: TFMTBCDField
       FieldName = 'valor_acrescimo'
-      Precision = 15
-      Size = 2
-    end
-    object cdsVendavalor_devolucao: TFMTBCDField
-      FieldName = 'valor_devolucao'
+      ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2
     end
     object cdsVendavalor_troco: TFMTBCDField
       FieldName = 'valor_troco'
+      ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2
     end
     object cdsVendaid_ecf: TIntegerField
       FieldName = 'id_ecf'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendanumero_nfe: TIntegerField
       FieldName = 'numero_nfe'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendasequencia_nfe: TIntegerField
       FieldName = 'sequencia_nfe'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendaobservacao: TMemoField
       FieldName = 'observacao'
+      ProviderFlags = [pfInUpdate]
       BlobType = ftMemo
     end
     object cdsVendastatus_cupom: TIntegerField
       FieldName = 'status_cupom'
+      ProviderFlags = [pfInUpdate]
     end
     object cdsVendachecksum: TStringField
       FieldName = 'checksum'
+      ProviderFlags = [pfInUpdate]
       Size = 32
     end
   end
@@ -689,10 +705,6 @@ object dmDados: TdmDados
       ProviderFlags = [pfInUpdate]
       Size = 50
     end
-    object dstVendaid_produto_tab_precos: TIntegerField
-      FieldName = 'id_produto_tab_precos'
-      ProviderFlags = [pfInUpdate]
-    end
     object dstVendavalor_mercadorias: TFMTBCDField
       FieldName = 'valor_mercadorias'
       ProviderFlags = [pfInUpdate]
@@ -713,12 +725,6 @@ object dmDados: TdmDados
     end
     object dstVendavalor_acrescimo: TFMTBCDField
       FieldName = 'valor_acrescimo'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 2
-    end
-    object dstVendavalor_devolucao: TFMTBCDField
-      FieldName = 'valor_devolucao'
       ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 2

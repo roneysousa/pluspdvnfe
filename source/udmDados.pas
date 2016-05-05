@@ -585,6 +585,7 @@ type
     cdsListaNaturezasoperacaotipo: TStringField;
     cdsListaNaturezasoperacaoid_decreto: TIntegerField;
     cdsListaNaturezasoperacaopermite_venda: TBooleanField;
+    cdsImpEcftipo_cupom: TStringField;
     procedure sqlConexaoBeforeConnect(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
@@ -2188,7 +2189,7 @@ var qraux : TSQLquery;
 begin
   Result := -1;
   texto := 'Select id, id_empresa, numero_nota_fiscal, serie, indicador_do_emitente from nota_fiscal';
-  texto := ' where (numero_nota_fiscal = :pNFe) and (id_empresa = :pempresa) and (serie = :pserie)  and (indicador_do_emitente = '+QuotedStr('0')+') ';
+  texto := texto + ' where (numero_nota_fiscal = :pNFe) and (id_empresa = :pempresa) and (serie = :pserie)  and (indicador_do_emitente = '+QuotedStr('0')+') ';
   QrAux := TSQLquery.Create(nil);
   with QrAux do
     try
@@ -2196,7 +2197,7 @@ begin
       sql.Add(texto);
       Params.ParamByName('pNFe').AsInteger     := idNFe;
       Params.ParamByName('pempresa').AsInteger := idEmpresa;
-      Params.ParamByName('pserie').AsString    := InttoStr(StrtoInt(aSerie));
+      Params.ParamByName('pserie').AsInteger   := StrtoInt(aSerie);
       Open;
       //
       if not (IsEmpty) then

@@ -556,7 +556,10 @@ begin
          dmDados.FilterCDS(dmNFe.cdsNotaFiscal, fsInteger, InttoStr(iNumNota));
          // Destinatario
          if not uFuncoes.Empty(dsCadastro.DataSet.fieldByName('destinatario_uf').AsString) then
-             dmNFe.AbrirListaCidadeUF(dsCadastro.DataSet.fieldByName('UF_EMITENTE').AsString, dmNFe.cdsListaCidades);  // destinatario_uf
+          begin
+             // dmNFe.AbrirListaCidadeUF(dsCadastro.DataSet.fieldByName('destinatario_uf').AsString, dmNFe.cdsListaCidades);  //      UF_EMITENTE
+             dmNFe.AbrirListaCidadeUF(cmbUFDest.Text, dmNFe.cdsListaCidades);
+          End;
          //
          if not uFuncoes.Empty(dsCadastro.DataSet.fieldByName('emitente_retirada_uf').AsString) then
              dmNFe.AbrirListaCidadeUF(dsCadastro.DataSet.fieldByName('UF_EMITENTE_RET').AsString, dmNFe.cdsRetiradaCidade);
@@ -3485,7 +3488,10 @@ begin
                                     if not (dmDados.cdsImpEcf.IsEmpty) Then
                                     begin
                                         dmNFe.cdsNotaFiscalnum_ecf.AsString     := dmDados.cdsImpEcfnum_caixa.AsString;
-                                        dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcfcodigo_modelo.AsString;
+                                        if not uFuncoes.Empty(dmDados.cdsImpEcftipo_cupom.AsString) Then
+                                            dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcftipo_cupom.AsString
+                                        Else
+                                            dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := '2D';
                                     End;
                                     //
                                     dsCadastro.DataSet.FieldByName('informacoes_adicionais_contribu').AsString :=

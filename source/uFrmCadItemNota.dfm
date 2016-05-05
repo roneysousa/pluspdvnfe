@@ -1,6 +1,6 @@
 object FrmCadItemNota: TFrmCadItemNota
-  Left = 281
-  Top = 86
+  Left = 273
+  Top = 160
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Produto'
@@ -378,14 +378,6 @@ object FrmCadItemNota: TFrmCadItemNota
             ParentFont = False
             Transparent = True
           end
-          object Label38: TLabel
-            Left = 632
-            Top = 8
-            Width = 49
-            Height = 13
-            Caption = 'CDS_CST'
-            FocusControl = DBEdit1
-          end
           object cmbCstICMS: TDBLookupComboBox
             Left = 16
             Top = 22
@@ -404,15 +396,6 @@ object FrmCadItemNota: TFrmCadItemNota
             DataField = 'CDS_DESC_ORIGEM_PRODUTO'
             DataSource = dsCadastroItem
             TabOrder = 1
-          end
-          object DBEdit1: TDBEdit
-            Left = 632
-            Top = 24
-            Width = 80
-            Height = 21
-            DataField = 'CDS_CST'
-            DataSource = dsCadastroItem
-            TabOrder = 2
           end
         end
         object gbxIcms: TGroupBox

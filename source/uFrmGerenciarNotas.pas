@@ -1268,6 +1268,7 @@ begin
          End;
          //dmNFe.ACBrNFe1.NotasFiscais.LoadFromFile(OpenDialog1.FileName);
          //  Se situação cancelada
+         dmNFe.ACBrNFe1.DANFE.NFeCancelada := False;
          If (cdsConsultasituacao.AsInteger = 3) Then
             dmNFe.ACBrNFe1.DANFE.NFeCancelada := true;
          //
@@ -1330,7 +1331,7 @@ var
  Modelo, Serie, Ano, NumeroInicial, NumeroFinal, Justificativa, aCNPJ, aHora, aProtocolo, aDescricao : String;
  iLoja, iCodStatusInut : Integer;
  aDataMov : TDatetime;
- aUFempresa : String;
+ aUFempresa, aNomeArquivoImp : String;
 begin
       MostraStatus;
       //
@@ -1366,19 +1367,21 @@ begin
                             try
                                 DMDados.RefreshCDS(DMDados.cdsConfig);
                                 //
-                                dmNFe.ACBrNFe1.Configuracoes.Certificados.NumeroSerie := dmDados.cdsEmpresanumero.AsString;
+                                dmNFe.ACBrNFe1.Configuracoes.Certificados.NumeroSerie := dmDados.cdsEmpresacertificado_numero_serie.AsString;
                                 dmNFe.ACBrNFe1.Configuracoes.WebServices.UF := aUFempresa;
                                 // 
+                                If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 1) Then
+                                   dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taProducao;
+                                   
                                 If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 2) Then
                                  begin
                                     dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taHomologacao;
+
                                  End;
-                                If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 1) Then
-                                   dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taProducao;
                                 //
                                 dmNFe.ACBrNFe1.WebServices.Inutiliza(aCNPJ, Justificativa, StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial), StrToInt(NumeroFinal));
                                 MemoResp.Lines.Text :=  UTF8Encode(dmNFe.ACBrNFe1.WebServices.Inutilizacao.RetWS);
-                                dmNFe.LoadXML(MemoResp, WBResposta);
+                                dmNFe.LoadXML(MemoResp, WBResposta);     
                                 // se Inutilização de número homologado
                                 If (dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat = 102) Then
                                 begin
@@ -1394,22 +1397,29 @@ begin
                                      dmNFe.SetStatusdaNotaInutilizada(iCodStatusInut, StrToInt(NumeroInicial),StrToInt(NumeroFinal), aProtocolo, iLoja, Serie);
                                      //
                                      If (dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat = 102) Then
-                                         Application.MessageBox(PChar('Inutilização de número homologado.'),
-                                              'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL)
+                                      begin
+                                          Application.MessageBox(PChar('Inutilização de númeração homologado.'),
+                                               'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                                          // Abrir Arquivo
+                                          {ExtractFilePath( Application.ExeName )+'InutilizacaoNfe';
+                                          dmNFe.ACBrNFe1.NotasFiscais.Clea
+                                          dmNFe.ACBrNFe1.NotasFiscais.LoadFromFile(OpenDialog1.FileName);
+                                          dmNFe.ACBrNFe1.ImprimirInutilizacao;  }
+                                      End
                                      Else
                                           Application.MessageBox(PChar('Inutilização de número não homologado.'+#13+
                                              'Retorno : ' + InttoStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat)),
                                              'ATENÇÃO', MB_OK+MB_ICONSTOP+MB_APPLMODAL);
                                 End
                                 Else
-                                     Application.MessageBox(PChar('Inutilização de número não homologado.'+#13+
+                                     Application.MessageBox(PChar('Inutilização de númeroção não homologado.'+#13+
                                             'Retorno : ' + InttoStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat)),
                                             'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                             Except
-                                  {On e: exception do
+                                  On e: SysUtils.exception do
                                   begin
                                        ShowMessage('Erro ao tentar gravar dados! Erro:'+#13  + E.Message);
-                                  End;}
+                                  End;
                             End;
                         End;
                   End;

@@ -783,6 +783,7 @@ type
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
     procedure cdsListaNT_RefCalcFields(DataSet: TDataSet);
+    procedure ACBrNFe1StatusChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -925,7 +926,7 @@ var
 
 implementation
 
-uses udmDados, uFuncoes, uFrmPlusPdvNfe;
+uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus;
 
 {$R *.dfm}
 
@@ -3155,8 +3156,8 @@ function TdmNFe.GetStatusdaNota(iNota, idEmitente: Integer): Integer;
 var qraux : TSQLquery;
     texto : string;
 begin
-  Result := 0;
-  texto := 'select id, situacao, numero_nota_fiscal, serie, id_empresa from nota_fiscal where (numero_nota_fiscal = :pCODIGO) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') ';
+  Result := 0;                                                                                   // numero_nota_fiscal
+  texto := 'select id, situacao, numero_nota_fiscal, serie, id_empresa from nota_fiscal where (id = :pCODIGO) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') ';
   QrAux := TSQLquery.Create(nil);
   with QrAux do
     try
@@ -3910,7 +3911,7 @@ Var
 begin
      Result := False;
      texto  := 'Update nota_fiscal set data_protocolo = :pDATAPROTOCOLO, situacao = :pSITUACAO_ENUM, numero_protocolo = :pPROTOCOLO ';
-     texto  := texto + ' Where (numero_nota_fiscal = :pCODIGO) and (id_empresa = :pemitente) and (serie = :pserie) ';
+     texto  := texto + ' Where (id = :pCODIGO) and (id_empresa = :pemitente) and (serie = :pserie) ';       // numero_nota_fiscal
      //
      qryAux:= TSQLQuery.Create(nil);
      with qryAux do
@@ -3918,7 +3919,7 @@ begin
            SQLConnection := DmDados.sqlConexao;
            Close;
            SQL.Add(texto);
-           Params.ParamByName('pCODIGO').AsString          := uFuncoes.StrZero(aNumeroNFe,9);
+           Params.ParamByName('pCODIGO').AsInteger         := StrtoInt(aNumeroNFe);  //  uFuncoes.StrZero(aNumeroNFe,9);
            Params.ParamByName('pemitente').AsInteger       := idEmitente;
            Params.ParamByName('pserie').AsString           := aSerie;
            //
@@ -4306,7 +4307,7 @@ begin
                // Destinatário
                Dest.CNPJCPF        := cdsNotaFiscaldestinatario_cnpjcpf.AsString;
                Dest.xNome          := cdsNotaFiscaldestinatario_razaosocial.AsString;
-               if not uFuncoes.Empty(cdsNotaFiscaldestinatario_ie.AsString) and (cdsNotaFiscaldestinatario_tipopessoa.AsString = 'J') then
+               if not uFuncoes.Empty(cdsNotaFiscaldestinatario_ie.AsString) and (cdsNotaFiscalind_inscricao_estadual_dest.AsInteger <> 2) then   // and (cdsNotaFiscaldestinatario_tipopessoa.AsString = 'J')
                    Dest.IE          := cdsNotaFiscaldestinatario_ie.AsString;
                //
                // 17/11/2014
@@ -5963,6 +5964,122 @@ begin
           FieldByName('MBC_DESCRICAO').asString := 'Pauta (valor)';
           Post;
       End;
+end;
+
+procedure TdmNFe.ACBrNFe1StatusChange(Sender: TObject);
+begin
+  case ACBrNFe1.Status of
+    stIdle :
+    begin
+      if ( frmStatus <> nil ) then
+        frmStatus.Hide;
+    end;
+    stNFeStatusServico :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Verificando Status do servico...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeRecepcao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando dados da NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeRetRecepcao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Recebendo dados da NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeConsulta :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeCancelamento :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando cancelamento de NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeInutilizacao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando pedido de Inutilização...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeRecibo :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando Recibo de Lote...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeCadastro :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando Cadastro...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    {stNFeEnvDPEC :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando DPEC...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeConsultaDPEC :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando DPEC...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;  }
+    stNFeEmail :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Email...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeCCe :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Carta de Correção...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeEvento :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Evento...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+  end;
+  Application.ProcessMessages;
 end;
 
 end.

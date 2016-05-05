@@ -104,8 +104,6 @@ type
     DBLookupComboBox1: TDBLookupComboBox;
     lblReducao: TLabel;
     dbeReducaoICMS: TDBEdit;
-    Label38: TLabel;
-    DBEdit1: TDBEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
