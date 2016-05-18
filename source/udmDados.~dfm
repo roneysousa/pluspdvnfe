@@ -2614,6 +2614,10 @@ object dmDados: TdmDados
       FieldName = 'sequencial'
       Size = 3
     end
+    object cdsImpEcftipo_cupom: TStringField
+      FieldName = 'tipo_cupom'
+      Size = 2
+    end
   end
   object dspListas: TDataSetProvider
     DataSet = dstListas

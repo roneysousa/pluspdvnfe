@@ -5577,6 +5577,11 @@ begin
           FieldByName('id').asInteger := 14;
           FieldByName('descricao').asString  := 'ENTRADA DE MERCADORIAS';
           Post;
+          //
+          Append;
+          FieldByName('id').asInteger := 15;
+          FieldByName('descricao').asString  := 'REMESSA SIMPLES';
+          Post;
      End;  // With cdsListaNaturezaOpr do
 end;
 

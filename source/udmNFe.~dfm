@@ -6,6 +6,7 @@ object dmNFe: TdmNFe
   Height = 527
   Width = 954
   object ACBrNFe1: TACBrNFe
+    OnStatusChange = ACBrNFe1StatusChange
     Configuracoes.Geral.SSLLib = libCapicom
     Configuracoes.Geral.FormatoAlerta = 'TAG:%TAGNIVEL% ID:%ID%/%TAG%(%DESCRICAO%) - %MSG%.'
     Configuracoes.Geral.ValidarDigest = False

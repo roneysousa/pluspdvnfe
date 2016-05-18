@@ -783,6 +783,7 @@ type
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
     procedure cdsListaNT_RefCalcFields(DataSet: TDataSet);
+    procedure ACBrNFe1StatusChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -925,7 +926,7 @@ var
 
 implementation
 
-uses udmDados, uFuncoes, uFrmPlusPdvNfe;
+uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus;
 
 {$R *.dfm}
 
@@ -5963,6 +5964,122 @@ begin
           FieldByName('MBC_DESCRICAO').asString := 'Pauta (valor)';
           Post;
       End;
+end;
+
+procedure TdmNFe.ACBrNFe1StatusChange(Sender: TObject);
+begin
+  case ACBrNFe1.Status of
+    stIdle :
+    begin
+      if ( frmStatus <> nil ) then
+        frmStatus.Hide;
+    end;
+    stNFeStatusServico :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Verificando Status do servico...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeRecepcao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando dados da NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeRetRecepcao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Recebendo dados da NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeConsulta :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeCancelamento :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando cancelamento de NFe...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNfeInutilizacao :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando pedido de Inutilização...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeRecibo :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando Recibo de Lote...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeCadastro :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando Cadastro...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    {stNFeEnvDPEC :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando DPEC...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeConsultaDPEC :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Consultando DPEC...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;  }
+    stNFeEmail :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Email...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeCCe :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Carta de Correção...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+    stNFeEvento :
+    begin
+      if ( frmStatus = nil ) then
+        frmStatus := TfrmStatus.Create(Application);
+      frmStatus.lblStatus.Caption := 'Enviando Evento...';
+      frmStatus.Show;
+      frmStatus.BringToFront;
+    end;
+  end;
+  Application.ProcessMessages;
 end;
 
 end.

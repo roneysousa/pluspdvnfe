@@ -585,6 +585,7 @@ type
     cdsListaNaturezasoperacaotipo: TStringField;
     cdsListaNaturezasoperacaoid_decreto: TIntegerField;
     cdsListaNaturezasoperacaopermite_venda: TBooleanField;
+    cdsImpEcftipo_cupom: TStringField;
     procedure sqlConexaoBeforeConnect(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
