@@ -1,6 +1,6 @@
 object FrmCadItemNota: TFrmCadItemNota
-  Left = 281
-  Top = 86
+  Left = 273
+  Top = 160
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Produto'
@@ -31,7 +31,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Width = 49
       Height = 13
       Caption = 'C'#243'digo *'
-      FocusControl = edtCodigo
+      FocusControl = edtCodigo1
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -203,18 +203,19 @@ object FrmCadItemNota: TFrmCadItemNota
       Visible = False
       OnClick = spLocProdutoClick
     end
-    object edtCodigo: TDBEdit
-      Left = 16
-      Top = 24
+    object edtCodigo1: TDBEdit
+      Left = 296
+      Top = 56
       Width = 134
       Height = 21
       DataField = 'CDS_CDPROD'
       DataSource = dsCadastroItem
-      MaxLength = 9
-      TabOrder = 0
+      MaxLength = 14
+      ReadOnly = True
+      TabOrder = 1
       Visible = False
-      OnExit = edtCodigoExit
-      OnKeyPress = edtCodigoKeyPress
+      OnExit = edtCodigo1Exit
+      OnKeyPress = edtCodigo1KeyPress
     end
     object dbeDescricaoProduto: TDBEdit
       Left = 180
@@ -232,7 +233,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 2
     end
     object dbeCFOP: TDBEdit
       Left = 16
@@ -241,7 +242,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Height = 21
       DataField = 'CDS_CFOP'
       DataSource = dsCadastroItem
-      TabOrder = 2
+      TabOrder = 3
       OnEnter = dbeCFOPEnter
       OnExit = dbeCFOPExit
       OnKeyPress = dbeCFOPKeyPress
@@ -254,7 +255,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataField = 'CDS_NCM'
       DataSource = dsCadastroItem
       MaxLength = 10
-      TabOrder = 3
+      TabOrder = 4
       OnExit = dbeNCMExit
       OnKeyPress = dbeNCMKeyPress
     end
@@ -266,7 +267,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataField = 'CDS_UNDCOM'
       DataSource = dsCadastroItem
       MaxLength = 2
-      TabOrder = 4
+      TabOrder = 5
       OnKeyPress = edtUnidadeKeyPress
     end
     object edtQTDE: TDBEdit
@@ -277,7 +278,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataField = 'CDS_QTDECOM'
       DataSource = dsCadastroItem
       MaxLength = 9
-      TabOrder = 5
+      TabOrder = 6
       OnExit = edtQTDEExit
       OnKeyPress = edtQTDEKeyPress
     end
@@ -289,7 +290,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataField = 'CDS_VLUNITARIO'
       DataSource = dsCadastroItem
       MaxLength = 9
-      TabOrder = 6
+      TabOrder = 7
       OnExit = edtValorUnitarioExit
       OnKeyPress = edtValorUnitarioKeyPress
     end
@@ -301,7 +302,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataField = 'CDS_PEDESC'
       DataSource = dsCadastroItem
       MaxLength = 5
-      TabOrder = 7
+      TabOrder = 8
       OnExit = edtDescontoExit
       OnKeyPress = edtDescontoKeyPress
     end
@@ -321,7 +322,17 @@ object FrmCadItemNota: TFrmCadItemNota
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 8
+      TabOrder = 9
+    end
+    object edtCodigo: TEdit
+      Left = 16
+      Top = 24
+      Width = 121
+      Height = 21
+      MaxLength = 14
+      TabOrder = 0
+      OnExit = edtCodigoExit
+      OnKeyPress = edtCodigoKeyPress
     end
   end
   object Panel2: TPanel

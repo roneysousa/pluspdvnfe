@@ -1849,7 +1849,9 @@ begin
             begin
                  //
                  aProduto := edtCDPROD.Text;
+                 //
 
+                 //
                  If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
                   begin
                        Application.MessageBox(PChar('Código produto/serviço não cadastrado.'),

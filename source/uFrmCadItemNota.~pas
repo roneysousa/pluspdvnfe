@@ -15,7 +15,7 @@ type
     btnOK: TBitBtn;
     btnCancela: TBitBtn;
     Label1: TLabel;
-    edtCodigo: TDBEdit;
+    edtCodigo1: TDBEdit;
     dsCadastroItem: TDataSource;
     Label2: TLabel;
     dbeDescricaoProduto: TDBEdit;
@@ -104,11 +104,12 @@ type
     DBLookupComboBox1: TDBLookupComboBox;
     lblReducao: TLabel;
     dbeReducaoICMS: TDBEdit;
+    edtCodigo: TEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
-    procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCodigo1KeyPress(Sender: TObject; var Key: Char);
     procedure spLocProdutoClick(Sender: TObject);
-    procedure edtCodigoExit(Sender: TObject);
+    procedure edtCodigo1Exit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure spCFOPClick(Sender: TObject);
     procedure dbeCFOPKeyPress(Sender: TObject; var Key: Char);
@@ -141,6 +142,8 @@ type
     procedure dbeDataVctExit(Sender: TObject);
     procedure dsCadastroItemDataChange(Sender: TObject; Field: TField);
     procedure dbeReducaoICMSExit(Sender: TObject);
+    procedure edtCodigoExit(Sender: TObject);
+    procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     procedure Calcular;
@@ -370,7 +373,7 @@ begin
      Close;
 end;
 
-procedure TFrmCadItemNota.edtCodigoKeyPress(Sender: TObject; var Key: Char);
+procedure TFrmCadItemNota.edtCodigo1KeyPress(Sender: TObject; var Key: Char);
 begin
     If not( key in['0'..'9',#8, #13] ) then
          key:=#0;
@@ -411,7 +414,7 @@ begin
      End;
 end;
 
-procedure TFrmCadItemNota.edtCodigoExit(Sender: TObject);
+procedure TFrmCadItemNota.edtCodigo1Exit(Sender: TObject);
 Var
    aProduto : String;
    idTributacao : Integer;
@@ -423,7 +426,7 @@ begin
                  aProduto := edtCodigo.Text;
                  If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
                   begin
-                      If not (dmDados.ProcurarValorInt(aProduto, 'cod_barras', 'produtos')) Then
+                      If not (dmDados.ProcurarValor(aProduto, 'cod_barras', 'produtos')) Then
                       begin
                            Application.MessageBox(PChar('Código produto/serviço não cadastrado.'),
                              'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
@@ -444,7 +447,7 @@ begin
                         dsCadastroItem.DataSet.FieldByName('CDS_DESCRICAO').AsString := dmDados.cdsProdutodescricao.AsString;
                         if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_NCM').AsString) Then
                            dsCadastroItem.DataSet.FieldByName('CDS_NCM').AsString       := dmDados.cdsProdutoid_ncm.AsString;
-                        //   
+                        //
                         dsCadastroItem.DataSet.FieldByName('CDS_UNDCOM').AsString    := dmDados.cdsProdutoid_unidade.AsString;
                         //
                         dsCadastroItem.DataSet.FieldByName('CDS_VLUNITARIO').AsFloat := dmDados.cdsProdutovalor_venda.AsFloat;
@@ -498,7 +501,7 @@ begin
                         dbeCFOP.SetFocus;
                   End;
             End;
-      End;    
+      End;
 end;
 
 procedure TFrmCadItemNota.FormCreate(Sender: TObject);
@@ -969,6 +972,7 @@ begin
       End ;
       if (dsCadastroItem.DataSet.State in [dsEdit]) Then
       begin
+           edtCodigo.Text := dsCadastroItem.DataSet.FieldByName('CDS_CDPROD').AsString;
            edtCodigo.Enabled := False;
            edtCodigo.Visible := true;
            VerificaCST_ICMS_Reducao();
@@ -1121,4 +1125,140 @@ begin
         Calcular;
 end;
 
+procedure TFrmCadItemNota.edtCodigoExit(Sender: TObject);
+Var
+   aProduto : String;
+   idTributacao : Integer;
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+      begin
+           if not uFuncoes.Empty(edtCodigo.Text) Then
+            begin
+                 aProduto := edtCodigo.Text;
+                 //
+                 if Length(aProduto) > 9 Then
+                 begin
+                      If not (dmDados.ProcurarValor(aProduto, 'cod_barras', 'produtos')) Then
+                      begin
+                           Application.MessageBox(PChar('Código produto/serviço não cadastrado.'),
+                             'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                           edtCodigo.Clear;
+                           dbeDescricaoProduto.Text := '';
+                           edtCodigo.SetFocus;
+                           Exit;
+                       End;  // If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
+                       //
+                       aProduto := dmDados.GetCodigo_CodigoBarras(aProduto);
+                       edtCodigo.Text := uFuncoes.StrZero( aProduto, 9);
+                 End;
+                 //
+                 If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
+                  begin
+                      If not (dmDados.ProcurarValor(aProduto, 'cod_barras', 'produtos')) Then
+                      begin
+                           Application.MessageBox(PChar('Código produto/serviço não cadastrado.'),
+                             'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                           edtCodigo.Clear;
+                           dbeDescricaoProduto.Text := '';
+                           edtCodigo.SetFocus;
+                           Exit;
+                       End  // If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
+                       Else
+                       begin
+                           aProduto := dmDados.GetCodigo_CodigoBarras(aProduto);
+                           //edtCodigo.Text := aProduto;
+                           edtCodigo.Text := uFuncoes.StrZero( aProduto, 9);
+                       End;
+                  End;       // If not (dmDados.ProcurarValorInt(aProduto, 'id', 'produtos')) Then
+                  //
+                  dmDados.FilterCDS(dmDados.cdsProduto, fsInteger, aProduto);
+                  if not (dmDados.cdsProduto.IsEmpty) Then
+                   begin
+                        dsCadastroItem.DataSet.FieldByName('CDS_DESCRICAO').AsString := dmDados.cdsProdutodescricao.AsString;
+                        if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_NCM').AsString) Then
+                           dsCadastroItem.DataSet.FieldByName('CDS_NCM').AsString       := dmDados.cdsProdutoid_ncm.AsString;
+                        //
+                        dsCadastroItem.DataSet.FieldByName('CDS_UNDCOM').AsString    := dmDados.cdsProdutoid_unidade.AsString;
+                        //
+                        dsCadastroItem.DataSet.FieldByName('CDS_VLUNITARIO').AsFloat := dmDados.cdsProdutovalor_venda.AsFloat;
+                        fMaximoPercentualDesconto := dmDados.cdsProdutoperc_limite_desconto.AsFloat;
+                        //
+                        if not uFuncoes.Empty(DMDados.cdsProdutoorigem.AsString) Then
+                           dsCadastroItem.DataSet.FieldByName('CDS_ORIGEM_PRODUTO').AsInteger := DMDados.cdsProdutoorigem.AsInteger;
+                        //
+                        if (uFrmPlusPdvNfe.iCodRegimeTributario = 1) Then
+                         begin
+                              {if (dsCadastroItem.DataSet.State = dsInsert) Then
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsInteger := 102;}
+                              //
+                              If (aTipoOperacao  = 'S') Then
+                              begin
+                                  // IPI
+                                  dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 53;
+                                  // PIS
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 99;
+                                  // Cofins
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 99;
+                              End
+                              Else
+                              begin
+                                  // IPI
+                                  dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 49;
+                                  // PIS
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 98;
+                                  // Cofins
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 98;
+                              End;
+                         End;
+                        //
+                        if (uFrmPlusPdvNfe.iCodRegimeTributario = 3) Then
+                        begin
+                             idTributacao := dmDados.cdsProdutoid_tributacao.AsInteger;
+                             dmDados.FilterCDS(dmDados.cdsTributacao, fsInteger, InttoStr(idTributacao));
+                             //
+                             if not (dmDados.cdsTributacao.IsEmpty) Then
+                             begin
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger         := dmDados.cdsTributacaocst_icms.AsInteger;
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger     := dmDados.cdsTributacaocst_pis.AsInteger;
+                                  dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger  := dmDados.cdsTributacaocst_cofins.AsInteger;
+                             End;
+                             //
+                             dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger     := dmDados.cdsProdutocst_ipi.AsInteger;
+                        End;
+                        //
+                        edtCodigo.Text := uFuncoes.StrZero( edtCodigo.Text, 9);
+                        dsCadastroItem.DataSet.FieldByName('CDS_CDPROD').AsString := edtCodigo.Text;
+                        dsCadastroItem.DataSet.FieldByName('CDS_INDTOT').AsInteger := 1;
+                        //
+
+                        dbeCFOP.SetFocus;
+                  End;
+            End;
+      End;
+end;
+
+procedure TFrmCadItemNota.edtCodigoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+    If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     //
+  if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+  begin
+     If (key = #13) and uFuncoes.Empty(edtCodigo.Text) and (spLocProduto.Enabled) Then
+      begin
+           key  := #0;
+           spLocProdutoClick(Self);
+      End;
+      //
+     If (key = #13) and not uFuncoes.Empty(edtCodigo.Text) Then
+      begin
+           key  := #0;
+           dbeCFOP.SetFocus;
+      End;
+  End;
+end;
+
 end.
+
+

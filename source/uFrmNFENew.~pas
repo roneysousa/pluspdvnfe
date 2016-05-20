@@ -3489,7 +3489,7 @@ begin
                                     begin
                                         dmNFe.cdsNotaFiscalnum_ecf.AsString     := dmDados.cdsImpEcfnum_caixa.AsString;
                                         if not uFuncoes.Empty(dmDados.cdsImpEcftipo_cupom.AsString) Then
-                                            dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcfcodigo_modelo.AsString
+                                            dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcftipo_cupom.AsString
                                         Else
                                             dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := '2D';
                                     End;
