@@ -886,18 +886,6 @@ object dmDados: TdmDados
       Precision = 15
       Size = 8
     end
-    object dstProdutoperc_lucro_bruto: TFMTBCDField
-      FieldName = 'perc_lucro_bruto'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 3
-    end
-    object dstProdutoperc_lucro_liquido: TFMTBCDField
-      FieldName = 'perc_lucro_liquido'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 3
-    end
     object dstProdutovalor_venda: TFMTBCDField
       FieldName = 'valor_venda'
       ProviderFlags = [pfInUpdate]
@@ -1602,18 +1590,6 @@ object dmDados: TdmDados
       ProviderFlags = [pfInUpdate]
       Precision = 15
       Size = 8
-    end
-    object cdsProdutoperc_lucro_bruto: TFMTBCDField
-      FieldName = 'perc_lucro_bruto'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 3
-    end
-    object cdsProdutoperc_lucro_liquido: TFMTBCDField
-      FieldName = 'perc_lucro_liquido'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 3
     end
     object cdsProdutovalor_venda: TFMTBCDField
       FieldName = 'valor_venda'

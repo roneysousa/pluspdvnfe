@@ -4,7 +4,8 @@ interface
 
 uses Windows, Dialogs, Messages, DateUtils, SysUtils, Classes, Controls, Forms,
 Variants, StdCtrls, Mask,Db, DBTables,DBIProcs,TypInfo,WinProcs, ExtCtrls, Registry,
-ExtDlgs,Jpeg, DBXpress, SqlExpr, DBClient, Provider, FMTBcd, ComObj, udmDados;
+ExtDlgs,Jpeg, DBXpress, SqlExpr, DBClient, Provider, FMTBcd, ComObj, udmDados,
+uFrmPlusPdvNfe;
 
 
 Type
@@ -463,7 +464,7 @@ var qraux : TSQLquery;
     texto : string;
 begin
   Result := 0;
-  texto := 'Select max(id) from nota_fiscal where (indicador_do_emitente = :pTipo) and (modelo = :pmodelo) ';
+  texto := 'Select max(id) from nota_fiscal where (indicador_do_emitente = :pTipo) and (modelo = :pmodelo) and (id_empresa = '+IntToStr(uFrmPlusPdvNfe.idEmpresa) +') ';
   //
   QrAux := TSQLquery.Create(nil);
   with QrAux do
@@ -471,7 +472,7 @@ begin
       SQLConnection := DmDados.sqlConexao;
       sql.Add(texto);
       Params.ParamByName('pTipo').AsInteger   := StrtoInt(aTipoEmissao);
-      Params.ParamByName('pmodelo').Asinteger :=  StrtoInt(aModelo);
+      Params.ParamByName('pmodelo').Asinteger := StrtoInt(aModelo);
       Open;
       If not (IsEmpty) Then
          result := fields[0].AsInteger;

@@ -3426,6 +3426,7 @@ Var
   iModaVenda, iFormaPGTO, iNumeroNota, iParcela : Integer;
   aFormaPagamento: String;
   aNumLote, aDtFabric, aDtVenc : String;
+  bTemCliente : Boolean;
 begin
      //
      // dm.RefreshCDS(dm.CdsConfig);
@@ -3455,27 +3456,37 @@ begin
 
                            dsCadastro.DataSet.FieldByName('id_empresa').AsInteger := M_CDLOJA;
                            //
-                           DMDados.FilterCDS(DMDados.cdsCliente, fsInteger, dmNFe.cdsVendaItensNFEid_cliente.ASString);
-                           //
-                           If not (DMDados.cdsCliente.IsEmpty) Then
-                            begin
-                                 cmbTipoPessoa.SetFocus;
-                                 If (dmDados.cdsClientetipo_pessoa.AsString = 'J') Then
-                                    cmbTipoPessoa.ItemIndex := 1;
-                                 If (dmDados.cdsClientetipo_pessoa.AsString = 'F') Then
-                                    cmbTipoPessoa.ItemIndex := 0;
-                                 //
-                                 dbeCNPJCPF.SetFocus;
-                                 dsCadastro.DataSet.FieldByName('destinatario_cnpjcpf').AsString := dmDados.cdsClientecpf_cnpj.AsString;
-                                 //
-                                 if (udmDados.aHambienteNFe = '2') Then
+                           If not uFuncoes.Empty(dmNFe.cdsVendaItensNFEid_cliente.ASString) Then
+                           begin
+                                DMDados.FilterCDS(DMDados.cdsCliente, fsInteger, dmNFe.cdsVendaItensNFEid_cliente.ASString);
+                                //
+                                If not (DMDados.cdsCliente.IsEmpty) Then
                                  begin
-                                      cmbTipoPessoa.ItemIndex := 1;
-                                      dmNFe.cdsNotaFiscaldestinatario_tipopessoa.AsString  := 'J';
-                                      dmNFe.cdsNotaFiscaldestinatario_cnpjcpf.AsString     := '99999999000191';
-                                      dmNFe.cdsNotaFiscaldestinatario_razaosocial.AsString := 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL';
+                                      cmbTipoPessoa.SetFocus;
+                                      If (dmDados.cdsClientetipo_pessoa.AsString = 'J') Then
+                                         cmbTipoPessoa.ItemIndex := 1;
+                                      If (dmDados.cdsClientetipo_pessoa.AsString = 'F') Then
+                                         cmbTipoPessoa.ItemIndex := 0;
+                                      //
+                                      dbeCNPJCPF.SetFocus;
+                                      dsCadastro.DataSet.FieldByName('destinatario_cnpjcpf').AsString := dmDados.cdsClientecpf_cnpj.AsString;
+                                      //
+                                      if (udmDados.aHambienteNFe = '2') Then
+                                      begin
+                                           cmbTipoPessoa.ItemIndex := 1;
+                                           dmNFe.cdsNotaFiscaldestinatario_tipopessoa.AsString  := 'J';
+                                           dmNFe.cdsNotaFiscaldestinatario_cnpjcpf.AsString     := '99999999000191';
+                                           dmNFe.cdsNotaFiscaldestinatario_razaosocial.AsString := 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL';
+                                      End;
+                                      dbeNumero.SetFocus;
+                                      bTemCliente := True;
                                  End;
-                                 dbeNumero.SetFocus;
+                           End
+                           Else
+                            begin
+                               bTemCliente := False;
+                               Application.MessageBox(PChar('Não há informação de cliente nessa venda!!!'+#13+'Você tem que selecionar um cliente.'),
+                                   'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                             End;
                            // CUPOM FISCAL
                            If NOT uFuncoes.Empty(dmNFe.cdsVendaItensNFEcoo.AsString) Then
@@ -3706,6 +3717,10 @@ begin
       Finally
           FrmLocVenda.Free;
       End;
+
+      //
+      if not (bTemCliente) Then
+          dbeCNPJCPF.SetFocus;
 end;
 
 procedure TFrmNotaFiscalEletronicaNovo.CalcularTotalDuplicata(

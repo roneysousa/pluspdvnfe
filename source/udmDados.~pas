@@ -172,8 +172,6 @@ type
     dstProdutoid_fabricante: TIntegerField;
     dstProdutovalor_compra: TFMTBCDField;
     dstProdutovalor_custo: TFMTBCDField;
-    dstProdutoperc_lucro_bruto: TFMTBCDField;
-    dstProdutoperc_lucro_liquido: TFMTBCDField;
     dstProdutovalor_venda: TFMTBCDField;
     dstProdutovalor_anterior: TFMTBCDField;
     dstProdutovalor_fracao: TFMTBCDField;
@@ -327,8 +325,6 @@ type
     cdsProdutoid_fabricante: TIntegerField;
     cdsProdutovalor_compra: TFMTBCDField;
     cdsProdutovalor_custo: TFMTBCDField;
-    cdsProdutoperc_lucro_bruto: TFMTBCDField;
-    cdsProdutoperc_lucro_liquido: TFMTBCDField;
     cdsProdutovalor_venda: TFMTBCDField;
     cdsProdutovalor_anterior: TFMTBCDField;
     cdsProdutovalor_fracao: TFMTBCDField;

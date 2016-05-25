@@ -559,7 +559,7 @@ begin
      M_TEXTO := M_TEXTO +' nf.id_usuario_cadastro, nf.data_cadastro, nf.id_usuario_alteracao, nf.id_usuario_enviou, num_lote_evento ';
      M_TEXTO := M_TEXTO +' from nota_fiscal nf ';
      M_TEXTO := M_TEXTO +' inner join empresas e on nf.id_empresa = e.id ';
-     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA) ';
+     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA) and (modelo = 55) ';  // 
 
 
      If not uFuncoes.Empty(cmbTipo.Text) Then

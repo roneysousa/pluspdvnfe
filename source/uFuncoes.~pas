@@ -4,7 +4,8 @@ interface
 
 uses Windows, Dialogs, Messages, DateUtils, SysUtils, Classes, Controls, Forms,
 Variants, StdCtrls, Mask,Db, DBTables,DBIProcs,TypInfo,WinProcs, ExtCtrls, Registry,
-ExtDlgs,Jpeg, DBXpress, SqlExpr, DBClient, Provider, FMTBcd, ComObj, udmDados;
+ExtDlgs,Jpeg, DBXpress, SqlExpr, DBClient, Provider, FMTBcd, ComObj, udmDados,
+uFrmPlusPdvNfe;
 
 
 Type
@@ -31,6 +32,7 @@ function Gerapercentual(valor:real;Percent:Real):real;
 Function ValidarChaveNFe(const ChaveNFe: string):boolean;
 function mvcodigomax(campo,tabela:string):integer;
 function mvcodigomaxNFe(aTipoEmissao :string):integer;
+function mvcodigomaxNFeModelo(aTipoEmissao, aModelo :string):integer;
 function mvcodigomaxStr(campo,tabela:string):String;
 Function GetAnoMesData(aData : TDatetime) : String;
 function RemoveVirgula(Str:String): String;
@@ -457,6 +459,27 @@ begin
     end;
 End;
 
+function mvcodigomaxNFeModelo(aTipoEmissao, aModelo :string):integer;
+var qraux : TSQLquery;
+    texto : string;
+begin
+  Result := 0;
+  texto := 'Select max(id) from nota_fiscal where (indicador_do_emitente = :pTipo) and (modelo = :pmodelo) and (id_empresa = '+IntToStr(uFrmPlusPdvNfe.idEmpresa) +') ';
+  //
+  QrAux := TSQLquery.Create(nil);
+  with QrAux do
+    try
+      SQLConnection := DmDados.sqlConexao;
+      sql.Add(texto);
+      Params.ParamByName('pTipo').AsInteger   := StrtoInt(aTipoEmissao);
+      Params.ParamByName('pmodelo').Asinteger :=  StrtoInt(aModelo);
+      Open;
+      If not (IsEmpty) Then
+         result := fields[0].AsInteger;
+    finally
+      free;
+    end;
+End;
 
 function mvcodigomaxStr(campo,tabela:string):String;
 var qraux : TSQLquery;

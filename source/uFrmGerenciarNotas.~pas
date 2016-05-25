@@ -559,7 +559,7 @@ begin
      M_TEXTO := M_TEXTO +' nf.id_usuario_cadastro, nf.data_cadastro, nf.id_usuario_alteracao, nf.id_usuario_enviou, num_lote_evento ';
      M_TEXTO := M_TEXTO +' from nota_fiscal nf ';
      M_TEXTO := M_TEXTO +' inner join empresas e on nf.id_empresa = e.id ';
-     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA) ';
+     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA)  ';  // and (modelo = 55)
 
 
      If not uFuncoes.Empty(cmbTipo.Text) Then
@@ -1331,7 +1331,7 @@ var
  Modelo, Serie, Ano, NumeroInicial, NumeroFinal, Justificativa, aCNPJ, aHora, aProtocolo, aDescricao : String;
  iLoja, iCodStatusInut : Integer;
  aDataMov : TDatetime;
- aUFempresa : String;
+ aUFempresa, aNomeArquivoImp : String;
 begin
       MostraStatus;
       //
@@ -1376,7 +1376,7 @@ begin
                                 If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 2) Then
                                  begin
                                     dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taHomologacao;
-                                    Showmessage('Enviar agora...');
+
                                  End;
                                 //
                                 dmNFe.ACBrNFe1.WebServices.Inutiliza(aCNPJ, Justificativa, StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial), StrToInt(NumeroFinal));
@@ -1400,8 +1400,11 @@ begin
                                       begin
                                           Application.MessageBox(PChar('Inutilização de númeração homologado.'),
                                                'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
-                                          //
-                                          dmNFe.ACBrNFe1.ImprimirInutilizacao;
+                                          // Abrir Arquivo
+                                          {ExtractFilePath( Application.ExeName )+'InutilizacaoNfe';
+                                          dmNFe.ACBrNFe1.NotasFiscais.Clea
+                                          dmNFe.ACBrNFe1.NotasFiscais.LoadFromFile(OpenDialog1.FileName);
+                                          dmNFe.ACBrNFe1.ImprimirInutilizacao;  }
                                       End
                                      Else
                                           Application.MessageBox(PChar('Inutilização de número não homologado.'+#13+
