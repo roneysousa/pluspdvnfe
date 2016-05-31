@@ -33,16 +33,19 @@ uses
   uNewEnviarEmail in 'uNewEnviarEmail.pas' {FrmNewEmailSend},
   uEmailSynalist in 'uEmailSynalist.pas',
   uInterfaceEmail in 'uInterfaceEmail.pas',
-  uSobreNFe in 'uSobreNFe.pas' {frmSobre};
+  uSobreNFe in 'uSobreNFe.pas' {frmSobre},
+  ufrmStatus in 'ufrmStatus.pas' {frmStatus},
+  uFrmDescontoValor in 'uFrmDescontoValor.pas' {FrmDescontoValor};
 
 {$R *.res}
 
 begin
      Application.Initialize;
      Application.CreateForm(TdmDados, dmDados);
-     Application.CreateForm(TdmNFe, dmNFe);
-     Application.CreateForm(TFrmMainNFe, FrmMainNFe);
-     frmLogin := TfrmLogin.Create(nil);
+  Application.CreateForm(TdmNFe, dmNFe);
+  Application.CreateForm(TFrmMainNFe, FrmMainNFe);
+  Application.CreateForm(TFrmDescontoValor, FrmDescontoValor);
+  frmLogin := TfrmLogin.Create(nil);
      if frmLogin.ShowModal = mrOk then
       begin
            FreeAndNil(frmLogin);

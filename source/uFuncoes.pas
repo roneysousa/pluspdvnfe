@@ -47,6 +47,7 @@ function FormataFONE2(sFONE: string): string;
 function FilterChars(const S: string; const ValidChars: TChars): string;
 function Criptografia(mStr, mChave: string): string;
 function DeleteChar(const Ch: Char; const S: string): string;
+Function ConverterValorPercentual(fValorTotal, fValorDesconto : Double): Currency;
 
 const
     MSG_OK   = 'Registro gravado com sucesso.';
@@ -759,5 +760,10 @@ begin
       Posicao := Pos(Ch, Result);
    end;
 end;
+
+Function ConverterValorPercentual(fValorTotal, fValorDesconto : Double): Currency;
+begin
+    Result := Arredondar(Abs((((fValorTotal-fValorDesconto)/fValorTotal) - 1)*100),2);
+End;
 
 end.

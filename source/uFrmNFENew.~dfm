@@ -1,6 +1,6 @@
 object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
-  Left = 249
-  Top = 52
+  Left = 230
+  Top = 80
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Emiss'#227'o de Nota Fiscal Eletr'#244'nica'
@@ -808,6 +808,16 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
               Expanded = False
               FieldName = 'CDS_VLTRIB_MUNICIPAL'
               Visible = False
+            end
+            item
+              Expanded = False
+              FieldName = 'CDS_BC_IPI'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CDS_VLIPI'
+              Visible = True
             end>
         end
       end
@@ -887,28 +897,28 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           Caption = 'Valor Unit'#225'rio (R$)'
         end
         object Label17: TLabel
-          Left = 463
+          Left = 456
           Top = 45
           Width = 63
           Height = 13
           Caption = 'Desconto (%)'
         end
         object Label19: TLabel
-          Left = 566
+          Left = 586
           Top = 45
           Width = 43
           Height = 13
           Caption = 'ICMS (%)'
         end
         object Label20: TLabel
-          Left = 664
+          Left = 684
           Top = 45
           Width = 30
           Height = 13
           Caption = 'IPI (%)'
         end
         object Label21: TLabel
-          Left = 740
+          Left = 760
           Top = 45
           Width = 46
           Height = 13
@@ -944,6 +954,43 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           Caption = 'Unidade'
           Transparent = True
         end
+        object spDescValor: TSpeedButton
+          Left = 519
+          Top = 60
+          Width = 23
+          Height = 22
+          Hint = 'Desconto em valor'
+          Enabled = False
+          Flat = True
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+            8181810202020202020202020202020202020202020202020202020202020202
+            02818181FFFFFFFFFFFFFFFFFFFFFFFF05050505050505050505050505050505
+            0505050505050505050505050505050505050505FFFFFFFFFFFFFFFFFFFFFFFF
+            080808080808FFFFFFFFFFFF080808FFFFFFFFFFFF080808FFFFFFFFFFFF0808
+            08080808FFFFFFFFFFFFFFFFFFFFFFFF0B0B0B0B0B0BFFFFFFFFFFFF0B0B0BFF
+            FFFFFFFFFF0B0B0BFFFFFFFFFFFF0B0B0B0B0B0BFFFFFFFFFFFFFFFFFFFFFFFF
+            0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E
+            0E0E0E0EFFFFFFFFFFFFFFFFFFFFFFFF121212121212FFFFFFFFFFFF121212FF
+            FFFFFFFFFF121212FFFFFFFFFFFF121212121212FFFFFFFFFFFFFFFFFFFFFFFF
+            151515151515FFFFFFFFFFFF151515FFFFFFFFFFFF151515FFFFFFFFFFFF1515
+            15151515FFFFFFFFFFFFFFFFFFFFFFFF18181818181818181818181818181818
+            1818181818181818181818181818181818181818FFFFFFFFFFFFFFFFFFFFFFFF
+            1B1B1B1B1B1BFFFFFFFFFFFF1B1B1BFFFFFFFFFFFF1B1B1BFFFFFFFFFFFF1B1B
+            1B1B1B1BFFFFFFFFFFFFFFFFFFFFFFFF1E1E1E1E1E1EFFFFFFFFFFFF3A3A3AFF
+            FFFFFFFFFF3A3A3AFFFFFFFFFFFF3A3A3A1E1E1EFFFFFFFFFFFFFFFFFFFFFFFF
+            2121212121212121212121212121212121212121212121212121212121212121
+            21212121FFFFFFFFFFFFFFFFFFFFFFFF25252525252525252525252525252525
+            2525252525252525252525252525252525252525FFFFFFFFFFFFFFFFFFFFFFFF
+            282828282828FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2828
+            28282828FFFFFFFFFFFFFFFFFFF3F3F32B2B2B2B2B2BFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFF4545452B2B2BFFFFFFFFFFFFFFFFFFF3F3F3
+            2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
+            2E2E2E2EFFFFFFFFFFFFFFFFFFFFFFFF98989831313131313131313131313131
+            3131313131313131313131313131313131989898FFFFFFFFFFFF}
+          OnClick = spDescValorClick
+        end
         object edtCDPROD: TEdit
           Left = 8
           Top = 21
@@ -958,7 +1005,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
         object edtDescricao: TEdit
           Left = 162
           Top = 21
-          Width = 626
+          Width = 644
           Height = 21
           TabStop = False
           Color = clSilver
@@ -1021,7 +1068,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           OnKeyPress = edtDescontoKeyPress
         end
         object edtICMS: TCurrencyEdit
-          Left = 524
+          Left = 544
           Top = 61
           Width = 80
           Height = 21
@@ -1034,7 +1081,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           OnKeyPress = edtICMSKeyPress
         end
         object edtIPI: TCurrencyEdit
-          Left = 608
+          Left = 628
           Top = 61
           Width = 80
           Height = 21
@@ -1047,7 +1094,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           OnKeyPress = edtIPIKeyPress
         end
         object edtSubTotal: TCurrencyEdit
-          Left = 692
+          Left = 712
           Top = 61
           Width = 95
           Height = 21
@@ -2675,6 +2722,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
             Height = 21
             DataField = 'valor_desconto'
             DataSource = dsCadastro
+            ReadOnly = True
             TabOrder = 10
             OnExit = dbeTotalDescontoExit
           end

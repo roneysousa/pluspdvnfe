@@ -47,6 +47,7 @@ function FormataFONE2(sFONE: string): string;
 function FilterChars(const S: string; const ValidChars: TChars): string;
 function Criptografia(mStr, mChave: string): string;
 function DeleteChar(const Ch: Char; const S: string): string;
+Function ConverterValorPercentual(): Currency;
 
 const
     MSG_OK   = 'Registro gravado com sucesso.';
@@ -472,7 +473,7 @@ begin
       SQLConnection := DmDados.sqlConexao;
       sql.Add(texto);
       Params.ParamByName('pTipo').AsInteger   := StrtoInt(aTipoEmissao);
-      Params.ParamByName('pmodelo').Asinteger :=  StrtoInt(aModelo);
+      Params.ParamByName('pmodelo').Asinteger := StrtoInt(aModelo);
       Open;
       If not (IsEmpty) Then
          result := fields[0].AsInteger;

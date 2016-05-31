@@ -105,6 +105,7 @@ type
     lblReducao: TLabel;
     dbeReducaoICMS: TDBEdit;
     edtCodigo: TEdit;
+    spDescValor: TSpeedButton;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigo1KeyPress(Sender: TObject; var Key: Char);
@@ -144,6 +145,7 @@ type
     procedure dbeReducaoICMSExit(Sender: TObject);
     procedure edtCodigoExit(Sender: TObject);
     procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
+    procedure spDescValorClick(Sender: TObject);
   private
     { Private declarations }
     procedure Calcular;
@@ -166,7 +168,7 @@ var
 implementation
 
 uses udmDados, udmNFe, uFuncoes, uFrmLocProdutoServico, uFrmLocCFOP,
-  uFrmLocalizarNCM, uFrmPlusPdvNfe;
+  uFrmLocalizarNCM, uFrmPlusPdvNfe, uFrmDescontoValor;
 
 {$R *.dfm}
 
@@ -183,7 +185,7 @@ begin
     if uFuncoes.Empty(edtCodigo.Text) Then
     begin
          Application.MessageBox('Digite o código produto.','ATENÇÃO',
-                     MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
          edtCodigo.SetFocus;
          Exit;
     End;
@@ -191,7 +193,7 @@ begin
    if uFuncoes.Empty(dbeCFOP.Text) Then
     begin
          Application.MessageBox('Digite o CFOP do produto.','ATENÇÃO',
-                     MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
          dbeCFOP.SetFocus;
          Exit;
     End;
@@ -199,7 +201,7 @@ begin
    if uFuncoes.Empty(dbeNCM.Text) Then
     begin
          Application.MessageBox('Digite o NCM do produto.','ATENÇÃO',
-                     MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
          dbeNCM.SetFocus;
          Exit;
     End;
@@ -207,7 +209,7 @@ begin
    if uFuncoes.Empty(edtUnidade.Text) Then
     begin
          Application.MessageBox('Digite a Unidade do produto.','ATENÇÃO',
-                     MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
          edtUnidade.SetFocus;
          Exit;
     End;
@@ -1257,6 +1259,38 @@ begin
            dbeCFOP.SetFocus;
       End;
   End;
+end;
+
+procedure TFrmCadItemNota.spDescValorClick(Sender: TObject);
+Var
+     FSubtotal : Double;
+begin
+     if uFuncoes.Empty(edtQTDE.Text) Then
+     begin
+         edtQTDE.SetFocus;
+         Exit;
+     End;
+     //
+     if uFuncoes.Empty(edtValorUnitario.Text) Then
+     begin
+         edtValorUnitario.SetFocus;
+         Exit;
+     End;
+     //
+     if (edtDesconto.CanFocus) then
+        edtDesconto.SetFocus;
+     Application.CreateForm(TFrmDescontoValor,FrmDescontoValor);
+     Try
+          FSubtotal := dsCadastroItem.DataSet.FieldByName('CDS_QTDECOM').AsFloat * dsCadastroItem.DataSet.FieldByName('CDS_VLUNITARIO').AsFloat;
+          uFrmDescontoValor.fValorTotal := FSubtotal;
+          if (FrmDescontoValor.ShowModal = mrOk) Then
+          begin
+              if (uFrmDescontoValor.FResultado > 0) Then
+                  dsCadastroItem.DataSet.FieldByName('CDS_PEDESC').AsFloat := uFrmDescontoValor.FResultado;
+          End;
+     Finally
+          FrmDescontoValor.Free;
+     End;
 end;
 
 end.

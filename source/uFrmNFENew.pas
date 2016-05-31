@@ -332,6 +332,7 @@ type
     cmbReboqueUF: TDBLookupComboBox;
     Label48: TLabel;
     cmbUFVeiculo: TDBLookupComboBox;
+    spDescValor: TSpeedButton;
     procedure BtSairClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BtAdicionarClick(Sender: TObject);
@@ -445,6 +446,7 @@ type
     procedure dbeCNPJKeyPress(Sender: TObject; var Key: Char);
     procedure dbeEntregaCNPJKeyPress(Sender: TObject; var Key: Char);
     procedure dbeCNPJTransporteKeyPress(Sender: TObject; var Key: Char);
+    procedure spDescValorClick(Sender: TObject);
     //procedure PageControl1Change(Sender: TObject);
   private
     { Private declarations }
@@ -496,7 +498,7 @@ uses UdmDados, uFuncoes, Math, uFrmPlusPdvNfe, udmNFe, uFrmLocalizaCliente,
   uFrmLocProdutoServico, uFrmLocCFOP, uFrmLocalizarNCM, uFrmCadDuplicata,
   uFrmCadVolumes, uFrmLocVenda, uFrmCupomVinculado,
   uFrmEditarNotaRef, uFrmCadItemNota, uFrmLocTransportadora, DateUtils,
-  pcnNFe;
+  pcnNFe, uFrmDescontoValor;
 
 {$R *.dfm}
 
@@ -780,7 +782,8 @@ begin
                  If (FieldByName('CDS_VLICMS').AsFloat > 0) and (FieldByName('CDS_BCICMS').AsFloat > 0) Then
                     M_VLICMS := M_VLICMS +Roundto(FieldByName('CDS_VLICMS').AsFloat,-2);
                     //M_VLICMS := M_VLICMS +uFuncoes.Arredondar(FieldByName('CDS_VLICMS').AsFloat, iQuantDecimais);
-                 If (FieldByName('CDS_VLIPI').AsFloat > 0) and (FieldByName('CDS_ALIQIPI').AsFloat > 0) Then
+                 // IPI
+                 If (FieldByName('CDS_BC_IPI').AsFloat > 0) and (FieldByName('CDS_ALIQIPI').AsFloat > 0) Then   // CDS_VLIPI
                     M_VALIPI := M_VALIPI + uFuncoes.Arredondar(FieldByName('CDS_VLIPI').AsFloat, iQuantDecimais);
 
                  // valor Pis
@@ -789,6 +792,7 @@ begin
                  // valor Cofins
                  if (FieldByName('CDS_VALOR_COFINS').AsFloat > 0) and (FieldByName('CDS_ALIQ_COFINS').AsFloat > 0 ) Then
                     M_VALOR_COFINS := M_VALOR_COFINS + uFuncoes.Arredondar(FieldByName('CDS_VALOR_COFINS').AsFloat, iQuantDecimais);
+                 // ICMS ST
                  if (FieldByName('CDS_BCICMS_ST').AsFloat > 0) and (FieldByName('CDS_ALIQUOTA_ICMS_ST').AsFloat > 0 ) Then
                  begin
                      M_BASEST   := uFuncoes.Arredondar(M_BASEST  + FieldByName('CDS_BCICMS_ST').AsFloat, iQuantDecimais);
@@ -1684,7 +1688,7 @@ begin
                               //
                               If (edtIPI.Value > 0) Then
                                begin
-                                   M_BCIPI  := uFuncoes.Arredondar(edtValorUnitario.Value * edtQTDE.Value, M_QTCASA);
+                                   M_BCIPI  := uFuncoes.Arredondar((edtValorUnitario.Value * edtQTDE.Value)- M_VLDESCONTO, M_QTCASA);
                                    M_VALIPI := uFuncoes.Arredondar(uFuncoes.Gerapercentual(M_BCIPI, edtIPI.Value),M_QTCASA);
                                End;
                               //
@@ -2038,6 +2042,9 @@ begin
      //
      btnImportaXML.Enabled  := dsCadastro.DataSet.State in [dsBrowse];
      pnlBotoesRef.Enabled   := dsCadastro.DataSet.State in [dsInsert, dsEdit];
+
+     //
+     spDescValor.Enabled   := dsCadastro.DataSet.State in [dsInsert, dsEdit];
 end;
 
 procedure TFrmNotaFiscalEletronicaNovo.spTransportadoraClick(
@@ -5366,6 +5373,38 @@ procedure TFrmNotaFiscalEletronicaNovo.dbeCNPJTransporteKeyPress(
 begin
      If not( key in['0'..'9',#8, #13] ) then
         key:=#0;
+end;
+
+procedure TFrmNotaFiscalEletronicaNovo.spDescValorClick(Sender: TObject);
+Var
+     FSubtotal : Double;
+begin
+     if uFuncoes.Empty(edtQTDE.Text) Then
+     begin
+         edtQTDE.SetFocus;
+         Exit;
+     End;
+     //
+     if uFuncoes.Empty(edtValorUnitario.Text) Then
+     begin
+         edtValorUnitario.SetFocus;
+         Exit;
+     End;
+     //
+     if (edtDesconto.CanFocus) then
+        edtDesconto.SetFocus;
+     Application.CreateForm(TFrmDescontoValor,FrmDescontoValor);
+     Try
+          FSubtotal := edtQTDE.Value * edtValorUnitario.Value;
+          uFrmDescontoValor.fValorTotal := FSubtotal;
+          if (FrmDescontoValor.ShowModal = mrOk) Then
+          begin
+              if (uFrmDescontoValor.FResultado > 0) Then
+                  edtDesconto.Value := uFrmDescontoValor.FResultado;
+          End;
+     Finally
+          FrmDescontoValor.Free;
+     End;
 end;
 
 end.

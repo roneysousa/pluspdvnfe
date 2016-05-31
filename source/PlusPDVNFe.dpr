@@ -34,7 +34,8 @@ uses
   uEmailSynalist in 'uEmailSynalist.pas',
   uInterfaceEmail in 'uInterfaceEmail.pas',
   uSobreNFe in 'uSobreNFe.pas' {frmSobre},
-  ufrmStatus in 'ufrmStatus.pas' {frmStatus};
+  ufrmStatus in 'ufrmStatus.pas' {frmStatus},
+  uFrmDescontoValor in 'uFrmDescontoValor.pas' {FrmDescontoValor};
 
 {$R *.res}
 

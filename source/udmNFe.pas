@@ -1047,9 +1047,20 @@ begin
            FieldByName('CDS_INDTOT').AsInteger := pINDTOT;
            FieldByName('CDS_BCICMS').AsFloat   := pBCICMS;
            FieldByName('CDS_VLICMS').AsFloat   := pVLICMS;
-           FieldByName('CDS_VLIPI').AsFloat    := pVLIPI;
            FieldByName('CDS_ALIQICMS').AsFloat := pALIQICMS;
+           // IPI
+           FieldByName('CDS_BC_IPI').AsFloat   := 0;
            FieldByName('CDS_ALIQIPI').AsFloat  := pALIQIPI;
+           if (pALIQIPI > 0) Then
+            begin
+                FieldByName('CDS_BC_IPI').AsFloat   := pBCIPI;
+                FieldByName('CDS_BC_IPI_CALC').AsFloat := pBCIPI;
+                //(pVLUNTRIB * pQTDECOM )- FieldByName('CDS_VLDESCONTO').AsFloat;
+                FieldByName('CDS_VLIPI').AsFloat    := pVLIPI;
+            End
+           Else
+               FieldByName('CDS_VLIPI').AsFloat    := 0;
+           //    
            aCstIPI := uFuncoes.StrZero(InttoStr(dmDados.GetCST_IPI(StrToInt(pCDPROD))),2);
            if not uFuncoes.Empty(aCstIPI) Then
            begin
@@ -1263,6 +1274,7 @@ begin
                        End
                        Else
                            cdsItemsNotaFiscalCDS_INDTOT.AsInteger := 1;
+                       // ICMS    
                        cdsItemsNotaFiscalCDS_ALIQICMS.AsFloat := FieldByName('aliquota_icms').AsFloat;
                        cdsItemsNotaFiscalCDS_BCICMS.AsFloat   := FieldByName('valor_bc_icms').AsFloat;
                        cdsItemsNotaFiscalCDS_VLICMS.AsFloat   := FieldByName('valor_icms').AsFloat;
@@ -1270,8 +1282,11 @@ begin
                            cdsItemsNotaFiscalCDS_PEREDUCAO.AsFloat   := FieldByName('percentual_reducao_icms').AsFloat;
                        if not uFuncoes.Empty(FieldByName('cst_ipi').AsString) Then   // cst IPI
                           cdsItemsNotaFiscalCDS_IPI_CST.AsString := uFuncoes.Alltrim(FieldByName('cst_ipi').AsString);
+                       // IPI
                        cdsItemsNotaFiscalCDS_ALIQIPI.AsFloat  := FieldByName('aliquota_ipi').AsFloat;
                        cdsItemsNotaFiscalCDS_BC_IPI.AsFloat   := FieldByName('valor_bc_ipi').AsFloat;
+                       if (FieldByName('valor_bc_ipi').AsFloat > 0) then
+                          cdsItemsNotaFiscalCDS_BC_IPI_CALC.AsFloat := FieldByName('valor_bc_ipi').AsFloat;
                        cdsItemsNotaFiscalCDS_VLIPI.AsFloat    := FieldByName('valor_ipi').AsFloat;
                        // Pis
                        cdsItemsNotaFiscalCDS_CST_PIS.AsString  := uFuncoes.Alltrim(FieldByName('cst_pis').AsString);
