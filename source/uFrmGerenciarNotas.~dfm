@@ -1,6 +1,6 @@
 object FrmGerenciarNotas: TFrmGerenciarNotas
-  Left = 202
-  Top = 26
+  Left = 200
+  Top = 82
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Gerenciamento de Notas'

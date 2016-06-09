@@ -48,6 +48,7 @@ function FilterChars(const S: string; const ValidChars: TChars): string;
 function Criptografia(mStr, mChave: string): string;
 function DeleteChar(const Ch: Char; const S: string): string;
 Function ConverterValorPercentual(fValorTotal, fValorDesconto : Double): Currency;
+Function ConverterModeloDocumento(iModelo : Integer): Integer;
 
 const
     MSG_OK   = 'Registro gravado com sucesso.';
@@ -473,7 +474,7 @@ begin
       SQLConnection := DmDados.sqlConexao;
       sql.Add(texto);
       Params.ParamByName('pTipo').AsInteger   := StrtoInt(aTipoEmissao);
-      Params.ParamByName('pmodelo').Asinteger := StrtoInt(aModelo);
+      Params.ParamByName('pmodelo').Asinteger := ConverterModeloDocumento(StrtoInt(aModelo));
       Open;
       If not (IsEmpty) Then
          result := fields[0].AsInteger;
@@ -764,6 +765,14 @@ end;
 Function ConverterValorPercentual(fValorTotal, fValorDesconto : Double): Currency;
 begin
     Result := Arredondar(Abs((((fValorTotal-fValorDesconto)/fValorTotal) - 1)*100),2);
+End;
+
+Function ConverterModeloDocumento(iModelo : Integer): Integer;
+begin
+    if (iModelo = 55) then
+        Result := 8
+    Else
+        Result := iModelo;
 End;
 
 end.

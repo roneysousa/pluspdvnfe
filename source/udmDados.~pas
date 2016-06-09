@@ -1269,7 +1269,7 @@ var qraux : TSQLquery;
 begin
     Result := 0;
     // texto := 'Select Max(to_number(numero_nota_fiscal, '+Chr(39)+'999999999'+Chr(39)+')) as total from nota_fiscal where (id_empresa  = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') ';
-    texto := 'Select Max(numero_nota_fiscal) as total from nota_fiscal where (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (situacao <> 99)';
+    texto := 'Select Max(numero_nota_fiscal) as total from nota_fiscal where (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (situacao <> 99) and (modelo = 55) ';
     QrAux := TSqlquery.Create(nil);
     with QrAux do
      try
@@ -1362,7 +1362,7 @@ var qraux : TSQLquery;
     texto : string;
 begin
     Result := False;
-    texto := 'Select id, numero_nota_fiscal, id_empresa from nota_fiscal where (numero_nota_fiscal = :pnumeronota) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') ';
+    texto := 'Select id, numero_nota_fiscal, id_empresa from nota_fiscal where (numero_nota_fiscal = :pnumeronota) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (modelo = 55) ';
     QrAux := TSqlquery.Create(nil);
     with QrAux do
      try

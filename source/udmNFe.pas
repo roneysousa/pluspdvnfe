@@ -4155,7 +4155,7 @@ begin
                    1 : Ide.indPag    := ipPrazo;
                    2 : Ide.indPag    := ipOutras;
                End;
-               Ide.modelo    := cdsNotaFiscalmodelo.AsInteger;
+               Ide.modelo    := 55; // cdsNotaFiscalmodelo.AsInteger;
                Ide.serie     := cdsNotaFiscalserie.AsInteger;
                Ide.dEmi      := cdsNotaFiscaldata_hora_emissao.AsDateTime;
                if not uFuncoes.Empty(cdsNotaFiscaldata_saida_entrada.asString) Then
@@ -4477,7 +4477,7 @@ begin
                                        Prod.vSeg      := 0;
                                        //
                                        if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString)
-                                             and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL') Then
+                                            and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL') Then
                                              begin
                                                 if (dmDados.GetVerificaProdutoMedicamento(cdsNotaFiscalItensid_produto.asinteger)) Then
                                                  begin
@@ -4486,8 +4486,8 @@ begin
                                                                                                  cdsNotaFiscalItensid_produto.asinteger,
                                                                                                  cdsNotaFiscalItensnum_lote.AsString);
                                                    //
-                                                   if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString) and
-                                                       not uFuncoes.Empty(cdsNotaFiscalItensdata_vencimento_lote.asstring)
+                                                   if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString) and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL')
+                                                       and not uFuncoes.Empty(cdsNotaFiscalItensdata_vencimento_lote.asstring)
                                                        and not uFuncoes.Empty(aDataFabricacao) Then
                                                    begin
                                                         With Prod.med.Add do
@@ -4500,8 +4500,8 @@ begin
                                                    End
                                                    Else
                                                    begin
-                                                         if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString) and
-                                                           not uFuncoes.Empty(cdsNotaFiscalItensdata_vencimento_lote.AsString)
+                                                         if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString) and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL')
+                                                            and not uFuncoes.Empty(cdsNotaFiscalItensdata_vencimento_lote.AsString)
                                                             and not uFuncoes.Empty(cdsNotaFiscalItensdata_fabricacao_lote.AsString) Then
                                                             begin
                                                                  With Prod.med.Add do
@@ -4514,7 +4514,7 @@ begin
                                                             End;
                                                    End;
                                                  End;
-                                             End;     //  if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString)
+                                             End;     //  if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString)   and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL')
                                              // with Det.Items[M_NRITEM].Imposto do
                                              with Imposto do
                                               begin

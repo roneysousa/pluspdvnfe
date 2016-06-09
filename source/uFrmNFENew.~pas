@@ -618,7 +618,7 @@ begin
                  FieldByName('data_hora_emissao').AsDateTime   := Date();
                  FieldByName('data_saida_entrada').AsDateTime  := Date();
                  FieldByName('indicador_do_emitente').AsString := '0';
-                 FieldByName('modelo').AsInteger         := 55;
+                 FieldByName('modelo').AsInteger         := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString      := '3.10';
                  FieldByName('tipo_operacao').AsInteger  := 1;
                  FieldByName('situacao').AsInteger       := 5;
@@ -783,7 +783,7 @@ begin
                     M_VLICMS := M_VLICMS +Roundto(FieldByName('CDS_VLICMS').AsFloat,-2);
                     //M_VLICMS := M_VLICMS +uFuncoes.Arredondar(FieldByName('CDS_VLICMS').AsFloat, iQuantDecimais);
                  // IPI
-                 If (FieldByName('CDS_VLIPI').AsFloat > 0) and (FieldByName('CDS_ALIQIPI').AsFloat > 0) Then
+                 If (FieldByName('CDS_BC_IPI').AsFloat > 0) and (FieldByName('CDS_ALIQIPI').AsFloat > 0) Then   // CDS_VLIPI
                     M_VALIPI := M_VALIPI + uFuncoes.Arredondar(FieldByName('CDS_VLIPI').AsFloat, iQuantDecimais);
 
                  // valor Pis
@@ -867,10 +867,11 @@ end;
 
 procedure TFrmNotaFiscalEletronicaNovo.Registro;
 Var
-   M_CODIGO : INTEGER;
+   M_CODIGO, iModelo : INTEGER;
 begin
+     iModelo := uFuncoes.ConverterModeloDocumento(55);
      //
-     M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', '55');
+     M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', InttoStr(iModelo));
      // uFuncoes.mvcodigomax('id','nota_fiscal');
      //
      If (M_CODIGO > 0) Then

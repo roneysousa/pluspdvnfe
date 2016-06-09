@@ -618,7 +618,7 @@ begin
                  FieldByName('data_hora_emissao').AsDateTime   := Date();
                  FieldByName('data_saida_entrada').AsDateTime  := Date();
                  FieldByName('indicador_do_emitente').AsString := '0';
-                 FieldByName('modelo').AsInteger         := 55;
+                 FieldByName('modelo').AsInteger         := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString      := '3.10';
                  FieldByName('tipo_operacao').AsInteger  := 1;
                  FieldByName('situacao').AsInteger       := 5;
@@ -867,10 +867,11 @@ end;
 
 procedure TFrmNotaFiscalEletronicaNovo.Registro;
 Var
-   M_CODIGO : INTEGER;
+   M_CODIGO, iModelo : INTEGER;
 begin
+     iModelo := uFuncoes.ConverterModeloDocumento(55);
      //
-     M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', '55');
+     M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', InttoStr(iModelo));
      // uFuncoes.mvcodigomax('id','nota_fiscal');
      //
      If (M_CODIGO > 0) Then
@@ -4126,7 +4127,7 @@ begin
                  FieldByName('id').AsInteger     := iNumNota;
                  if not uFuncoes.Empty(aNumeroNFe) Then
                     FieldByName('numero_nota_fiscal').AsString  := uFuncoes.StrZero(aNumeroNFe,9);
-                 FieldByName('modelo').AsInteger     := 55;
+                 FieldByName('modelo').AsInteger     := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString  := '3.10';
                  FieldByName('tipo_operacao').AsInteger := 1;
                  FieldByName('situacao').AsInteger := 5;
@@ -4154,7 +4155,7 @@ begin
                  FieldByName('data_hora_emissao').AsDateTime   := Date();
                  FieldByName('data_saida_entrada').AsDateTime  := Date();
                  FieldByName('indicador_do_emitente').AsString := '0';
-                 FieldByName('modelo').AsInteger         := 55;
+                 FieldByName('modelo').AsInteger         := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString      := '3.10';
                  FieldByName('tipo_operacao').AsInteger  := 1;
                  FieldByName('situacao').AsInteger       := 5;
