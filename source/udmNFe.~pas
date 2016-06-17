@@ -779,6 +779,9 @@ type
     cdsListaModbcICMS_STMBC_DESCRICAO: TStringField;
     cdsItemsNotaFiscalCDS_MOD_BC_ICMS_DESCRICAO: TStringField;
     cdsItemsNotaFiscalCDS_MOD_BC_ICMS_ST_DESCRICAO: TStringField;
+    cdsListaAliquotaPart: TClientDataSet;
+    cdsListaAliquotaPartCDS_ANO: TIntegerField;
+    cdsListaAliquotaPartCDS_ALIQUOTA_DESTINO: TFloatField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
@@ -918,6 +921,8 @@ type
     Procedure CarregarListaModalidadesBC_ICMS_ST();
     Function GetUf(aCodigo : String; aCdsLista : TClientDataSet): String;
     Function GetCodigoUF(aUF : String; aCdsLista : TClientDataSet): String;
+    Procedure CarregarAliquotaPartilhaICMS(aCdsLista : TClientDataSet);
+    Function GetAliquotaDestinatario(aDataAtual : TDatetime): Double;
   end;
 
 var
@@ -2140,6 +2145,8 @@ begin
     CarregarListaUFVeiculo();
     CarregarListaUFReboque();
     CarregarListaMotivosDesoneracao();
+    //
+    CarregarAliquotaPartilhaICMS(cdsListaAliquotaPart);
 end;
 
 function TdmNFe.ExcluirDuplicatas(idNota: Integer): Boolean;
@@ -2417,7 +2424,7 @@ begin
                       If (fValor > 0) Then
                       begin
                            Edit;
-                           fSubTotalItem := uFuncoes.Arredondar(FieldByName('CDS_VLDESCONTO').AsFloat * FieldByName('CDS_VLDESCONTO').AsFloat, udmDados.iCasasDecimais);
+                           fSubTotalItem := uFuncoes.Arredondar(FieldByName('CDS_VLUNITARIO').AsFloat * FieldByName('CDS_QTDECOM').AsFloat, udmDados.iCasasDecimais);
                            If (RecNo = iQuantItens) Then
                             begin
                                FieldByName('CDS_VLDESCONTO').AsFloat := fValor;
@@ -2429,7 +2436,7 @@ begin
                            Else
                            begin
                                FieldByName('CDS_VLDESCONTO').AsFloat := fValorDescontoItem;
-                               FieldByName('CDS_PEDESC').asFloat     := uFuncoes.ConverterValorPercentual(fSubTotalItem, fValor);
+                               FieldByName('CDS_PEDESC').asFloat     := uFuncoes.ConverterValorPercentual(fSubTotalItem, fValorDescontoItem);
                                //
                                fValor := fValor - fValorDescontoItem;
                            End;
@@ -2807,7 +2814,9 @@ begin
         begin
            fSubTotal :=  uFuncoes.Arredondar(
               ((cdsItemsNotaFiscalCDS_VLUNITARIO.AsFloat * cdsItemsNotaFiscalCDS_QTDECOM.AsFloat)
-              + cdsItemsNotaFiscalCDS_VLACRESCIMO.AsFloat)
+              + cdsItemsNotaFiscalCDS_VLACRESCIMO.AsFloat
+              + cdsItemsNotaFiscalCDS_VLOUTRASDESPESAS.asFloat
+              + cdsItemsNotaFiscalCDS_VLFRETE.asfloat)
               - cdsItemsNotaFiscalCDS_VLDESCONTO.AsFloat, 2);
             cdsItemsNotaFiscalCDS_SUBTOTAL.AsFloat := fSubTotal;
             //
@@ -4023,14 +4032,20 @@ Var
     FTotalPeloProdutos, FSubTotal, FPercentualImpostoItem, FValorPMC : Double;
     aDescricaoTributos, aChaveIBPT, aChaveIBPTAtual, aDescricaoNatureza : String;
     bTemCupomFiscal : Boolean;
-    aMsgCupomFiscal, aMsgBuscaCupomFiscal : String;
+    aMsgCupomFiscal, aMsgBuscaCupomFiscal, aMsgPartilhaICMS : String;
+    FDIFAL, FPercPartilhaDestinatario, FPercPartilhaRemetente, FAliquotaDestino, FAliquotaOrigem : Double;
+    FValor_PartilhaOrigem, FValor_PartilhaDestino : Double;
 begin
       Result := False;
       bNatVenda := false;
       bTemCupomFiscal := False;
       aMsgNotasRefereciadas := '';
+      aMsgPartilhaICMS := '';
       aDescricaoTributos    := '';
       aChaveIBPT := '';
+      FPercPartilhaDestinatario := 0;
+      FPercPartilhaRemetente    := 0;
+      //
       bSpedPisCofins := False;
       // Nota Fiscal
       dmDados.FilterCDS(cdsNotaFiscal, fsInteger, IntToStr(iCodigoNFe));
@@ -4446,7 +4461,7 @@ begin
                                        //Prod.vProd  := uFuncoes.Arredondar(((Prod.vUnCom) * Prod.qCom),2);
                                        Prod.vProd   := uFuncoes.Arredondar(((Prod.vUnCom) * Prod.qCom),M_QTCASA);
                                        //
-                                       FSubTotal    := uFuncoes.Arredondar(Prod.vProd - Prod.vDesc,2);
+                                       FSubTotal    := uFuncoes.Arredondar((Prod.vProd + cdsNotaFiscalItensvalor_frete.asFloat + cdsNotaFiscalItensvalor_outrasdespesas.asFloat ) - Prod.vDesc,2);
                                        // Alteração
                                        aUnidProduto := DMDados.GetUnidadeProduto(cdsNotaFiscalItensid_produto.AsString);
                                        //
@@ -4865,7 +4880,8 @@ begin
                                                               begin
                                                                    if (cdsNotaFiscalItensaliquota_pis.AsFloat > 0) Then
                                                                     begin
-                                                                           Pis.vBC  := RoundTo(Prod.vProd,-2);
+                                                                           // Pis.vBC  := RoundTo(Prod.vProd,-2);
+                                                                           Pis.vBC  := RoundTo(FSubTotal,-2);
                                                                            //cdsItensNotaNFI_VL_BC_PIS.AsFloat;
                                                                            PIS.pPIS := cdsNotaFiscalItensaliquota_pis.AsFloat;
                                                                            PIS.vPIS := RoundTo(uFuncoes.Gerapercentual(Pis.vBC, PIS.pPIS) ,-2);
@@ -4913,7 +4929,9 @@ begin
                                                                begin
                                                                     if (cdsNotaFiscalItensaliquota_cofins.AsFloat > 0) then
                                                                     begin
-                                                                         COFINS.vBC     := RoundTo(Prod.vProd,-2);
+                                                                         // COFINS.vBC     := RoundTo(Prod.vProd,-2);
+                                                                         COFINS.vBC     := RoundTo(FSubTotal,-2);
+
                                                                          // cdsItensNotaNFI_VL_BC_COFINS.AsFloat;
                                                                          COFINS.pCOFINS := cdsNotaFiscalItensaliquota_cofins.AsFloat;
                                                                          COFINS.vCOFINS := RoundTo(uFuncoes.Gerapercentual(COFINS.vBC, COFINS.pCOFINS) ,-2);
@@ -4927,6 +4945,58 @@ begin
                                                                M_TOTAL_COFINS := M_TOTAL_COFINS + COFINS.vCOFINS;
                                                           End;    // With  COFINS do
                                                     End;   // if (bSpedPisCofins) Then
+                                                    // ICMS Partilha
+                                                    if (udmDados.bICMS_PARTILHA) then
+                                                     begin
+                                                          FAliquotaOrigem  := 0;
+                                                          if (Emit.CRT = crtRegimeNormal) Then
+                                                          begin
+                                                               FDIFAL := 0;
+                                                               FValor_PartilhaOrigem  := 0;
+                                                               FValor_PartilhaDestino := 0;
+                                                               FAliquotaOrigem  := cdsNotaFiscalItensaliquota_icms.AsFloat;
+                                                               // Verificar : Operações interestaduais para consumidor final contribuinte
+                                                               if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
+                                                                  and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
+                                                                  and (cdsNotaFiscaldestino_operacao.asinteger = 2)
+                                                                  and (FAliquotaOrigem > 0) then
+                                                                begin
+                                                                     FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
+                                                                     FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;
+                                                                     //
+                                                                     FAliquotaDestino := 17;
+                                                                     // calcular o DIFAL
+                                                                     // DIFAL = Base do ICMS * ((%Alíquota do ICMS Intra - %Alíquota do ICMS Inter) / 100)
+                                                                     FDIFAL := FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100);
+                                                                     // efetuar a partilha do DIFAL
+                                                                     // Parte UF Origem = Valor do DIFAL * (%Origem / 100)
+                                                                     if (FPercPartilhaRemetente > 0) Then
+                                                                        FValor_PartilhaOrigem := FDIFAL * (FPercPartilhaRemetente / 100)
+                                                                     Else
+                                                                        FValor_PartilhaOrigem := 0;
+                                                                     // Parte UF Destino = Valor do DIFAL * (%Destino / 100)
+                                                                     FValor_PartilhaDestino :=  FDIFAL * (FPercPartilhaDestinatario / 100);
+                                                                     // Tags
+                                                                     With ICMSUFDest do
+                                                                     begin
+                                                                          // vBCUFDest	Valor da BC do ICMS na UF de destino
+                                                                          vBCUFDest := FSubTotal;
+                                                                          // pFCPUFDest	0,00	Percentual do ICMS relativo ao Fundo de Combate a` Pobreza (FCP) na UF de destino
+                                                                          // pICMSUFDest	Aliquota interna da UF de destino
+                                                                          pICMSUFDest := FAliquotaDestino;
+                                                                          // pICMSInter		Aliquota interestadual das UF envolvidas
+                                                                          pICMSInter  := FAliquotaOrigem;
+                                                                          // pICMSInterPart		Percentual provisorio de partilha do ICMS Interestadual
+                                                                          pICMSInterPart := FPercPartilhaDestinatario;
+                                                                          // vFCPUFDest		Valor do ICMS relativo ao Fundo de Combate a` Pobreza (FCP) da UF de destino
+                                                                          // vICMSUFDest		Valor do ICMS Interestadual para a UF de destino
+                                                                          vICMSUFDest := FValor_PartilhaDestino;
+                                                                          // vICMSUFRemet	Valor do ICMS Interestadual para a UF do remetente
+                                                                          vICMSUFRemet := FValor_PartilhaOrigem;
+                                                                     End;
+                                                                End;
+                                                          End;
+                                                     End;
                                                     //
                                                     if (bNatVenda) Then
                                                     begin
@@ -4986,6 +5056,16 @@ begin
                 FPercentualImposto := 0;
                 Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
                 Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                //
+                // Verificar : Operações interestaduais para consumidor final contribuinte
+                if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
+                  and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
+                  and (cdsNotaFiscaldestino_operacao.asinteger = 2)
+                  and (FAliquotaOrigem > 0) then
+                   begin
+                         Total.ICMSTot.vICMSUFDest  := 0;
+                         Total.ICMSTot.vICMSUFRemet := 0;
+                   End;
                 //
                 Total.ICMSTot.vNF   := cdsNotaFiscalvalor_total_nota.AsFloat;
                 Total.ICMSTot.vProd := cdsNotaFiscalvalor_itens.AsFloat;
@@ -6114,6 +6194,46 @@ begin
     end;
   end;
   Application.ProcessMessages;
+end;
+
+procedure TdmNFe.CarregarAliquotaPartilhaICMS(aCdsLista: TClientDataSet);
+begin
+    dmDados.RefreshCDS(aCdsLista);
+    aCdsLista.EmptyDataSet;
+    With aCdsLista do
+     begin
+          //  2016
+          Append;
+          FieldByname('CDS_ANO').AsInteger := 2016;
+          FieldByname('CDS_ALIQUOTA_DESTINO').AsFloat   := 40;
+          Post;
+          //  2017
+          Append;
+          FieldByname('CDS_ANO').AsInteger := 2017;
+          FieldByname('CDS_ALIQUOTA_DESTINO').AsFloat   := 60;
+          Post;
+          //  2018
+          Append;
+          FieldByname('CDS_ANO').AsInteger := 2018;
+          FieldByname('CDS_ALIQUOTA_DESTINO').AsFloat   := 80;
+          Post;
+          //  2019
+          Append;
+          FieldByname('CDS_ANO').AsInteger := 2019;
+          FieldByname('CDS_ALIQUOTA_DESTINO').AsFloat   := 100;
+          Post;
+     End; //   With aCdsLista do
+end;
+
+function TdmNFe.GetAliquotaDestinatario(aDataAtual: TDatetime): Double;
+Var
+     Dia, Mes, Ano : Word;
+begin
+     DecodeDate (aDataAtual, Ano, Mes, Dia);
+     if (cdsListaAliquotaPart.Locate('CDS_ANO',Ano,[])) Then
+         Result :=  cdsListaAliquotaPart.FieldByName('CDS_ALIQUOTA_DESTINO').asFloat
+     Else
+         Result := 100;
 end;
 
 end.

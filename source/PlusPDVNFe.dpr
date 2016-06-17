@@ -42,9 +42,9 @@ uses
 begin
      Application.Initialize;
      Application.CreateForm(TdmDados, dmDados);
-  Application.CreateForm(TdmNFe, dmNFe);
-  Application.CreateForm(TFrmMainNFe, FrmMainNFe);
-  frmLogin := TfrmLogin.Create(nil);
+     Application.CreateForm(TdmNFe, dmNFe);
+     Application.CreateForm(TFrmMainNFe, FrmMainNFe);
+     frmLogin := TfrmLogin.Create(nil);
      if frmLogin.ShowModal = mrOk then
       begin
            FreeAndNil(frmLogin);

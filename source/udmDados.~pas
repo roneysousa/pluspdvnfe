@@ -2246,7 +2246,7 @@ begin
        Open;
        //
        if not (IsEmpty) Then
-          Result := FieldByName('cnpj').AsInteger
+          Result := uFuncoes.Alltrim(FieldByName('cnpj').AsString);
        finally
          free;
        end;

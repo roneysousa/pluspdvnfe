@@ -44,7 +44,6 @@ begin
      Application.CreateForm(TdmDados, dmDados);
   Application.CreateForm(TdmNFe, dmNFe);
   Application.CreateForm(TFrmMainNFe, FrmMainNFe);
-  Application.CreateForm(TFrmDescontoValor, FrmDescontoValor);
   frmLogin := TfrmLogin.Create(nil);
      if frmLogin.ShowModal = mrOk then
       begin

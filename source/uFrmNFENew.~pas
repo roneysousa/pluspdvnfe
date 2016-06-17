@@ -751,7 +751,7 @@ procedure TFrmNotaFiscalEletronicaNovo.CalcularTotalItens(
   aCDS: TClientDataSet);
 Var
   M_TOTAL_NOTA, M_VLTOTA, M_BCICMS, M_VLICMS, M_VALIPI, M_VLDESC : Double;
-  M_VALOR_PIS, M_VALOR_COFINS : Double;
+  M_VALOR_PIS, M_VALOR_COFINS, FFOutrasDespesas, FFrete : Double;
   M_BASEST, M_VALORST : Double;
   iQuantDecimais : Integer;
 begin
@@ -761,6 +761,8 @@ begin
      M_VLICMS := 0;
      M_VALIPI := 0;
      M_VLDESC := 0;
+     FFOutrasDespesas := 0;
+     FFrete:= 0;
      iQuantDecimais := 2;
      //
      M_BASEST  := 0;
@@ -775,6 +777,11 @@ begin
           First;
           While not (Eof) do
             begin
+                 //
+                 if (FieldByName('CDS_VLOUTRASDESPESAS').AsFloat > 0) then
+                   FFOutrasDespesas := FFOutrasDespesas + FieldByName('CDS_VLOUTRASDESPESAS').AsFloat;
+                 if (FieldByName('CDS_VLFRETE').AsFloat > 0) then
+                   FFrete := FFrete + FieldByName('CDS_VLFRETE').AsFloat;
                  //
                  M_VLDESC := uFuncoes.Arredondar( M_VLDESC + FieldByName('CDS_VLDESCONTO').AsFloat, 2);
                  If (FieldByName('CDS_BCICMS').AsFloat > 0) and (FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
@@ -821,6 +828,9 @@ begin
            dmNFe.cdsNotaFiscalvalor_icms.AsFloat          := M_VLICMS;
            dmNFe.cdsNotaFiscalvalor_ipi.AsFloat           := M_VALIPI;
            dmNFe.cdsNotaFiscalvalor_desconto.AsFloat      := M_VLDESC;
+           dmNFe.cdsNotaFiscalvalor_outras_despesas.AsFloat := FFOutrasDespesas;
+           dmNFe.cdsNotaFiscalvalor_frete.AsFloat         := FFrete;
+
            dmNFe.cdsNotaFiscalvalor_pis.AsFloat           := M_VALOR_PIS;
            dmNFe.cdsNotaFiscalvalor_cofins.AsFloat        := M_VALOR_COFINS;
            //
@@ -839,8 +849,9 @@ end;
 
 procedure TFrmNotaFiscalEletronicaNovo.CalcularTotalNota;
 Var
-   M_VLFRET, M_VLDESC, M_VALOR_ST, M_VALIPI : Double;
+   M_VLFRET, M_VLDESC, M_VALOR_ST, M_VALIPI, M_VLOUTRO : Double;
 begin
+     M_VLOUTRO := dmNFe.cdsNotaFiscalvalor_outras_despesas.AsFloat;
      M_VLFRET := dmNFe.cdsNotaFiscalvalor_frete.AsFloat;
      M_VLDESC := dmNFe.cdsNotaFiscalvalor_desconto.AsFloat;
      M_VALOR_ST := dmNFe.cdsNotaFiscalvalor_icms_st.AsFloat;
@@ -850,7 +861,7 @@ begin
      //
      dmNFe.cdsNotaFiscalvalor_total_nota.AsFloat  := uFuncoes.Arredondar(
               ((fTOTAL_NFe + M_VALIPI + M_VLFRET +  dmNFe.cdsNotaFiscalvalor_seguro.AsFloat
-              + dmNFe.cdsNotaFiscalvalor_outras_despesas.AsFloat) - M_VLDESC)+M_VALOR_ST, 2);
+              + M_VLOUTRO) - M_VLDESC)+M_VALOR_ST, 2);
 end;
 
 procedure TFrmNotaFiscalEletronicaNovo.LimparCampos;
@@ -3688,7 +3699,7 @@ begin
                                   dmNFe.cdsNotaFiscalvalor_desconto.AsFloat := dmNFe.cdsVendaItensNFEvalor_desconto.AsFloat;
                                   dmNFe.SetDescontosItensNFe(dmNFe.cdsItemsNotaFiscal, dmNFe.cdsNotaFiscalvalor_desconto.AsFloat);
                                   //
-                                  //CalcularTotalItens(dmNFe.cdsItemsNotaFiscal);
+                                  CalcularTotalItens(dmNFe.cdsItemsNotaFiscal);
                                   CalcularTotalNota;
                              End;
                             //    Duplicatas

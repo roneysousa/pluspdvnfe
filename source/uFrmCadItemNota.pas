@@ -106,6 +106,10 @@ type
     dbeReducaoICMS: TDBEdit;
     edtCodigo: TEdit;
     spDescValor: TSpeedButton;
+    Label38: TLabel;
+    dbeOutrosValores: TDBEdit;
+    Label39: TLabel;
+    dbeValorFrete: TDBEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigo1KeyPress(Sender: TObject; var Key: Char);
@@ -146,6 +150,10 @@ type
     procedure edtCodigoExit(Sender: TObject);
     procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
     procedure spDescValorClick(Sender: TObject);
+    procedure dbeOutrosValoresExit(Sender: TObject);
+    procedure dbeValorFreteExit(Sender: TObject);
+    procedure dbeBasePisExit(Sender: TObject);
+    procedure DBEdit10Exit(Sender: TObject);
   private
     { Private declarations }
     procedure Calcular;
@@ -520,6 +528,7 @@ procedure TFrmCadItemNota.Calcular;
 Var
     M_VLSUBT, M_VLDESC, M_VLACRE, fPercentualAcrescimo : Double;
     M_VLUNIT, M_QTPROD, M_MARGE_LUCRO_ST, M_BCIPI, M_BC_ICMSST, M_VLICMS_ST : Double;
+    FOutroDespesas, FFrete : Double;
     fPercReducaoBC_ICMS : Double;
 begin
      If not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').asString) Then
@@ -540,14 +549,20 @@ begin
      if (dsCadastroItem.DataSet.fieldByname('CDS_PEDESC').asFloat > 0) Then
         M_VLDESC := dsCadastroItem.DataSet.fieldByname('CDS_PEDESC').asFloat;
      M_VLACRE := 0;
+     FOutroDespesas := 0;
+     if not uFuncoes.Empty(dbeOutrosValores.Text) Then
+         FOutroDespesas := StrtoFloat(dbeOutrosValores.text);
+     FFrete         := 0;
+     if not uFuncoes.Empty(dbeValorFrete.Text) Then
+          FFrete        := StrtoFloat(dbeValorFrete.text);
      fPercentualAcrescimo := 0;
      //
-     M_VLSUBT := uFuncoes.Arredondar((M_VLUNIT * M_QTPROD),2);
+     // Base do ICMS = Valor do produto + Frete + Outras Despesas Acessórias - Descontos + IPI
+     M_VLSUBT := uFuncoes.Arredondar(((M_VLUNIT * M_QTPROD)+FOutroDespesas+ FFrete),2);
      if (M_VLDESC > 0) Then
      begin
          dsCadastroItem.DataSet.FieldByName('CDS_VLDESCONTO').AsFloat := uFuncoes.Arredondar(uFuncoes.Gerapercentual(M_VLSUBT, M_VLDESC),2);
          M_VLSUBT := uFuncoes.Arredondar(M_VLSUBT - dsCadastroItem.DataSet.FieldByName('CDS_VLDESCONTO').AsFloat, 2);  // + uFuncoes.Gerapercentual(M_VLUNIT, M_VLACRE);
-
      End
      Else
          dsCadastroItem.DataSet.FieldByName('CDS_VLDESCONTO').AsFloat := 0;
@@ -560,6 +575,7 @@ begin
      //  Valor Icms
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
       begin
+
           if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) Then
            begin
                if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
@@ -601,16 +617,20 @@ begin
      Else
      begin
          dsCadastroItem.DataSet.FieldByName('CDS_BC_IPI_CALC').AsFloat := 0;
-         dsCadastroItem.DataSet.FieldByName('CDS_VLIPI').AsFloat := 0;
+         dsCadastroItem.DataSet.FieldByName('CDS_VLIPI').AsFloat       := 0;
      End;
      // Valor PIS
       if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_PIS').AsFloat > 0) Then
       begin
           dsCadastroItem.DataSet.FieldByName('CDS_BC_PIS_CALC').AsFloat  := M_VLSUBT;
-          dsCadastroItem.DataSet.FieldByName('CDS_VALOR_PIS').AsFloat        := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BC_PIS_CALC').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_PIS').AsFloat),2);
+          dsCadastroItem.DataSet.FieldByName('CDS_BC_PIS').AsFloat       := M_VLSUBT;
+          dsCadastroItem.DataSet.FieldByName('CDS_VALOR_PIS').AsFloat    := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BC_PIS_CALC').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_PIS').AsFloat),2);
       End
       Else
+      begin
+          dsCadastroItem.DataSet.FieldByName('CDS_BC_PIS').AsFloat    := 0; 
           dsCadastroItem.DataSet.FieldByName('CDS_VALOR_PIS').AsFloat := 0;
+      End;
 
      // Valor ICMS ST
      If (dsCadastroItem.DataSet.FieldByName('CDS_ALIQUOTA_ICMS_ST').AsFloat > 0) Then
@@ -653,10 +673,14 @@ begin
       if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_COFINS').AsFloat > 0) Then
       begin
           dsCadastroItem.DataSet.FieldByName('CDS_BC_COFINS_CALC').AsFloat := M_VLSUBT;
-          dsCadastroItem.DataSet.FieldByName('CDS_VALOR_COFINS').AsFloat       := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BC_COFINS_CALC').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_COFINS').AsFloat),2);
+          dsCadastroItem.DataSet.FieldByName('CDS_BC_COFINS').AsFloat      := M_VLSUBT;
+          dsCadastroItem.DataSet.FieldByName('CDS_VALOR_COFINS').AsFloat   := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BC_COFINS_CALC').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQ_COFINS').AsFloat),2);
       End
       Else
+      begin
+          dsCadastroItem.DataSet.FieldByName('CDS_BC_COFINS').AsFloat    := 0;
           dsCadastroItem.DataSet.FieldByName('CDS_VALOR_COFINS').AsFloat := 0;
+      End;
       //
       if (dsCadastroItem.DataSet.FieldByName('CDS_VLIPI').AsFloat > 0) Then
           dsCadastroItem.DataSet.FieldByName('CDS_SUBTOTAL').AsFloat := M_VLSUBT + dsCadastroItem.DataSet.FieldByName('CDS_VLIPI').AsFloat;
@@ -1298,6 +1322,30 @@ begin
      Finally
           FrmDescontoValor.Free;
      End;
+end;
+
+procedure TFrmCadItemNota.dbeOutrosValoresExit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit] ) Then
+          Calcular;
+end;
+
+procedure TFrmCadItemNota.dbeValorFreteExit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit] ) Then
+          Calcular;
+end;
+
+procedure TFrmCadItemNota.dbeBasePisExit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+       Calcular;
+end;
+
+procedure TFrmCadItemNota.DBEdit10Exit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+         Calcular;
 end;
 
 end.

@@ -761,6 +761,27 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
               Visible = True
             end
             item
+              Expanded = False
+              FieldName = 'CDS_VLOUTRASDESPESAS'
+              Title.Caption = 'Outras Despesas'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -11
+              Title.Font.Name = 'Verdana'
+              Title.Font.Style = [fsBold]
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CDS_VLFRETE'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -11
+              Title.Font.Name = 'Verdana'
+              Title.Font.Style = [fsBold]
+              Visible = True
+            end
+            item
               Alignment = taCenter
               Expanded = False
               FieldName = 'CDS_DTFABRICACAO'
@@ -2683,8 +2704,10 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
             Top = 308
             Width = 251
             Height = 21
+            Color = clSilver
             DataField = 'valor_outras_despesas'
             DataSource = dsCadastro
+            ReadOnly = True
             TabOrder = 9
             OnExit = dbeOutrasDespesasExit
           end

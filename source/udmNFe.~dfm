@@ -3,8 +3,8 @@ object dmNFe: TdmNFe
   OnCreate = DataModuleCreate
   Left = 223
   Top = 149
-  Height = 527
-  Width = 954
+  Height = 530
+  Width = 978
   object ACBrNFe1: TACBrNFe
     OnStatusChange = ACBrNFe1StatusChange
     Configuracoes.Geral.SSLLib = libCapicom
@@ -4520,6 +4520,23 @@ object dmNFe: TdmNFe
     object cdsListaModbcICMS_STMBC_DESCRICAO: TStringField
       FieldName = 'MBC_DESCRICAO'
       Size = 40
+    end
+  end
+  object cdsListaAliquotaPart: TClientDataSet
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 872
+    Top = 232
+    Data = {
+      470000009619E0BD010000001800000002000000000003000000470007434453
+      5F414E4F0400010000000000144344535F414C4951554F54415F44455354494E
+      4F08000400000000000000}
+    object cdsListaAliquotaPartCDS_ANO: TIntegerField
+      FieldName = 'CDS_ANO'
+    end
+    object cdsListaAliquotaPartCDS_ALIQUOTA_DESTINO: TFloatField
+      FieldName = 'CDS_ALIQUOTA_DESTINO'
     end
   end
 end
