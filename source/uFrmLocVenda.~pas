@@ -38,6 +38,8 @@ type
     cdsVendadata_venda: TSQLTimeStampField;
     cdsVendasituacao: TStringField;
     cdsVendanumero_nfe: TIntegerField;
+    Label7: TLabel;
+    DBEdit4: TDBEdit;
     procedure btnConsultaClick(Sender: TObject);
     procedure edtVendaChange(Sender: TObject);
     procedure edtVendaKeyPress(Sender: TObject; var Key: Char);
@@ -243,7 +245,8 @@ begin
                   if (FieldByName('situacao').AsString = 'C') Then
                      raise Exception.Create('Venda cancelada!!!');
                   if not uFuncoes.Empty(FieldByName('numero_nfe').AsString) Then
-                     raise Exception.Create('Venda da NF-e :'+FieldByName('numero_nfe').AsString);
+                      If (FieldByName('numero_nfe').AsInteger > 0) Then
+                          raise Exception.Create('Venda da NF-e : '+FieldByName('numero_nfe').AsString);
                   Result := True;
              End;
        finally

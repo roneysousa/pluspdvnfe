@@ -84,7 +84,7 @@ end;
 procedure TFrmCupomVinculado.dbeNumECFExit(Sender: TObject);
 begin
      if not uFuncoes.Empty(dbeNumECF.Text) Then
-        if (StrtoInt(dbeNumECF.Text) > 0) Then
+        if (StrtoInt(uFuncoes.Alltrim(dbeNumECF.Text)) > 0) Then
              dbeNumECF.Text := uFuncoes.StrZero(dbeNumECF.Text,3);
 end;
 

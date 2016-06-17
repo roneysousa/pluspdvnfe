@@ -38,6 +38,8 @@ type
     cdsVendadata_venda: TSQLTimeStampField;
     cdsVendasituacao: TStringField;
     cdsVendanumero_nfe: TIntegerField;
+    Label7: TLabel;
+    DBEdit4: TDBEdit;
     procedure btnConsultaClick(Sender: TObject);
     procedure edtVendaChange(Sender: TObject);
     procedure edtVendaKeyPress(Sender: TObject; var Key: Char);

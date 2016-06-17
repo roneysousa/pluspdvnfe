@@ -666,6 +666,8 @@ type
     Function GetPesoProduto(aProduto, aTipo : String): Double;
     Procedure CarregarListaNaturezasOperacaoPadrao();
     Function GetIdRegistoNFe(idNFe, idEmpresa : Integer; aSerie : String): Integer;
+    Function GerPMCProduto(idProduto : Integer): Double;
+    Function GetCNPJEmpresa(idEmpresa : Integer): String;
   end;
 
 var
@@ -1264,12 +1266,15 @@ end;
 
 function TdmDados.GetMaxIdNFeEmpresa(idEmpresa: Integer): Integer;
 var qraux : TSQLquery;
-    texto : string;
+    texto, aCnpjEmitente : string;
     iRetorno : Integer;
 begin
     Result := 0;
+    aCnpjEmitente := GetCNPJEmpresa(idEmpresa);
     // texto := 'Select Max(to_number(numero_nota_fiscal, '+Chr(39)+'999999999'+Chr(39)+')) as total from nota_fiscal where (id_empresa  = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') ';
-    texto := 'Select Max(numero_nota_fiscal) as total from nota_fiscal where (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (situacao <> 99) and (modelo = 55) ';
+    // texto := 'Select Max(numero_nota_fiscal) as total from nota_fiscal where (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (situacao <> 99) and (modelo = 55) ';
+    texto := 'Select Max(numero_nota_fiscal) as total from nota_fiscal where (id_empresa = :pemitente) and ';
+    texto := texto + '(indicador_do_emitente = '+QuotedStr('0')+') and (situacao <> 99) and (modelo = 8) and (emitente_cnpj = '+QuotedStr(aCnpjEmitente) +') ';
     QrAux := TSqlquery.Create(nil);
     with QrAux do
      try
@@ -1362,7 +1367,8 @@ var qraux : TSQLquery;
     texto : string;
 begin
     Result := False;
-    texto := 'Select id, numero_nota_fiscal, id_empresa from nota_fiscal where (numero_nota_fiscal = :pnumeronota) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (modelo = 55) ';
+    //texto := 'Select id, numero_nota_fiscal, id_empresa from nota_fiscal where (numero_nota_fiscal = :pnumeronota) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (modelo = 55) ';
+    texto := 'Select id, numero_nota_fiscal, id_empresa from nota_fiscal where (numero_nota_fiscal = :pnumeronota) and (id_empresa = :pemitente) and (indicador_do_emitente = '+QuotedStr('0')+') and (modelo = 8) ';
     QrAux := TSqlquery.Create(nil);
     with QrAux do
      try
@@ -2202,6 +2208,48 @@ begin
       free;
     end;
 
+end;
+
+function TdmDados.GerPMCProduto(idProduto: Integer): Double;
+var qraux : TSQLquery;
+    texto : string;
+begin
+  Result := 0;
+  texto := 'Select id, pmc from produtos where (id = :pid)';
+  QrAux := TSQLquery.Create(nil);
+  with QrAux do
+    try
+      SQLConnection := sqlConexao;
+      sql.Add(texto);
+      Params.ParamByName('pid').AsInteger     := idProduto;
+      Open;
+      //
+      if not (IsEmpty) then
+         if (FieldByname('pmc').AsFloat > 0) Then
+               result := FieldByname('pmc').AsFloat;
+    finally
+      free;
+    end;
+end;
+
+function TdmDados.GetCNPJEmpresa(idEmpresa: Integer): String;
+var qraux : TSQLquery;
+    texto : string;
+begin
+    texto := 'Select id, cnpj from empresas where (id  = :pLoja) ';
+    QrAux := TSqlquery.Create(nil);
+    with QrAux do
+     try
+       SQLConnection := sqlConexao;
+       sql.Add(texto);
+       Params[0].AsInteger := idEmpresa;
+       Open;
+       //
+       if not (IsEmpty) Then
+          Result := FieldByName('cnpj').AsInteger
+       finally
+         free;
+       end;
 end;
 
 end.

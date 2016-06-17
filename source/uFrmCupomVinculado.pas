@@ -48,6 +48,15 @@ begin
            Exit;
       End;
       //
+     if (Strtoint(uFuncoes.Alltrim(dbeNumECF.Text)) = 0) Then
+      begin
+           Application.MessageBox(PChar('Número do ECF inválido!!!'),
+                           'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
+           dbeNumECF.Clear;
+           dbeNumECF.SetFocus;
+           Exit;
+      End;
+      //
      if uFuncoes.Empty(dbeNumCOO.Text) Then
       begin
            Application.MessageBox(PChar('Digite o número do COO.'),
@@ -84,7 +93,7 @@ end;
 procedure TFrmCupomVinculado.dbeNumECFExit(Sender: TObject);
 begin
      if not uFuncoes.Empty(dbeNumECF.Text) Then
-        if (StrtoInt(dbeNumECF.Text) > 0) Then
+        if (StrtoInt(uFuncoes.Alltrim(dbeNumECF.Text)) > 0) Then
              dbeNumECF.Text := uFuncoes.StrZero(dbeNumECF.Text,3);
 end;
 

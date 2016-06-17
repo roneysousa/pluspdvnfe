@@ -93,6 +93,14 @@ object FrmLocVenda: TFrmLocVenda
       Caption = '&Tabela'
       Visible = False
     end
+    object Label7: TLabel
+      Left = 280
+      Top = 88
+      Width = 73
+      Height = 13
+      Caption = 'Valor Desconto'
+      FocusControl = DBEdit4
+    end
     object edtVenda: TEdit
       Left = 16
       Top = 21
@@ -241,6 +249,24 @@ object FrmLocVenda: TFrmLocVenda
       Value = 1.000000000000000000
       Visible = False
       OnKeyPress = edtTabelaKeyPress
+    end
+    object DBEdit4: TDBEdit
+      Left = 280
+      Top = 104
+      Width = 134
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'valor_desconto'
+      DataSource = dsConsulta
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 8
     end
   end
   object Panel2: TPanel

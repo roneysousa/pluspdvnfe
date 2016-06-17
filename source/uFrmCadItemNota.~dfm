@@ -384,7 +384,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Top = 1
       Width = 732
       Height = 320
-      ActivePage = tsbICMS
+      ActivePage = tsMedicamento
       Align = alClient
       TabOrder = 0
       object tsbICMS: TTabSheet

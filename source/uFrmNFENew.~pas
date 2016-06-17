@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, ComCtrls, StdCtrls, Buttons, DB, Grids, DBGrids,
   DBClient, ToolEdit, RXDBCtrl, Mask, DBCtrls, CurrEdit, Menus, DBTables,
-  pcnNFeRTXT,  pcnConversao, FMTBcd, SqlExpr, pcnConversaoNFe;
+  pcnNFeRTXT,  pcnConversao, FMTBcd, SqlExpr, pcnConversaoNFe, JvExDBGrids,
+  JvDBGrid;
 
 type
   TFrmNotaFiscalEletronicaNovo = class(TForm)
@@ -2752,14 +2753,19 @@ begin
             begin
                  aOperacao := 'I';
                  M_NRNOTA :=  dmDados.GetIdAutomatico('nota_fiscal_id_seq');
-                 //
+                 //   Última NFe na tabela NotasFiscais
                  idMaxNFeEmpresa := dmDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
                  //
                  dmDados.FilterCDS(dmDados.CdsEmpresa, fsInteger, dmNFe.cdsNotaFiscalid_empresa.AsString);
                  if not (dmDados.CdsEmpresa.IsEmpty) Then
                    begin
                         if (dmDados.cdsEmpresasequencia_nfe.AsInteger <> idMaxNFeEmpresa) Then
-                            idNFeEmpresa := idMaxNFeEmpresa + 1
+                         begin
+                              if (idMaxNFeEmpresa > dmDados.cdsEmpresasequencia_nfe.AsInteger) Then
+                                  idNFeEmpresa := idMaxNFeEmpresa + 1
+                              Else
+                                  idNFeEmpresa := dmDados.cdsEmpresasequencia_nfe.AsInteger + 1;
+                         End
                         Else
                             idNFeEmpresa := dmDados.cdsEmpresasequencia_nfe.AsInteger+1;
                    End
@@ -3503,11 +3509,18 @@ begin
                                If (M_ECFCOO <> '0') Then
                                begin
                                     aDataCupom := dmNFe.cdsVendaItensNFEdata_venda.AsString;
-                                    dmNFe.cdsNotaFiscalnum_coo.AsString     := dmNFe.cdsVendaItensNFEcoo.AsString;
+                                    M_ECFCOO := uFuncoes.StrZero(M_ECFCOO,6);
+                                    dmNFe.cdsNotaFiscalnum_coo.AsString     := M_ECFCOO;
+                                    // dmNFe.cdsVendaItensNFEcoo.AsString;
                                     //
                                     dmDados.FilterCDS(dmDados.cdsImpEcf, fsInteger, dmNFe.cdsVendaItensNFEid_ecf.AsString);
                                     if not (dmDados.cdsImpEcf.IsEmpty) Then
                                     begin
+                                        if uFuncoes.Empty(dmDados.cdsImpEcfnum_caixa.AsString) or
+                                            (dmDados.cdsImpEcfnum_caixa.AsInteger = 0) then
+                                        begin
+                                             Raise Exception.Create('Número do vazio ou inválido!!!'+#13+'Valor Atual Campo : '+dmDados.cdsImpEcfnum_caixa.AsString);
+                                        End;
                                         dmNFe.cdsNotaFiscalnum_ecf.AsString     := dmDados.cdsImpEcfnum_caixa.AsString;
                                         if not uFuncoes.Empty(dmDados.cdsImpEcftipo_cupom.AsString) Then
                                             dmNFe.cdsNotaFiscalmodelo_ecf.AsString  := dmDados.cdsImpEcftipo_cupom.AsString
@@ -3669,6 +3682,15 @@ begin
                             End;  //fim-do-enquanto
                             // Volumes
                             dmNFe.AtualizarQuantidadeVolume(dsCadastro.DataSet.FieldByName('id').AsInteger, dmNFe.cdsItemsNotaFiscal);
+                            // Verificar desconto
+                            If (dmNFe.cdsVendaItensNFEvalor_desconto.AsFloat > 0) and (TotalDesconto(dmNFe.cdsItemsNotaFiscal) = 0) Then
+                             begin
+                                  dmNFe.cdsNotaFiscalvalor_desconto.AsFloat := dmNFe.cdsVendaItensNFEvalor_desconto.AsFloat;
+                                  dmNFe.SetDescontosItensNFe(dmNFe.cdsItemsNotaFiscal, dmNFe.cdsNotaFiscalvalor_desconto.AsFloat);
+                                  //
+                                  //CalcularTotalItens(dmNFe.cdsItemsNotaFiscal);
+                                  CalcularTotalNota;
+                             End;
                             //    Duplicatas
                             If (iFormaPGTO = 1) Then
                             begin
@@ -4127,7 +4149,7 @@ begin
                  FieldByName('id').AsInteger     := iNumNota;
                  if not uFuncoes.Empty(aNumeroNFe) Then
                     FieldByName('numero_nota_fiscal').AsString  := uFuncoes.StrZero(aNumeroNFe,9);
-                 FieldByName('modelo').AsInteger     := 55;
+                 FieldByName('modelo').AsInteger     := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString  := '3.10';
                  FieldByName('tipo_operacao').AsInteger := 1;
                  FieldByName('situacao').AsInteger := 5;
@@ -4155,7 +4177,7 @@ begin
                  FieldByName('data_hora_emissao').AsDateTime   := Date();
                  FieldByName('data_saida_entrada').AsDateTime  := Date();
                  FieldByName('indicador_do_emitente').AsString := '0';
-                 FieldByName('modelo').AsInteger         := 55;
+                 FieldByName('modelo').AsInteger         := uFuncoes.ConverterModeloDocumento(55);
                  FieldByName('versao_xml').AsString      := '3.10';
                  FieldByName('tipo_operacao').AsInteger  := 1;
                  FieldByName('situacao').AsInteger       := 5;
@@ -5069,7 +5091,7 @@ begin
                         begin
                              idNFeEmpresa := DMDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
                              if (idNFeEmpresa <> 0) Then
-                                idNFeEmpresa := idNFeEmpresa + 1
+                                  idNFeEmpresa := idNFeEmpresa + 1
                              Else
                                 idNFeEmpresa := dmDados.GetProximoNumeroNotaFiscal(dmNFe.cdsNotaFiscalid_empresa.AsInteger)+ 1;
                              //

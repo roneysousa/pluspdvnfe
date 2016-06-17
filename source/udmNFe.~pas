@@ -2122,6 +2122,7 @@ begin
     //
     //ACBrNFe1.Configuracoes.Arquivos.PastaMensal := true;
     ACBrNFe1.Configuracoes.Arquivos.Salvar      := true;
+    ACBrNFeDANFERaveCB1.QuebraLinhaEmDetalhamentoEspecifico := False;
     //
     dstListas.CommandText := '';
     //
@@ -2392,7 +2393,7 @@ end;
 function TdmNFe.SetDescontosItensNFe(aCDS: TClientDataSet;
   fValorDesconto: Double): Boolean;
 Var
-   fValorDescontoItem , fValor, fValorDiferenca, fSaldoOutras : Double;
+   fValorDescontoItem , fValor, fValorDiferenca, fSaldoOutras, fSubTotalItem : Double;
    iQuantItens : Integer;
 begin
      With aCDS do
@@ -2404,9 +2405,10 @@ begin
            if (fValorDesconto > 0) Then
            begin                             
                 fValorDescontoItem := uFuncoes.Arredondar((fValorDesconto / iQuantItens),2);
-                fValor := fValorDescontoItem;
+                fValor := uFuncoes.Arredondar(fValorDescontoItem*iQuantItens, 2) ;
                 fValorDiferenca := 0;
                 fSaldoOutras     := 0;
+                fSubTotalItem    := 0;
                 //
                 fValorDiferenca := fValorDescontoItem - (fValorDescontoItem * iQuantItens);
                 //
@@ -2415,15 +2417,19 @@ begin
                       If (fValor > 0) Then
                       begin
                            Edit;
+                           fSubTotalItem := uFuncoes.Arredondar(FieldByName('CDS_VLDESCONTO').AsFloat * FieldByName('CDS_VLDESCONTO').AsFloat, udmDados.iCasasDecimais);
                            If (RecNo = iQuantItens) Then
                             begin
                                FieldByName('CDS_VLDESCONTO').AsFloat := fValor;
+                               //
+                               FieldByName('CDS_PEDESC').asFloat     := uFuncoes.ConverterValorPercentual(fSubTotalItem, fValor);
                                //
                                fValor := 0;
                             End
                            Else
                            begin
                                FieldByName('CDS_VLDESCONTO').AsFloat := fValorDescontoItem;
+                               FieldByName('CDS_PEDESC').asFloat     := uFuncoes.ConverterValorPercentual(fSubTotalItem, fValor);
                                //
                                fValor := fValor - fValorDescontoItem;
                            End;
@@ -4014,7 +4020,7 @@ Var
     iCstICMS, iCstIPI, iCstPis, iCstCofins, idNFe, iOrigemProd : Integer;
     M_TOTAL_BC_PIS, M_VALOR_PIS,  M_TOTAL_BC_COFINS, M_VALOR_COFINS : Double;
     FTotalTributoFederal, FTotalTributoEstadual, FTotalTributoMunicipal,
-    FTotalPeloProdutos, FSubTotal, FPercentualImpostoItem : Double;
+    FTotalPeloProdutos, FSubTotal, FPercentualImpostoItem, FValorPMC : Double;
     aDescricaoTributos, aChaveIBPT, aChaveIBPTAtual, aDescricaoNatureza : String;
     bTemCupomFiscal : Boolean;
     aMsgCupomFiscal, aMsgBuscaCupomFiscal : String;
@@ -4155,7 +4161,7 @@ begin
                    1 : Ide.indPag    := ipPrazo;
                    2 : Ide.indPag    := ipOutras;
                End;
-               Ide.modelo    := cdsNotaFiscalmodelo.AsInteger;
+               Ide.modelo    := 55; // cdsNotaFiscalmodelo.AsInteger;
                Ide.serie     := cdsNotaFiscalserie.AsInteger;
                Ide.dEmi      := cdsNotaFiscaldata_hora_emissao.AsDateTime;
                if not uFuncoes.Empty(cdsNotaFiscaldata_saida_entrada.asString) Then
@@ -4479,6 +4485,7 @@ begin
                                        if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString)
                                             and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL') Then
                                              begin
+                                                FValorPMC := 0;
                                                 if (dmDados.GetVerificaProdutoMedicamento(cdsNotaFiscalItensid_produto.asinteger)) Then
                                                  begin
                                                    //infAdProd := 'LOTE: '+cdsItensNotaNFI_NRLOTE.AsString +' :: VALIDADE: '+cdsItensNotaNFI_LOTE_DTVENC.AsString;
@@ -4486,6 +4493,7 @@ begin
                                                                                                  cdsNotaFiscalItensid_produto.asinteger,
                                                                                                  cdsNotaFiscalItensnum_lote.AsString);
                                                    //
+                                                   FValorPMC := dmDados.GerPMCProduto(cdsNotaFiscalItensid_produto.asinteger);
                                                    if not uFuncoes.Empty(cdsNotaFiscalItensnum_lote.AsString) and (cdsNotaFiscalItensnum_lote.AsString <> 'GERAL')
                                                        and not uFuncoes.Empty(cdsNotaFiscalItensdata_vencimento_lote.asstring)
                                                        and not uFuncoes.Empty(aDataFabricacao) Then
@@ -4496,6 +4504,8 @@ begin
                                                               qLote := Prod.qTrib;
                                                               dFab  := StrtoDate(aDataFabricacao);
                                                               dVal  := cdsNotaFiscalItensdata_vencimento_lote.AsDateTime;
+                                                              if (FValorPMC <> 0) then
+                                                                 vPMC :=  FValorPMC;
                                                          End;
                                                    End
                                                    Else
@@ -4510,6 +4520,8 @@ begin
                                                                        qLote := Prod.qTrib;
                                                                        dFab  := cdsNotaFiscalItensdata_fabricacao_lote.AsDateTime;
                                                                        dVal  := cdsNotaFiscalItensdata_vencimento_lote.AsDateTime;
+                                                                       if (FValorPMC <> 0) then
+                                                                          vPMC :=  FValorPMC;
                                                                   End;
                                                             End;
                                                    End;
@@ -5237,12 +5249,14 @@ end;
 
 function TdmNFe.GetVerificarExisteNFe(iNumNota: Integer): Boolean;
 var qraux : TSQLquery;
-    texto : string;
+    texto, aCNPJEmitente : string;
 begin
      Result := false;
+     aCNPJEmitente := dmDados.GetCNPJEmpresa(uFrmPlusPdvNfe.idEmpresa);
      texto := 'Select id, id_empresa, numero_nota_fiscal from nota_fiscal where (numero_nota_fiscal  = :pID) ';
      texto := texto + ' and (id_empresa = '+QuotedStr(InttoStr(uFrmPlusPdvNfe.idEmpresa)) + ')';
      texto := texto + ' and (indicador_do_emitente = '+QuotedStr('0')+')';
+     texto := texto + ' and (emitente_cnpj =' +QuotedStr(aCNPJEmitente)+') ';
      //
      QrAux := TSQLquery.Create(nil);
      with QrAux do

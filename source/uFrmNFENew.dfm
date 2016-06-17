@@ -808,16 +808,6 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
               Expanded = False
               FieldName = 'CDS_VLTRIB_MUNICIPAL'
               Visible = False
-            end
-            item
-              Expanded = False
-              FieldName = 'CDS_BC_IPI'
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'CDS_VLIPI'
-              Visible = True
             end>
         end
       end
@@ -2720,6 +2710,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
             Top = 308
             Width = 251
             Height = 21
+            Color = clSilver
             DataField = 'valor_desconto'
             DataSource = dsCadastro
             ReadOnly = True

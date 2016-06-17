@@ -285,20 +285,25 @@ begin
             // medicamentos
       if (tsMedicamento.TabVisible) Then
       begin
-           if not uFuncoes.Empty(dsCadastroItem.DataSet.fieldByName('CDS_NRLOTE').AsString) Then
+           if not uFuncoes.Empty(dbeLote.text) and (dbeLote.text <> 'GERAL') Then
             begin
                  if uFuncoes.Empty(uFuncoes.RemoveChar(dbeDataFab.text)) Then
                   begin
                         PageControl1.ActivePage := tsMedicamento;
+                        Application.MessageBox('Digite a data de Fabricação!','ATENÇÃO',
+                             MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                         dbeDataFab.SetFocus;
-                        raise Exception.Create('Digite a data de Fabricação.');
+                        Exit;
+                        //raise Exception.Create('');
                   End;
                   //
                  if uFuncoes.Empty(uFuncoes.RemoveChar(dbeDataVct.text)) Then
                   begin
                         PageControl1.ActivePage := tsMedicamento;
+                        Application.MessageBox('Digite a data de Vencimento!','ATENÇÃO',
+                             MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                         dbeDataVct.SetFocus;
-                        raise Exception.Create('Digite a data de Vencimento.');
+                        //raise Exception.Create('');
                   End;
                   //
                   If not ValidarDataVct() Then
@@ -1067,6 +1072,7 @@ end;
 procedure TFrmCadItemNota.dbeDataFabExit(Sender: TObject);
 begin
    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit])
+      And (dbeLote.Text <> 'GERAL') 
       and not uFuncoes.Empty(uFuncoes.RemoveChar(dbeDataFab.text)) Then
        try
             dbeDataFab.Date := StrtoDate(dbeDataFab.text);
@@ -1092,6 +1098,7 @@ end;
 procedure TFrmCadItemNota.dbeDataVctExit(Sender: TObject);
 begin
    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit])
+      and (dbeLote.Text <> 'GERAL') 
       and not uFuncoes.Empty(uFuncoes.RemoveChar(dbeDataVct.text)) Then
      begin
            ValidarDataVct();

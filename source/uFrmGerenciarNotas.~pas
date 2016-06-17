@@ -535,12 +535,13 @@ function TFrmGerenciarNotas.Consultar: Boolean;
 Var
   M_TEXTO : String;
   M_DTINIC, M_DTFINA : TDate;
-  M_CDTIPO, M_CDSITU, M_CDNATU : String;
+  M_CDTIPO, M_CDSITU, M_CDNATU, aCNPJEmitente : String;
   iNumero, iNumeroFinal, idLoja : Integer;
 begin
      Result  := False;
      //
      idLoja := uFrmPlusPdvNfe.idEmpresa;
+     aCNPJEmitente := dmDados.GetCNPJEmpresa(idLoja);
      If uFuncoes.Empty(uFuncoes.RemoveChar(edtDTINIC.Text)) Then
         M_DTINIC := StrtoDate('01/01/2000')
      Else
@@ -559,9 +560,10 @@ begin
      M_TEXTO := M_TEXTO +' nf.id_usuario_cadastro, nf.data_cadastro, nf.id_usuario_alteracao, nf.id_usuario_enviou, num_lote_evento ';
      M_TEXTO := M_TEXTO +' from nota_fiscal nf ';
      M_TEXTO := M_TEXTO +' inner join empresas e on nf.id_empresa = e.id ';
-     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA) and (modelo = 8) ';  // Alteração de do modelo de 55 (Nfe) para 8 (Infog2 SG) 
+     M_TEXTO := M_TEXTO +' Where (nf.id_empresa = '+QuotedStr(InttoStr(idLoja))+') ';
+     M_TEXTO := M_TEXTO +' and (nf.data_hora_emissao >= :pDTINIC) and (nf.data_hora_emissao <= :pDTFINA) and (modelo = 8) ';  // Alteração de do modelo de 55 (Nfe) para 8 (Infog2 SG)
+     M_TEXTO := M_TEXTO +' and (nf.emitente_cnpj = '+QuotedStr(aCNPJEmitente) +')';
      //
-
      If not uFuncoes.Empty(cmbTipo.Text) Then
       begin
            M_CDTIPO := InttoStr(DmNFe.GetCodigoFormaEmissao(cmbTipo.Text));

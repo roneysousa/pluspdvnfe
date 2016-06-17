@@ -1,6 +1,6 @@
 object FrmMainNFe: TFrmMainNFe
-  Left = 192
-  Top = 105
+  Left = 191
+  Top = 143
   Width = 894
   Height = 519
   Caption = 'PlusPDV - NFe'
@@ -6959,8 +6959,8 @@ object FrmMainNFe: TFrmMainNFe
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 446
-    Width = 886
+    Top = 441
+    Width = 878
     Height = 19
     Panels = <
       item
@@ -6979,7 +6979,7 @@ object FrmMainNFe: TFrmMainNFe
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 886
+    Width = 878
     Height = 77
     Align = alTop
     TabOrder = 1

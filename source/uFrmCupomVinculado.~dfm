@@ -1,6 +1,6 @@
 object FrmCupomVinculado: TFrmCupomVinculado
   Left = 326
-  Top = 240
+  Top = 241
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Cupom Fiscal Vinculados '#224' NF-e'

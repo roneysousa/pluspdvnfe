@@ -463,10 +463,12 @@ End;
 
 function mvcodigomaxNFeModelo(aTipoEmissao, aModelo :string):integer;
 var qraux : TSQLquery;
-    texto : string;
+    texto, aCnpjEmitente : string;
 begin
   Result := 0;
-  texto := 'Select max(id) from nota_fiscal where (indicador_do_emitente = :pTipo) and (modelo = :pmodelo) and (id_empresa = '+IntToStr(uFrmPlusPdvNfe.idEmpresa) +') ';
+  aCnpjEmitente := dmDados.GetCNPJEmpresa(uFrmPlusPdvNfe.idEmpresa);
+  texto := 'Select max(id) from nota_fiscal where (indicador_do_emitente = :pTipo) and (modelo = :pmodelo) ';
+  texto := texto + ' and (id_empresa = '+IntToStr(uFrmPlusPdvNfe.idEmpresa) +') and  (emitente_cnpj = '+QuotedStr(aCnpjEmitente)+') ';
   //
   QrAux := TSQLquery.Create(nil);
   with QrAux do
