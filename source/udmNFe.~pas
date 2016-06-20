@@ -923,6 +923,7 @@ type
     Function GetCodigoUF(aUF : String; aCdsLista : TClientDataSet): String;
     Procedure CarregarAliquotaPartilhaICMS(aCdsLista : TClientDataSet);
     Function GetAliquotaDestinatario(aDataAtual : TDatetime): Double;
+    Function GetAliquotaInterEstadualUF(aUF : String): Double;
   end;
 
 var
@@ -4035,6 +4036,7 @@ Var
     aMsgCupomFiscal, aMsgBuscaCupomFiscal, aMsgPartilhaICMS : String;
     FDIFAL, FPercPartilhaDestinatario, FPercPartilhaRemetente, FAliquotaDestino, FAliquotaOrigem : Double;
     FValor_PartilhaOrigem, FValor_PartilhaDestino : Double;
+    FTotal_vICMSUFDest, FTotal_vICMSUFRemet  : Double;
 begin
       Result := False;
       bNatVenda := false;
@@ -4045,6 +4047,8 @@ begin
       aChaveIBPT := '';
       FPercPartilhaDestinatario := 0;
       FPercPartilhaRemetente    := 0;
+      FTotal_vICMSUFDest  := 0;
+      FTotal_vICMSUFRemet := 0;
       //
       bSpedPisCofins := False;
       // Nota Fiscal
@@ -4964,7 +4968,7 @@ begin
                                                                      FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
                                                                      FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;
                                                                      //
-                                                                     FAliquotaDestino := 17;
+                                                                     FAliquotaDestino := 17;  // To-do Criar tabela de  Alíquota destino
                                                                      // calcular o DIFAL
                                                                      // DIFAL = Base do ICMS * ((%Alíquota do ICMS Intra - %Alíquota do ICMS Inter) / 100)
                                                                      FDIFAL := FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100);
@@ -4993,6 +4997,9 @@ begin
                                                                           vICMSUFDest := FValor_PartilhaDestino;
                                                                           // vICMSUFRemet	Valor do ICMS Interestadual para a UF do remetente
                                                                           vICMSUFRemet := FValor_PartilhaOrigem;
+                                                                          //
+                                                                          FTotal_vICMSUFDest  := FTotal_vICMSUFDest + FValor_PartilhaDestino;
+                                                                          FTotal_vICMSUFRemet := FTotal_vICMSUFRemet + FValor_PartilhaOrigem;
                                                                      End;
                                                                 End;
                                                           End;
@@ -5058,14 +5065,21 @@ begin
                 Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
                 //
                 // Verificar : Operações interestaduais para consumidor final contribuinte
-                if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
-                  and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
-                  and (cdsNotaFiscaldestino_operacao.asinteger = 2)
-                  and (FAliquotaOrigem > 0) then
-                   begin
-                         Total.ICMSTot.vICMSUFDest  := 0;
-                         Total.ICMSTot.vICMSUFRemet := 0;
-                   End;
+                if (udmDados.bICMS_PARTILHA) then
+                begin
+                     if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
+                        and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
+                        and (cdsNotaFiscaldestino_operacao.asinteger = 2)
+                        and (FAliquotaOrigem > 0) then
+                         begin
+                            Total.ICMSTot.vICMSUFDest  := FTotal_vICMSUFDest;
+                            if (FTotal_vICMSUFDest > 0) Then
+                                 aMsgPartilhaICMS := aMsgPartilhaICMS + ' Valor total do ICMS de partilha para a UF do destinatario: '+ FormatFloat('###,##0.#0', FTotal_vICMSUFDest);
+                            Total.ICMSTot.vICMSUFRemet := FTotal_vICMSUFRemet;
+                            if (FTotal_vICMSUFRemet > 0) then
+                                 aMsgPartilhaICMS := aMsgPartilhaICMS + '  Valor total do ICMS de partilha para a UF do remetente: ' + FormatFloat('###,##0.#0', FTotal_vICMSUFRemet)+'  ';
+                         End;
+                 End;
                 //
                 Total.ICMSTot.vNF   := cdsNotaFiscalvalor_total_nota.AsFloat;
                 Total.ICMSTot.vProd := cdsNotaFiscalvalor_itens.AsFloat;
@@ -5259,9 +5273,19 @@ begin
                         if (Emit.CRT = crtRegimeNormal) Then
                         begin
                               If not uFuncoes.Empty(cdsNotaFiscalinformacoes_adicionais_contribu.AsString) Then
-                                  InfAdic.infCpl := aMsgImpostos+';'+aMsgCupomFiscal+cdsNotaFiscalinformacoes_adicionais_contribu.AsString
+                              begin
+                                   if uFuncoes.Empty(aMsgPartilhaICMS) then
+                                       InfAdic.infCpl := aMsgImpostos+';'+aMsgCupomFiscal+cdsNotaFiscalinformacoes_adicionais_contribu.AsString
+                                   Else
+                                       InfAdic.infCpl := aMsgImpostos+aMsgPartilhaICMS+';'+aMsgCupomFiscal+cdsNotaFiscalinformacoes_adicionais_contribu.AsString;
+                              End
                               Else
-                                  InfAdic.infCpl := aMsgImpostos+aMsgCupomFiscal;
+                               begin
+                                    if uFuncoes.Empty(aMsgPartilhaICMS) then
+                                         InfAdic.infCpl := aMsgImpostos+aMsgCupomFiscal
+                                     Else
+                                         InfAdic.infCpl := aMsgImpostos+aMsgPartilhaICMS+';'+aMsgCupomFiscal;
+                               End;
                         End;
                         //
                         if not uFuncoes.Empty(aMsgNotasRefereciadas) Then
@@ -6234,6 +6258,87 @@ begin
          Result :=  cdsListaAliquotaPart.FieldByName('CDS_ALIQUOTA_DESTINO').asFloat
      Else
          Result := 100;
+end;
+
+function TdmNFe.GetAliquotaInterEstadualUF(aUF: String): Double;
+begin
+    { AC = 12, AL = 27, AP = 16, AM = 13, BA = 29, CE = 23, DF = 53, ES = 32,
+      GO = 52, MA = 21, MT = 51, MS = 50, MG = 31, PA = 15,  PB = 25, PR = 41,
+      PE = 26, PI = 22, RJ = 33, RN = 24, RS = 43, RO = 11,  RR = 14, SC = 42,
+      SP = 35, SE = 28, TO = 17 }
+    // ICMS no Acre – 17%;
+    if (aUF = 'AC') Then
+       Result := 17;
+    // ICMS em Alagoas – 17%;
+    If (aUF = 'AL') then
+      Result := 17;
+    // ICMS no Amazonas – 17%;
+    If (aUF = 'AM') Then
+      Result := 17;
+    // ICMS no Amapá – 17%;
+    If (aUF = 'AP') Then
+      Result := 17;
+    // ICMS na Bahia – 17%;
+    If (aUF = 'BA') Then
+      Result := 17;
+    // ICMS no Ceará – 17%;
+    if (aUF = 'CE') then
+      Result := 17;
+    // ICMS no Distrito Federal – 17%;
+    If (aUF = 'DF') then
+      Result := 17;
+    // ICMS no Espírito Santo – 17%;
+    If (aUF = 'ES') Then
+      Result := 17;
+    // ICMS em Goiás -17%;
+    If (aUF = 'GO') then
+      Result := 17;
+    // ICMS no Maranhão – 17%;
+    if (aUF = 'MA') Then
+      Result := 17;
+    // ICMS no Mato Grosso – 17%;
+    if (aUF = 'MT') Then
+      Result := 17;
+    // ICMS no Mato Grosso do Sul – 17%;
+    If (aUF = 'MS') Then
+      Result:= 17;
+    // ICMS em Minas Gerais – 18%;
+    if (aUF = 'MG') Then
+      Result := 18;
+    // ICMS no Pará – 17%;
+    If (aUF = 'PA') Then
+      Result := 17;
+    // ICMS na Paraíba – 17%;
+    if (aUF = 'PB') then
+      Result := 17;
+    // ICMS no Paraná – 18%;
+    if (aUF = 'PR') Then
+      Result := 18;
+    // ICMS em Pernambuco – 17%;
+    if (aUF = 'PE') then
+      Result := 17;
+    // ICMS no Piauí – 17%;
+    if (aUF = 'PI') Then
+      Result := 17;
+    // ICMS no Rio Grande do Norte – 17%;
+    if (aUF = 'RN') Then
+      Result := 17;
+    // ICMS no Rio Grande do Sul – 17%;
+    if (aUF = 'RS') Then
+      result := 17;
+    // ICMS no Rio de Janeiro – 19%;
+    if (aUF = 'RJ') then
+      result := 19;
+    // ICMS em Rondônia – 17%;
+    if (aUF = 'RO') then
+      Result :=  17;
+    // ICMS em Roraima – 17%;
+    If (aUF = 'RR') Then
+      result := 17;
+    // ICMS em Santa Catarina – 17%;
+    // ICMS em São Paulo – 18%;
+    // ICMS em Sergipe – 17%;
+    // ICMS no Tocantins – 17%;
 end;
 
 end.
