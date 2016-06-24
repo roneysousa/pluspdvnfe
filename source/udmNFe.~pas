@@ -4968,7 +4968,7 @@ begin
                                                                      FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
                                                                      FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;
                                                                      //
-                                                                     FAliquotaDestino := 17;  // To-do Criar tabela de  Alíquota destino
+                                                                     FAliquotaDestino := GetAliquotaInterEstadualUF(GetUF(cdsNotaFiscaldestinatario_uf.AsString, cdsListaUFDestinatario));  // To-do Criar tabela de  Alíquota destino
                                                                      // calcular o DIFAL
                                                                      // DIFAL = Base do ICMS * ((%Alíquota do ICMS Intra - %Alíquota do ICMS Inter) / 100)
                                                                      FDIFAL := FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100);
@@ -6272,30 +6272,30 @@ begin
     // ICMS em Alagoas – 17%;
     If (aUF = 'AL') then
       Result := 17;
-    // ICMS no Amazonas – 17%;
+    // ICMS no Amazonas – 18%;
     If (aUF = 'AM') Then
-      Result := 17;
-    // ICMS no Amapá – 17%;
+      Result := 18;
+    // ICMS no Amapá – 18%;
     If (aUF = 'AP') Then
-      Result := 17;
-    // ICMS na Bahia – 17%;
+      Result := 18;
+    // ICMS na Bahia – 18%;
     If (aUF = 'BA') Then
-      Result := 17;
+      Result := 18;
     // ICMS no Ceará – 17%;
     if (aUF = 'CE') then
       Result := 17;
-    // ICMS no Distrito Federal – 17%;
+    // ICMS no Distrito Federal – 18%;
     If (aUF = 'DF') then
-      Result := 17;
+      Result := 18;
     // ICMS no Espírito Santo – 17%;
     If (aUF = 'ES') Then
       Result := 17;
     // ICMS em Goiás -17%;
     If (aUF = 'GO') then
       Result := 17;
-    // ICMS no Maranhão – 17%;
+    // ICMS no Maranhão – 18%;
     if (aUF = 'MA') Then
-      Result := 17;
+      Result := 18;
     // ICMS no Mato Grosso – 17%;
     if (aUF = 'MT') Then
       Result := 17;
@@ -6336,9 +6336,17 @@ begin
     If (aUF = 'RR') Then
       result := 17;
     // ICMS em Santa Catarina – 17%;
+    if (aUF = 'SC') Then
+      result := 17;
     // ICMS em São Paulo – 18%;
+    If (aUF = 'SP') Then
+      Result := 18;
     // ICMS em Sergipe – 17%;
+    if (aUF = 'SE') then
+      Result := 17;
     // ICMS no Tocantins – 17%;
+    if (aUF = 'TO') then
+      Result := 17;
 end;
 
 end.

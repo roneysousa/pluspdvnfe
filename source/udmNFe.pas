@@ -6272,30 +6272,30 @@ begin
     // ICMS em Alagoas – 17%;
     If (aUF = 'AL') then
       Result := 17;
-    // ICMS no Amazonas – 17%;
+    // ICMS no Amazonas – 18%;
     If (aUF = 'AM') Then
-      Result := 17;
-    // ICMS no Amapá – 17%;
+      Result := 18;
+    // ICMS no Amapá – 18%;
     If (aUF = 'AP') Then
-      Result := 17;
-    // ICMS na Bahia – 17%;
+      Result := 18;
+    // ICMS na Bahia – 18%;
     If (aUF = 'BA') Then
-      Result := 17;
+      Result := 18;
     // ICMS no Ceará – 17%;
     if (aUF = 'CE') then
       Result := 17;
-    // ICMS no Distrito Federal – 17%;
+    // ICMS no Distrito Federal – 18%;
     If (aUF = 'DF') then
-      Result := 17;
+      Result := 18;
     // ICMS no Espírito Santo – 17%;
     If (aUF = 'ES') Then
       Result := 17;
     // ICMS em Goiás -17%;
     If (aUF = 'GO') then
       Result := 17;
-    // ICMS no Maranhão – 17%;
+    // ICMS no Maranhão – 18%;
     if (aUF = 'MA') Then
-      Result := 17;
+      Result := 18;
     // ICMS no Mato Grosso – 17%;
     if (aUF = 'MT') Then
       Result := 17;
@@ -6308,24 +6308,24 @@ begin
     // ICMS no Pará – 17%;
     If (aUF = 'PA') Then
       Result := 17;
-    // ICMS na Paraíba – 17%;
+    // ICMS na Paraíba – 18%;
     if (aUF = 'PB') then
-      Result := 17;
+      Result := 18;
     // ICMS no Paraná – 18%;
     if (aUF = 'PR') Then
       Result := 18;
-    // ICMS em Pernambuco – 17%;
+    // ICMS em Pernambuco – 18%;
     if (aUF = 'PE') then
-      Result := 17;
+      Result := 18;
     // ICMS no Piauí – 17%;
     if (aUF = 'PI') Then
       Result := 17;
-    // ICMS no Rio Grande do Norte – 17%;
+    // ICMS no Rio Grande do Norte – 18%;
     if (aUF = 'RN') Then
-      Result := 17;
-    // ICMS no Rio Grande do Sul – 17%;
+      Result := 18;
+    // ICMS no Rio Grande do Sul – 18%;
     if (aUF = 'RS') Then
-      result := 17;
+      result := 18;
     // ICMS no Rio de Janeiro – 19%;
     if (aUF = 'RJ') then
       result := 19;
@@ -6341,12 +6341,12 @@ begin
     // ICMS em São Paulo – 18%;
     If (aUF = 'SP') Then
       Result := 18;
-    // ICMS em Sergipe – 17%;
+    // ICMS em Sergipe – 18%;
     if (aUF = 'SE') then
-      Result := 17;
-    // ICMS no Tocantins – 17%;
+      Result := 18;
+    // ICMS no Tocantins – 18%;
     if (aUF = 'TO') then
-      Result := 17;
+      Result := 18;
 end;
 
 end.

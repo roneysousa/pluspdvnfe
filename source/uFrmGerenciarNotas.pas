@@ -1509,7 +1509,8 @@ begin
                                             //
                                             DMDados.FilterCDS(dmDados.CdsEmpresa,  fsInteger, InttoStr(idEmitente));
                                             dmDados.CdsEmpresa.Edit;
-                                            DMDados.cdsEmpresasequencia_nfe.AsInteger := DMDados.GetMaxIdNFeEmpresa(idEmitente);
+                                            DMDados.cdsEmpresasequencia_nfe.AsInteger := DMDados.cdsEmpresasequencia_nfe.AsInteger - 1;
+                                            // DMDados.GetMaxIdNFeEmpresa(idEmitente);
                                             DMDados.CdsEmpresa.ApplyUpdates(0);
                                             //
                                             DMDados.Comit(DMDados.Transc);
@@ -1529,9 +1530,9 @@ begin
               End
               Else
               begin
-                   Application.MessageBox(PChar('Nota não pode ser excluída.'),
-                                        'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
-             
+                   Application.MessageBox(PChar('Nota não pode ser excluída.'+#13
+                                          +'Sequência atual de NF-e: '+ InttoStr(idUltimaNota) +' diferente do número dessa NF-e: '+InttoStr(idNotaFiscal)), 'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
+
               End;
       End;
 end;

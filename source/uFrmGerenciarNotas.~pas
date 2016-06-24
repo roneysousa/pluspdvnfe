@@ -1509,7 +1509,8 @@ begin
                                             //
                                             DMDados.FilterCDS(dmDados.CdsEmpresa,  fsInteger, InttoStr(idEmitente));
                                             dmDados.CdsEmpresa.Edit;
-                                            DMDados.cdsEmpresasequencia_nfe.AsInteger := DMDados.GetMaxIdNFeEmpresa(idEmitente);
+                                            DMDados.cdsEmpresasequencia_nfe.AsInteger := DMDados.cdsEmpresasequencia_nfe.AsInteger - 1;
+                                            // DMDados.GetMaxIdNFeEmpresa(idEmitente);
                                             DMDados.CdsEmpresa.ApplyUpdates(0);
                                             //
                                             DMDados.Comit(DMDados.Transc);

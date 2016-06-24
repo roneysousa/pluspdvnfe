@@ -548,8 +548,8 @@ begin
      End
      Else
      begin}
-         grdConsultar.Columns[11].Visible := false;
-         grdConsultar.Columns[12].Visible := false;
+         grdConsultar.Columns[13].Visible := false;
+         grdConsultar.Columns[14].Visible := false;
      //End;
      //
      If (iNumNota = 0) Then
