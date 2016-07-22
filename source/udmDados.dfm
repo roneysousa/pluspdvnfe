@@ -24,9 +24,8 @@ object dmDados: TdmDados
       'EnableBCD=True')
     VendorLib = 'dbexppgsql.dll'
     BeforeConnect = sqlConexaoBeforeConnect
-    Connected = True
     Left = 24
-    Top = 24
+    Top = 16
   end
   object dstPadrao: TSQLDataSet
     MaxBlobSize = -1

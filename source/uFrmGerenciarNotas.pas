@@ -1376,14 +1376,15 @@ begin
                                    dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taProducao;
                                    
                                 If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 2) Then
-                                 begin
                                     dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taHomologacao;
-
-                                 End;
+                                //
+                                Application.ProcessMessages;
                                 //
                                 dmNFe.ACBrNFe1.WebServices.Inutiliza(aCNPJ, Justificativa, StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial), StrToInt(NumeroFinal));
                                 MemoResp.Lines.Text :=  UTF8Encode(dmNFe.ACBrNFe1.WebServices.Inutilizacao.RetWS);
-                                dmNFe.LoadXML(MemoResp, WBResposta);     
+                                dmNFe.LoadXML(MemoResp, WBResposta);
+                                //
+                                Sleep(500);
                                 // se Inutilização de número homologado
                                 If (dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat = 102) Then
                                 begin
@@ -1397,10 +1398,15 @@ begin
                                            StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial),StrToInt(NumeroFinal),
                                            uFrmPlusPdvNfe.idUsuario, aDataMov);
                                      dmNFe.SetStatusdaNotaInutilizada(iCodStatusInut, StrToInt(NumeroInicial),StrToInt(NumeroFinal), aProtocolo, iLoja, Serie);
+
                                      //
                                      If (dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat = 102) Then
                                       begin
-                                          Application.MessageBox(PChar('Inutilização de númeração homologado.'),
+                                          Application.MessageBox(PChar('Inutilização de númeração homologado.'+#13+
+                                                                       'Retorno..: '+ InttoStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat)+#13+
+                                                                       'Motivo...: '+ dmNFe.ACBrNFe1.WebServices.Inutilizacao.xMotivo+#13+
+                                                                       'Protocolo: '+ dmNFe.ACBrNFe1.WebServices.Inutilizacao.Protocolo+#13+
+                                                                       'Data.....: '+ DateToStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.dhRecbto)),
                                                'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
                                           // Abrir Arquivo
                                           {ExtractFilePath( Application.ExeName )+'InutilizacaoNfe';
@@ -1420,7 +1426,13 @@ begin
                             Except
                                   On e: SysUtils.exception do
                                   begin
-                                       ShowMessage('Erro ao tentar gravar dados! Erro:'+#13  + E.Message);
+                                       Application.MessageBox(PChar('Erro ao tentar gravar dados! Erro:'+#13
+                                                   + 'Retorno..: '+ InttoStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat)+#13
+                                                   + 'Motivo...: '+ dmNFe.ACBrNFe1.WebServices.Inutilizacao.xMotivo+#13
+                                                   + E.Message), 'ATENÇÃO', MB_OK+MB_ICONSTOP+MB_APPLMODAL);
+                                       {ShowMessage('Erro ao tentar gravar dados! Erro:'+#13+
+                                                   + 'Retorno..: '+ InttoStr(dmNFe.ACBrNFe1.WebServices.Inutilizacao.cStat)+#13+
+                                                   + E.Message);}
                                   End;
                             End;
                         End;

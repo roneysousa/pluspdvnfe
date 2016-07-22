@@ -49,6 +49,8 @@ function Criptografia(mStr, mChave: string): string;
 function DeleteChar(const Ch: Char; const S: string): string;
 Function ConverterValorPercentual(fValorTotal, fValorDesconto : Double): Currency;
 Function ConverterModeloDocumento(iModelo : Integer): Integer;
+Function ExtractBetweenTags(Const Value,TagI,TagF:string):string;
+Function ExtractWithTags(Const Value,TagI,TagF:string):string;
 
 const
     MSG_OK   = 'Registro gravado com sucesso.';
@@ -776,5 +778,33 @@ begin
     Else
         Result := iModelo;
 End;
+
+Function ExtractBetweenTags(Const Value,TagI,TagF:string):string;
+var
+i,f : integer;
+begin
+ i:=Pos(TagI,Value);
+ f:=Pos(TagF,Value);
+ if (i>0) and (f>i) then
+ Result:=Copy(Value,i+length(TagI),f-i-length(TagF)+1);
+end;
+
+
+Function ExtractWithTags(Const Value,TagI,TagF:string):string;
+var
+i,f : integer;
+begin
+ i:=Pos(TagI,Value);
+ f:=Pos(TagF,Value);
+ if (i>0) and (f>i) then
+ Result:=Copy(Value,i,f-i+length(TagF));
+end;
+
+{
+StrValue:='blah blah blah<tag> text I want to keep</tag>blah blah blah';
+NewValue:=ExtractBetweenTags(StrValue,'<tag>','</tag>');//returns 'text I want to keep'
+NewValue:=ExtractWithTags(StrValue,'<tag>','</tag>');//returns '<tag>text I want to keep</tag>'
+}
+
 
 end.

@@ -1396,7 +1396,7 @@ begin
                         begin
                             if ( dmNFe.cdsListaNT_Ref.IsEmpty) Then
                              begin
-                                  Application.MessageBox(PChar('Você precisa cadastrar pelo menos uma (NF-e/Nota)'+#13
+                                  Application.MessageBox(PChar('Você precisa cadastrar pelo menos uma (NF-e/Nota/Cupom Fiscal)'+#13
                                                   +' de referência para devolução.'),'ATENÇÃO',
                                   MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                                   PageControl1.ActivePageIndex := 7;
@@ -2824,10 +2824,14 @@ begin
             if not (dmNFe.cdsListaNT_Ref.IsEmpty) Then
             begin
                  If not (dmNFe.ExcluiRegistroNotaReferencia(dmNFe.cdsNotaFiscalid.AsInteger)) Then
-                  begin
-                       raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
-                  End;
+                    raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
             End;
+            //
+            If (dsCadastro.DataSet.fieldByName('finalidade').AsInteger = 4) Then
+             begin
+                 If not (dmNFe.ExcluiRegistroNotaReferencia(dmNFe.cdsNotaFiscalid.AsInteger)) Then
+                    raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
+             End;
             //
             pnlTotalItens.Caption := FormatFloat('#,###,##0.#0', dmNFe.cdsNotaFiscalvalor_total_nota.AsFloat);
             //

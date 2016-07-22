@@ -1396,7 +1396,7 @@ begin
                         begin
                             if ( dmNFe.cdsListaNT_Ref.IsEmpty) Then
                              begin
-                                  Application.MessageBox(PChar('Você precisa cadastrar pelo menos uma (NF-e/Nota)'+#13
+                                  Application.MessageBox(PChar('Você precisa cadastrar pelo menos uma (NF-e/Nota/Cupom Fiscal)'+#13
                                                   +' de referência para devolução.'),'ATENÇÃO',
                                   MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                                   PageControl1.ActivePageIndex := 7;
@@ -2612,7 +2612,7 @@ end;
 
 procedure TFrmNotaFiscalEletronicaNovo.BtGravarClick(Sender: TObject);
 Var
-    M_NRNOTA, iUsuario, M_CDCIDDES, M_CDCIDRET, M_CDITEM, idNFeEmpresa, idMaxNFeEmpresa : Integer;
+    M_NRNOTA, iUsuario, M_CDCIDDES, M_CDCIDRET, M_CDITEM, idNFeEmpresa : Integer;   // idMaxNFeEmpresa
     M_VLNOTA : Double;
     aOperacao : String;
     M_CODNCM : string[8];
@@ -2699,7 +2699,7 @@ begin
           cmbTipoContribuinte.SetFocus;
           Exit;
       End;
-      //                                
+      //
       if (dsCadastro.DataSet.FieldByName('ind_inscricao_estadual_dest').AsInteger = 1)
         and uFuncoes.Empty(dsCadastro.DataSet.FieldByName('destinatario_ie').AsString) Then
          begin
@@ -2735,7 +2735,7 @@ begin
                    End;
               end
               Else
-                  SHOWMESSAGE('Dados inválidos, tente novamente.');   
+                  SHOWMESSAGE('Dados inválidos, tente novamente.');
             Exit;
        End;
        //
@@ -2756,7 +2756,7 @@ begin
      if not uFuncoes.Empty(mmoObservacao.Lines.Text) Then
           mmoObservacao.Lines.Text := stringReplace(uFuncoes.TrocaCaracterEspecial(mmoObservacao.Lines.Text,false), #13#10, ';', [rfReplaceAll]);
      //
-     LimparCaracter();     
+     LimparCaracter();
      //
      dmDados.Start;
      Try
@@ -2765,10 +2765,10 @@ begin
                  aOperacao := 'I';
                  M_NRNOTA :=  dmDados.GetIdAutomatico('nota_fiscal_id_seq');
                  //   Última NFe na tabela NotasFiscais
-                 idMaxNFeEmpresa := dmDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
+                 //idMaxNFeEmpresa := dmDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
                  //
                  dmDados.FilterCDS(dmDados.CdsEmpresa, fsInteger, dmNFe.cdsNotaFiscalid_empresa.AsString);
-                 if not (dmDados.CdsEmpresa.IsEmpty) Then
+                 {if not (dmDados.CdsEmpresa.IsEmpty) Then
                    begin
                         if (dmDados.cdsEmpresasequencia_nfe.AsInteger <> idMaxNFeEmpresa) Then
                          begin
@@ -2777,11 +2777,11 @@ begin
                               Else
                                   idNFeEmpresa := dmDados.cdsEmpresasequencia_nfe.AsInteger + 1;
                          End
-                        Else
-                            idNFeEmpresa := dmDados.cdsEmpresasequencia_nfe.AsInteger+1;
-                   End
+                        Else }
+                        idNFeEmpresa := dmDados.cdsEmpresasequencia_nfe.AsInteger+1;
+                   {End
                  Else
-                     idNFeEmpresa := idMaxNFeEmpresa + 1;
+                     idNFeEmpresa := idMaxNFeEmpresa + 1;}
                  //
                  dmNFe.cdsNotaFiscalid.AsInteger                := M_NRNOTA;
                  dmNFe.cdsNotaFiscalnumero_nota_fiscal.AsString := uFuncoes.StrZero(InttoStr(idNFeEmpresa),9);
@@ -5100,11 +5100,11 @@ begin
                        //
                        if (dsCadastro.DataSet.State in [dsInsert]) Then
                         begin
-                             idNFeEmpresa := DMDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
+                             {idNFeEmpresa := DMDados.GetMaxIdNFeEmpresa(dmNFe.cdsNotaFiscalid_empresa.AsInteger);
                              if (idNFeEmpresa <> 0) Then
                                   idNFeEmpresa := idNFeEmpresa + 1
-                             Else
-                                idNFeEmpresa := dmDados.GetProximoNumeroNotaFiscal(dmNFe.cdsNotaFiscalid_empresa.AsInteger)+ 1;
+                             Else}
+                             idNFeEmpresa := dmDados.GetProximoNumeroNotaFiscal(dmNFe.cdsNotaFiscalid_empresa.AsInteger)+ 1;
                              //
                              dsCadastro.dataset.FieldByName('numero_nota_fiscal').AsString  := ufuncoes.Strzero(InttoStr(idNFeEmpresa),9);
                         End;

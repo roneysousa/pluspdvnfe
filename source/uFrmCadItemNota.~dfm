@@ -422,7 +422,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Top = 1
       Width = 732
       Height = 303
-      ActivePage = tsbCofins
+      ActivePage = tsbPIS
       Align = alClient
       TabOrder = 0
       object tsbICMS: TTabSheet
@@ -967,6 +967,7 @@ object FrmCadItemNota: TFrmCadItemNota
           DataField = 'CDS_BC_PIS'
           DataSource = dsCadastroItem
           TabOrder = 1
+          OnExit = dbeBasePisExit
         end
         object DBEdit10: TDBEdit
           Left = 16
@@ -976,6 +977,7 @@ object FrmCadItemNota: TFrmCadItemNota
           DataField = 'CDS_ALIQ_PIS'
           DataSource = dsCadastroItem
           TabOrder = 2
+          OnExit = DBEdit10Exit
         end
         object DBEdit11: TDBEdit
           Left = 16

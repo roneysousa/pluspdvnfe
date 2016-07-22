@@ -675,6 +675,7 @@ var
   aHambienteNFe : String;
   iCasasDecimais : Integer;
   aEmail_Requer_Autenticacao, aEmail_Host_Smtp, aEmail_Endereco, aEmail_Porta, aEmail_Password : String;
+  bICMS_PARTILHA : boolean;
 
 
 implementation
@@ -686,7 +687,7 @@ Uses uFuncoes, uFrmPlusPdvNfe, udmNFe;
 procedure TdmDados.sqlConexaoBeforeConnect(Sender: TObject);
 Var
 	ConfigIni : TIniFile;
-	aFile, aHost, aBanco : String;
+	aFile, aHost, aBanco, aICMS_Part : String;
 Begin
      Try
           aFile := ExtractFilePath(ParamStr(0)) + 'dbexppgsql.dll';
@@ -713,6 +714,11 @@ Begin
           //
           if uFuncoes.Empty(aHambienteNFe) Then
               aHambienteNFe := '2';
+          //
+          bICMS_PARTILHA := False;
+          aICMS_Part := ConfigIni.ReadString('CONFIG','ICMS_PARTILHA','');
+          if not uFuncoes.Empty(aICMS_Part) and (aICMS_Part = 'S') then
+             bICMS_PARTILHA := True;
           //
           aEmail_Requer_Autenticacao := ConfigIni.ReadString('EMAIL','REQUER_AUTENTICACAO','');
           aEmail_Host_Smtp           := ConfigIni.ReadString('EMAIL','HOST_SMTP','');

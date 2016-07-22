@@ -152,6 +152,8 @@ type
     procedure spDescValorClick(Sender: TObject);
     procedure dbeOutrosValoresExit(Sender: TObject);
     procedure dbeValorFreteExit(Sender: TObject);
+    procedure dbeBasePisExit(Sender: TObject);
+    procedure DBEdit10Exit(Sender: TObject);
   private
     { Private declarations }
     procedure Calcular;
@@ -1332,6 +1334,18 @@ procedure TFrmCadItemNota.dbeValorFreteExit(Sender: TObject);
 begin
      if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit] ) Then
           Calcular;
+end;
+
+procedure TFrmCadItemNota.dbeBasePisExit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+       Calcular;
+end;
+
+procedure TFrmCadItemNota.DBEdit10Exit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+         Calcular;
 end;
 
 end.

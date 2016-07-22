@@ -3442,7 +3442,7 @@ begin
           //  10;"NOTA INUTILIZADA"
           Append;
           FieldByname('id').asinteger       := 10;
-          FieldByname('descricao').asString := 'NOTA INUTILIZADA';
+          FieldByname('descricao').asString := 'Nº.INUTILIZADA';
           Post;
           //  99 nota entrada
           Append;
@@ -4721,13 +4721,13 @@ begin
                                                               ICMS.vBC   := 0;
                                                          End;
                                                          //
-                                                         if (Emit.CRT = crtRegimeNormal) and (cdsNotaFiscalItensaliquota_icms.AsFloat = 0)
+                                                         {if (Emit.CRT = crtRegimeNormal) and (cdsNotaFiscalItensaliquota_icms.AsFloat = 0)
                                                            and (CST = cst00) Then
                                                            begin
                                                                 CST        := cst60;
                                                                 ICMS.vICMS := 0;
                                                                 ICMS.vBC   := 0;
-                                                           End;
+                                                           End;}
                                                            //
                                                            {if (Emit.CRT = crtRegimeNormal) and (CST = cst40) Then
                                                             begin
@@ -4963,6 +4963,7 @@ begin
                                                                if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
                                                                   and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
                                                                   and (cdsNotaFiscaldestino_operacao.asinteger = 2)
+                                                                  and (cdsNotaFiscalind_inscricao_estadual_dest.asinteger = 9)
                                                                   and (FAliquotaOrigem > 0) then
                                                                 begin
                                                                      FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
@@ -4971,15 +4972,15 @@ begin
                                                                      FAliquotaDestino := GetAliquotaInterEstadualUF(GetUF(cdsNotaFiscaldestinatario_uf.AsString, cdsListaUFDestinatario));  // To-do Criar tabela de  Alíquota destino
                                                                      // calcular o DIFAL
                                                                      // DIFAL = Base do ICMS * ((%Alíquota do ICMS Intra - %Alíquota do ICMS Inter) / 100)
-                                                                     FDIFAL := FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100);
+                                                                     FDIFAL := uFuncoes.Arredondar(FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100),2);
                                                                      // efetuar a partilha do DIFAL
                                                                      // Parte UF Origem = Valor do DIFAL * (%Origem / 100)
                                                                      if (FPercPartilhaRemetente > 0) Then
-                                                                        FValor_PartilhaOrigem := FDIFAL * (FPercPartilhaRemetente / 100)
+                                                                        FValor_PartilhaOrigem := uFuncoes.Arredondar(FDIFAL * (FPercPartilhaRemetente / 100),2)
                                                                      Else
                                                                         FValor_PartilhaOrigem := 0;
                                                                      // Parte UF Destino = Valor do DIFAL * (%Destino / 100)
-                                                                     FValor_PartilhaDestino :=  FDIFAL * (FPercPartilhaDestinatario / 100);
+                                                                     FValor_PartilhaDestino :=  uFuncoes.Arredondar(FDIFAL * (FPercPartilhaDestinatario / 100),2);
                                                                      // Tags
                                                                      With ICMSUFDest do
                                                                      begin
@@ -5002,8 +5003,61 @@ begin
                                                                           FTotal_vICMSUFRemet := FTotal_vICMSUFRemet + FValor_PartilhaOrigem;
                                                                      End;
                                                                 End;
-                                                          End;
-                                                     End;
+                                                          End;   // if (Emit.CRT = crtRegimeNormal) Then
+                                                          //
+                                                          if (Emit.CRT = crtSimplesNacional) Then
+                                                          begin
+                                                               FDIFAL := 0;
+                                                               FValor_PartilhaOrigem  := 0;
+                                                               FValor_PartilhaDestino := 0;
+                                                               FAliquotaOrigem  := 12;
+                                                               //GetAliquotaInterEstadualUF(GetUF(cdsNotaFiscalemitente_uf.AsString, cdsListaUFEmitente));  // To-do Criar tabela de  Alíquota origem
+                                                               // Verificar : Operações interestaduais para consumidor final contribuinte
+                                                               if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
+                                                                  and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
+                                                                  and (cdsNotaFiscaldestino_operacao.asinteger = 2)
+                                                                  and (cdsNotaFiscalind_inscricao_estadual_dest.asinteger = 9)
+                                                                  and (FAliquotaOrigem > 0) then
+                                                                begin
+                                                                     FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
+                                                                     FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;
+                                                                     //
+                                                                     FAliquotaDestino := GetAliquotaInterEstadualUF(GetUF(cdsNotaFiscaldestinatario_uf.AsString, cdsListaUFDestinatario));  // To-do Criar tabela de  Alíquota destino
+                                                                     // calcular o DIFAL
+                                                                     // DIFAL = Base do ICMS * ((%Alíquota do ICMS Intra - %Alíquota do ICMS Inter) / 100)
+                                                                     FDIFAL := uFuncoes.Arredondar(FSubTotal  * ((FAliquotaDestino - FAliquotaOrigem)/100),2);
+                                                                     // efetuar a partilha do DIFAL
+                                                                     // Parte UF Origem = Valor do DIFAL * (%Origem / 100)
+                                                                     {if (FPercPartilhaRemetente > 0) Then
+                                                                        FValor_PartilhaOrigem := FDIFAL * (FPercPartilhaRemetente / 100)
+                                                                     Else   }
+                                                                        FValor_PartilhaOrigem := 0;
+                                                                     // Parte UF Destino = Valor do DIFAL * (%Destino / 100)
+                                                                     FValor_PartilhaDestino :=  uFuncoes.Arredondar(FDIFAL * (FPercPartilhaDestinatario / 100),2);
+                                                                     // Tags
+                                                                     With ICMSUFDest do
+                                                                     begin
+                                                                          // vBCUFDest	Valor da BC do ICMS na UF de destino
+                                                                          vBCUFDest := FSubTotal;
+                                                                          // pFCPUFDest	0,00	Percentual do ICMS relativo ao Fundo de Combate a Pobreza (FCP) na UF de destino
+                                                                          // pICMSUFDest	Aliquota interna da UF de destino
+                                                                          pICMSUFDest := FAliquotaDestino;
+                                                                          // pICMSInter		Aliquota interestadual das UF envolvidas
+                                                                          pICMSInter  := FAliquotaOrigem;
+                                                                          // pICMSInterPart		Percentual provisorio de partilha do ICMS Interestadual
+                                                                          pICMSInterPart := FPercPartilhaDestinatario;
+                                                                          // vFCPUFDest		Valor do ICMS relativo ao Fundo de Combate a Pobreza (FCP) da UF de destino
+                                                                          // vICMSUFDest		Valor do ICMS Interestadual para a UF de destino
+                                                                          vICMSUFDest := FValor_PartilhaDestino;
+                                                                          // vICMSUFRemet	Valor do ICMS Interestadual para a UF do remetente
+                                                                          vICMSUFRemet := FValor_PartilhaOrigem;
+                                                                          //
+                                                                          FTotal_vICMSUFDest  := FTotal_vICMSUFDest + FValor_PartilhaDestino;
+                                                                          FTotal_vICMSUFRemet := FTotal_vICMSUFRemet + FValor_PartilhaOrigem;
+                                                                     End;    // With ICMSUFDest do
+                                                                End;    // if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
+                                                          End;          // if (Emit.CRT = crtSimplesNacional) Then PArtilha
+                                                     End;    // if (udmDados.bICMS_PARTILHA) then
                                                     //
                                                     if (bNatVenda) Then
                                                     begin
@@ -5069,8 +5123,7 @@ begin
                 begin
                      if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
                         and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
-                        and (cdsNotaFiscaldestino_operacao.asinteger = 2)
-                        and (FAliquotaOrigem > 0) then
+                        and (cdsNotaFiscaldestino_operacao.asinteger = 2) then
                          begin
                             Total.ICMSTot.vICMSUFDest  := FTotal_vICMSUFDest;
                             if (FTotal_vICMSUFDest > 0) Then
@@ -5260,14 +5313,30 @@ begin
                         if (Emit.CRT = crtSimplesNacional) Then
                         begin
                              If not uFuncoes.Empty(cdsNotaFiscalinformacoes_adicionais_contribu.AsString) Then
-                                 InfAdic.infCpl := aMsgImpostos+';'+ aMsgCupomFiscal +
+                              Begin
+                                 if uFuncoes.Empty(aMsgPartilhaICMS) then
+                                    InfAdic.infCpl := aMsgImpostos+';'+ aMsgCupomFiscal +
                                                    'DOCUMENTO EMITIDO POR ME OPTANTE PELO SIMPLES NACIONAL.;'+
                                                    'NAO GERA DIREITO A CREDITO FISCAL DE ICMS, ISS E IPI.  ;'+
                                                    cdsNotaFiscalinformacoes_adicionais_contribu.AsString
-                             Else
-                                 InfAdic.infCpl := aMsgImpostos+';'+  aMsgCupomFiscal +
+                                 Else
+                                    InfAdic.infCpl := aMsgImpostos+' '+aMsgPartilhaICMS+';'+ aMsgCupomFiscal +
                                                    'DOCUMENTO EMITIDO POR ME OPTANTE PELO SIMPLES NACIONAL.;'+
-                                                   'NAO GERA DIREITO A CREDITO FISCAL DE ICMS, ISS E IPI.  ;';
+                                                   'NAO GERA DIREITO A CREDITO FISCAL DE ICMS, ISS E IPI.  ;'+
+                                                   cdsNotaFiscalinformacoes_adicionais_contribu.AsString;
+
+                              End
+                             Else
+                             begin
+                                 if uFuncoes.Empty(aMsgPartilhaICMS) then
+                                    InfAdic.infCpl := aMsgImpostos+';'+  aMsgCupomFiscal +
+                                                   'DOCUMENTO EMITIDO POR ME OPTANTE PELO SIMPLES NACIONAL.;'+
+                                                   'NAO GERA DIREITO A CREDITO FISCAL DE ICMS, ISS E IPI.  ;'
+                                 Else
+                                    InfAdic.infCpl := aMsgImpostos+' '+aMsgPartilhaICMS+';'+  aMsgCupomFiscal +
+                                                   'DOCUMENTO EMITIDO POR ME OPTANTE PELO SIMPLES NACIONAL.;'+
+                                                   'NAO GERA DIREITO A CREDITO FISCAL DE ICMS, ISS E IPI.  ;'
+                             End;
                         End;
                         //
                         if (Emit.CRT = crtRegimeNormal) Then
@@ -5714,6 +5783,11 @@ begin
           Append;
           FieldByName('id').asInteger := 15;
           FieldByName('descricao').asString  := 'REMESSA SIMPLES';
+          Post;
+          //
+          Append;
+          FieldByName('id').asInteger := 16;
+          FieldByName('descricao').asString  := 'SAIDA DE MERCADORIAS';
           Post;
      End;  // With cdsListaNaturezaOpr do
 end;
