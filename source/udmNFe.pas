@@ -3892,7 +3892,6 @@ begin
       Finally
          Free;
       End;
-
 end;
 
 function TdmNFe.GetVerificarDescricaoSit(aDescricao: String): Integer;
@@ -6403,10 +6402,10 @@ begin
     // ICMS no Rio de Janeiro – 19%;
     if (aUF = 'RJ') then
       result := 19;
-    // ICMS em Rondônia – 17%;
+    // ICMS em Rondônia – 17,5%;
     if (aUF = 'RO') then
       Result :=  17;
-    // ICMS em Roraima – 17%;
+    // ICMS em Roraima – 17.5%;
     If (aUF = 'RR') Then
       result := 17;
     // ICMS em Santa Catarina – 17%;

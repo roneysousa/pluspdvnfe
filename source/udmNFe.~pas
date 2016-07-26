@@ -3442,7 +3442,7 @@ begin
           //  10;"NOTA INUTILIZADA"
           Append;
           FieldByname('id').asinteger       := 10;
-          FieldByname('descricao').asString := 'NOTA INUTILIZADA';
+          FieldByname('descricao').asString := 'Nº.INUTILIZADA';
           Post;
           //  99 nota entrada
           Append;
@@ -3892,7 +3892,6 @@ begin
       Finally
          Free;
       End;
-
 end;
 
 function TdmNFe.GetVerificarDescricaoSit(aDescricao: String): Integer;
