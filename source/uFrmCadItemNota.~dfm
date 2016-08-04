@@ -422,7 +422,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Top = 1
       Width = 732
       Height = 303
-      ActivePage = tsbPIS
+      ActivePage = tsbICMS
       Align = alClient
       TabOrder = 0
       object tsbICMS: TTabSheet
@@ -557,9 +557,9 @@ object FrmCadItemNota: TFrmCadItemNota
           object lblReducao: TLabel
             Left = 160
             Top = 24
-            Width = 111
+            Width = 116
             Height = 13
-            Caption = '% redu'#231#227'o da BC ICMS'
+            Caption = '% Redu'#231#227'o da BC ICMS'
             FocusControl = dbeReducaoICMS
             Transparent = True
           end

@@ -15,6 +15,7 @@ object FrmCadItemNota: TFrmCadItemNota
   OldCreateOrder = False
   Position = poScreenCenter
   ShowHint = True
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96

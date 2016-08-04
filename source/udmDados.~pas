@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, DBXpress, DB, SqlExpr, inifiles, Forms, FMTBcd,
-  DBClient, Provider, ZSequence, ZConnection, Windows;
+  DBClient, Provider, ZSequence, ZConnection, Windows, MidasLib;
 
 type
   TTypeLocalizar = (fsInteger, fsString);

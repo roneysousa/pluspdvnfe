@@ -154,6 +154,7 @@ type
     procedure dbeValorFreteExit(Sender: TObject);
     procedure dbeBasePisExit(Sender: TObject);
     procedure DBEdit10Exit(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     procedure Calcular;
@@ -1346,6 +1347,22 @@ procedure TFrmCadItemNota.DBEdit10Exit(Sender: TObject);
 begin
      if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
          Calcular;
+end;
+
+procedure TFrmCadItemNota.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+     begin
+          If Application.MessageBox('Salvar item?',
+            'ATENÇÃO', MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON1+MB_APPLMODAL) = idYes then
+             begin
+                  Canclose := False;
+                  btnOK.SetFocus;
+             End
+             Else
+                 dsCadastroItem.DataSet.Cancel;
+     End;
 end;
 
 end.

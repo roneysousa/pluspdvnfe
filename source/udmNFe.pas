@@ -4031,7 +4031,7 @@ Var
     FTotalTributoFederal, FTotalTributoEstadual, FTotalTributoMunicipal,
     FTotalPeloProdutos, FSubTotal, FPercentualImpostoItem, FValorPMC : Double;
     aDescricaoTributos, aChaveIBPT, aChaveIBPTAtual, aDescricaoNatureza : String;
-    bTemCupomFiscal : Boolean;
+    bTemCupomFiscal, bCstPartilha : Boolean;
     aMsgCupomFiscal, aMsgBuscaCupomFiscal, aMsgPartilhaICMS : String;
     FDIFAL, FPercPartilhaDestinatario, FPercPartilhaRemetente, FAliquotaDestino, FAliquotaOrigem : Double;
     FValor_PartilhaOrigem, FValor_PartilhaDestino : Double;
@@ -4959,11 +4959,18 @@ begin
                                                                FValor_PartilhaDestino := 0;
                                                                FAliquotaOrigem  := cdsNotaFiscalItensaliquota_icms.AsFloat;
                                                                // Verificar : Operações interestaduais para consumidor final contribuinte
+                                                               {Esta regra de validação não se aplica nas operações isentas (CST=40-Isenta ou CSOSN=103-Isento),
+                                                               imunes ou não tributadas (CST=41-Não tributada, ou CSOSN=300-Imune, ou CSOSN=400-Não tributada pelo
+                                                               Simples Nacional).}
+                                                               bCstPartilha := True;
+                                                               If ((ICMS.CST = cst40) or (ICMS.CST = cst41)) then
+                                                                    bCstPartilha := False;
+
                                                                if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
                                                                   and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
                                                                   and (cdsNotaFiscaldestino_operacao.asinteger = 2)
                                                                   and (cdsNotaFiscalind_inscricao_estadual_dest.asinteger = 9)
-                                                                  and (FAliquotaOrigem > 0) then
+                                                                  and (FAliquotaOrigem > 0) and (bCstPartilha) then
                                                                 begin
                                                                      FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
                                                                      FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;
@@ -5012,11 +5019,18 @@ begin
                                                                FAliquotaOrigem  := 12;
                                                                //GetAliquotaInterEstadualUF(GetUF(cdsNotaFiscalemitente_uf.AsString, cdsListaUFEmitente));  // To-do Criar tabela de  Alíquota origem
                                                                // Verificar : Operações interestaduais para consumidor final contribuinte
+                                                               {Esta regra de validação não se aplica nas operações isentas (CST=40-Isenta ou CSOSN=103-Isento),
+                                                               imunes ou não tributadas (CST=41-Não tributada, ou CSOSN=300-Imune, ou CSOSN=400-Não tributada pelo
+                                                               Simples Nacional).}
+                                                               bCstPartilha := True;
+                                                               If ((ICMS.CSOSN = csosn103) or (ICMS.CSOSN = csosn300) or (ICMS.CSOSN = csosn400)) then
+                                                                    bCstPartilha := False;
+
                                                                if (cdsNotaFiscalnatureza_operacao.asInteger = 1)
                                                                   and (cdsNotaFiscalindicador_consumidor_final.asinteger = 1)
                                                                   and (cdsNotaFiscaldestino_operacao.asinteger = 2)
                                                                   and (cdsNotaFiscalind_inscricao_estadual_dest.asinteger = 9)
-                                                                  and (FAliquotaOrigem > 0) then
+                                                                  and (FAliquotaOrigem > 0) and (bCstPartilha) then
                                                                 begin
                                                                      FPercPartilhaDestinatario := GetAliquotaDestinatario(Date());
                                                                      FPercPartilhaRemetente    := 100 - FPercPartilhaDestinatario;

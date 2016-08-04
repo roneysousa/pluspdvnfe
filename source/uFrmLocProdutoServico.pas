@@ -45,7 +45,7 @@ begin
         begin
             Close;
             Texto := Texto +'where (UPPER(descricao) like '+QuotedStr(Copy(edtConsultar.Text,1,59)+'%')+') ';
-            Texto := Texto +' order by descricao ';
+            Texto := Texto +' order by descricao, id ';
             CommandText := Texto;
             Open;
         end;
