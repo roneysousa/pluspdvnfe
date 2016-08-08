@@ -163,7 +163,6 @@ type
     cdsNotaFiscalItensvalor_frete: TFMTBCDField;
     cdsNotaFiscalItensvalor_seguro: TFMTBCDField;
     cdsNotaFiscalItensvalor_outrasdespesas: TFMTBCDField;
-    cdsNotaFiscalItensicms_simples_nacional: TIntegerField;
     cdsNotaFiscalItensaliquota_icms: TFMTBCDField;
     cdsNotaFiscalItensvalor_icms: TFMTBCDField;
     cdsNotaFiscalItensvalor_bc_icms: TFMTBCDField;
@@ -687,7 +686,6 @@ type
     dstNotaFiscalItensvalor_frete: TFMTBCDField;
     dstNotaFiscalItensvalor_seguro: TFMTBCDField;
     dstNotaFiscalItensvalor_outrasdespesas: TFMTBCDField;
-    dstNotaFiscalItensicms_simples_nacional: TIntegerField;
     dstNotaFiscalItensaliquota_icms: TFMTBCDField;
     dstNotaFiscalItensvalor_icms: TFMTBCDField;
     dstNotaFiscalItensvalor_bc_icms: TFMTBCDField;
@@ -782,6 +780,8 @@ type
     cdsListaAliquotaPart: TClientDataSet;
     cdsListaAliquotaPartCDS_ANO: TIntegerField;
     cdsListaAliquotaPartCDS_ALIQUOTA_DESTINO: TFloatField;
+    dstNotaFiscalItenscsosn: TIntegerField;
+    cdsNotaFiscalItenscsosn: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
@@ -1305,8 +1305,8 @@ begin
                        cdsItemsNotaFiscalCDS_ALIQ_COFINS.AsFloat := FieldByName('aliquota_cofins').AsFloat;
                        cdsItemsNotaFiscalCDS_VALOR_COFINS.AsFloat := FieldByName('valor_cofins').AsFloat;
                        //
-                       if not uFuncoes.Empty(FieldByName('icms_simples_nacional').AsString) Then
-                           cdsItemsNotaFiscalCDS_CSOSN.AsString := FieldByName('icms_simples_nacional').AsString;
+                       if not uFuncoes.Empty(FieldByName('csosn').AsString) Then
+                           cdsItemsNotaFiscalCDS_CSOSN.AsString := FieldByName('csosn').AsString;
                        //
                        if (FieldByName('valor_bc_icms_st').AsFloat > 0 ) Then
                        begin
@@ -3036,12 +3036,12 @@ begin
                        and (uFrmPlusPdvNfe.iCodRegimeTributario <> 3) Then
                         Begin
                            if not uFuncoes.Empty(FieldByName('CDS_CSOSN').AsString) Then
-                              cdsNotaFiscalItensicms_simples_nacional.AsString := FieldByName('CDS_CSOSN').AsString
+                              cdsNotaFiscalItenscsosn.AsString := FieldByName('CDS_CSOSN').AsString
                            Else
-                              cdsNotaFiscalItensicms_simples_nacional.AsInteger := 102;
+                              cdsNotaFiscalItenscsosn.AsInteger := 102;
                         End
                         Else
-                            cdsNotaFiscalItensicms_simples_nacional.Clear;
+                            cdsNotaFiscalItenscsosn.Clear;
                      // substituição tributária 
                      If (FieldByName('CDS_BCICMS_ST').AsFloat > 0) Then
                      begin
@@ -4569,8 +4569,8 @@ begin
                                                          //
                                                          if (Emit.CRT = crtSimplesNacional) Then
                                                          begin
-                                                              if not uFuncoes.Empty(cdsNotaFiscalItensicms_simples_nacional.AsString) Then
-                                                                  M_CSOSN := cdsNotaFiscalItensicms_simples_nacional.asInteger
+                                                              if not uFuncoes.Empty(cdsNotaFiscalItenscsosn.AsString) Then
+                                                                  M_CSOSN := cdsNotaFiscalItenscsosn.asInteger
                                                               Else
                                                                   M_CSOSN := 102;
                                                               //

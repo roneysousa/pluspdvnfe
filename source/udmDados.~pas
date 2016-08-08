@@ -154,7 +154,6 @@ type
     dstProdutocod_barras: TStringField;
     dstProdutoreferencia: TStringField;
     dstProdutoid_ncm: TStringField;
-    dstProdutoid_cor: TIntegerField;
     dstProdutoid_grade: TIntegerField;
     dstProdutogrupo: TIntegerField;
     dstProdutoorigem: TIntegerField;
@@ -182,10 +181,6 @@ type
     dstProdutoperc_comissao: TFMTBCDField;
     dstProdutolimite_desconto_bloqueado: TBooleanField;
     dstProdutoperc_limite_desconto: TFMTBCDField;
-    dstProdutoquantidade_minima_atacado: TFMTBCDField;
-    dstProdutovalor_revenda: TFMTBCDField;
-    dstProdutovalor_revenda_anterior: TFMTBCDField;
-    dstProdutoid_usuario_reajuste: TIntegerField;
     dstProdutoid_tributacao: TIntegerField;
     dstProdutoperc_icms_compra: TFMTBCDField;
     dstProdutoperc_reducao_icms: TFMTBCDField;
@@ -196,7 +191,6 @@ type
     dstProdutoid_cfop_venda_interna: TIntegerField;
     dstProdutoid_cfop_venda_externa: TIntegerField;
     dstProdutochecksum: TStringField;
-    dstProdutoobservacao: TMemoField;
     dstProdutoid_usuario_cadastro: TIntegerField;
     dstProdutoid_usuario_alteracao: TIntegerField;
     dstProdutodata_cadastro: TSQLTimeStampField;
@@ -307,7 +301,6 @@ type
     cdsProdutocod_barras: TStringField;
     cdsProdutoreferencia: TStringField;
     cdsProdutoid_ncm: TStringField;
-    cdsProdutoid_cor: TIntegerField;
     cdsProdutoid_grade: TIntegerField;
     cdsProdutogrupo: TIntegerField;
     cdsProdutoorigem: TIntegerField;
@@ -335,10 +328,6 @@ type
     cdsProdutoperc_comissao: TFMTBCDField;
     cdsProdutolimite_desconto_bloqueado: TBooleanField;
     cdsProdutoperc_limite_desconto: TFMTBCDField;
-    cdsProdutoquantidade_minima_atacado: TFMTBCDField;
-    cdsProdutovalor_revenda: TFMTBCDField;
-    cdsProdutovalor_revenda_anterior: TFMTBCDField;
-    cdsProdutoid_usuario_reajuste: TIntegerField;
     cdsProdutoid_tributacao: TIntegerField;
     cdsProdutoperc_icms_compra: TFMTBCDField;
     cdsProdutoperc_reducao_icms: TFMTBCDField;
@@ -348,7 +337,6 @@ type
     cdsProdutoperc_frete: TFMTBCDField;
     cdsProdutoid_cfop_venda_interna: TIntegerField;
     cdsProdutoid_cfop_venda_externa: TIntegerField;
-    cdsProdutoobservacao: TMemoField;
     cdsProdutoid_usuario_cadastro: TIntegerField;
     cdsProdutoid_usuario_alteracao: TIntegerField;
     cdsProdutodata_cadastro: TSQLTimeStampField;

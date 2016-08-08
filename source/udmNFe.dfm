@@ -899,8 +899,8 @@ object dmNFe: TdmNFe
       Precision = 15
       Size = 2
     end
-    object dstNotaFiscalItensicms_simples_nacional: TIntegerField
-      FieldName = 'icms_simples_nacional'
+    object dstNotaFiscalItenscsosn: TIntegerField
+      FieldName = 'csosn'
       ProviderFlags = [pfInUpdate]
     end
     object dstNotaFiscalItensaliquota_icms: TFMTBCDField
@@ -2200,9 +2200,8 @@ object dmNFe: TdmNFe
       Precision = 15
       Size = 2
     end
-    object cdsNotaFiscalItensicms_simples_nacional: TIntegerField
-      FieldName = 'icms_simples_nacional'
-      ProviderFlags = [pfInUpdate]
+    object cdsNotaFiscalItenscsosn: TIntegerField
+      FieldName = 'csosn'
     end
     object cdsNotaFiscalItensaliquota_icms: TFMTBCDField
       FieldName = 'aliquota_icms'

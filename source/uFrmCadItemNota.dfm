@@ -399,6 +399,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataSource = dsCadastroItem
       TabOrder = 10
       OnExit = dbeOutrosValoresExit
+      OnKeyPress = dbeOutrosValoresKeyPress
     end
     object dbeValorFrete: TDBEdit
       Left = 137
@@ -409,6 +410,7 @@ object FrmCadItemNota: TFrmCadItemNota
       DataSource = dsCadastroItem
       TabOrder = 11
       OnExit = dbeValorFreteExit
+      OnKeyPress = dbeValorFreteKeyPress
     end
   end
   object Panel2: TPanel
@@ -474,6 +476,7 @@ object FrmCadItemNota: TFrmCadItemNota
             DataSource = dsCadastroItem
             TabOrder = 0
             OnExit = cmbCstICMSExit
+            OnKeyPress = cmbCstICMSKeyPress
           end
           object cmbOrigem1: TDBLookupComboBox
             Left = 16
@@ -483,6 +486,7 @@ object FrmCadItemNota: TFrmCadItemNota
             DataField = 'CDS_DESC_ORIGEM_PRODUTO'
             DataSource = dsCadastroItem
             TabOrder = 1
+            OnKeyPress = cmbOrigem1KeyPress
           end
         end
         object gbxIcms: TGroupBox

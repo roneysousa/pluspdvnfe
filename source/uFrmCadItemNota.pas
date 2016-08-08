@@ -155,6 +155,10 @@ type
     procedure dbeBasePisExit(Sender: TObject);
     procedure DBEdit10Exit(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure dbeOutrosValoresKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeValorFreteKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbCstICMSKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbOrigem1KeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     procedure Calcular;
@@ -879,6 +883,7 @@ begin
       If (key = #13) Then
        begin
             key := #0;
+            dbeOutrosValores.SetFocus;
             //
            { if (PageControl1.ActivePageIndex = 0) Then
              begin
@@ -924,6 +929,7 @@ end;
 
 procedure TFrmCadItemNota.FormShow(Sender: TObject);
 begin
+     KeyPreview := True;
      dmDados.RefreshCDS(dmDados.cdsConfig);
      //
      dmNFe.CarregarlistaCST_ICMS();
@@ -1363,6 +1369,49 @@ begin
              Else
                  dsCadastroItem.DataSet.Cancel;
      End;
+end;
+
+procedure TFrmCadItemNota.dbeOutrosValoresKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (key = #13) Then
+       begin
+            key := #0;
+            dbeValorFrete.SetFocus;
+       End;
+end;
+
+procedure TFrmCadItemNota.dbeValorFreteKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+      If (key = #13) Then
+       begin
+            key := #0;
+            Perform(Wm_NextDlgCtl,0,0);
+       End;
+end;
+
+procedure TFrmCadItemNota.cmbCstICMSKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        If (key = #13) Then  // and not ufuncoes.Empty(cmbCstICMS.Text)
+         begin
+            key := #0;
+            Perform(Wm_NextDlgCtl,0,0);
+         End;
+end;
+
+procedure TFrmCadItemNota.cmbOrigem1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        If (key = #13) Then  // and not ufuncoes.Empty(cmbOrigem1.Text)
+         begin
+              key := #0;
+              Perform(Wm_NextDlgCtl,0,0);
+         End;
 end;
 
 end.

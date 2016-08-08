@@ -24,6 +24,7 @@ object dmDados: TdmDados
       'EnableBCD=True')
     VendorLib = 'dbexppgsql.dll'
     BeforeConnect = sqlConexaoBeforeConnect
+    Connected = True
     Left = 24
     Top = 16
   end
@@ -762,7 +763,19 @@ object dmDados: TdmDados
     end
   end
   object dstProduto: TSQLDataSet
-    CommandText = 'select * from produtos where (id = :pid)'
+    CommandText = 
+      'select id, descricao, tipo, cod_barras, referencia, id_ncm, id_g' +
+      'rade, grupo, origem, '#13#10'    id_produto_localizacao, id_secao, id_' +
+      'subsecao, id_unidade, id_unidade_armaz, quant_armaz,'#13#10'    fracio' +
+      'nado, pesavel, peso_liquido, peso_bruto, id_fornecedor, id_fabri' +
+      'cante, '#13#10'    valor_compra, valor_custo, valor_venda, valor_anter' +
+      'ior, valor_fracao, controle_lote,'#13#10'    medicamento, ativo, comis' +
+      'sionado, perc_comissao, limite_desconto_bloqueado, perc_limite_d' +
+      'esconto, '#13#10'    id_tributacao, perc_icms_compra, perc_reducao_icm' +
+      's, perc_outras_taxas, '#13#10'    cst_ipi, perc_ipi, perc_frete, id_cf' +
+      'op_venda_interna, id_cfop_venda_externa, id_usuario_cadastro,'#13#10' ' +
+      '   id_usuario_alteracao, data_cadastro, data_alteracao, checksum' +
+      #13#10'    from produtos where (id = :pid)'
     MaxBlobSize = -1
     Params = <
       item
@@ -800,10 +813,6 @@ object dmDados: TdmDados
       FieldName = 'id_ncm'
       ProviderFlags = [pfInUpdate]
       Size = 10
-    end
-    object dstProdutoid_cor: TIntegerField
-      FieldName = 'id_cor'
-      ProviderFlags = [pfInUpdate]
     end
     object dstProdutoid_grade: TIntegerField
       FieldName = 'id_grade'
@@ -935,28 +944,6 @@ object dmDados: TdmDados
       Precision = 6
       Size = 2
     end
-    object dstProdutoquantidade_minima_atacado: TFMTBCDField
-      FieldName = 'quantidade_minima_atacado'
-      ProviderFlags = [pfInUpdate]
-      Precision = 8
-      Size = 3
-    end
-    object dstProdutovalor_revenda: TFMTBCDField
-      FieldName = 'valor_revenda'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 8
-    end
-    object dstProdutovalor_revenda_anterior: TFMTBCDField
-      FieldName = 'valor_revenda_anterior'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 8
-    end
-    object dstProdutoid_usuario_reajuste: TIntegerField
-      FieldName = 'id_usuario_reajuste'
-      ProviderFlags = [pfInUpdate]
-    end
     object dstProdutoid_tributacao: TIntegerField
       FieldName = 'id_tributacao'
       ProviderFlags = [pfInUpdate]
@@ -1002,11 +989,6 @@ object dmDados: TdmDados
     object dstProdutoid_cfop_venda_externa: TIntegerField
       FieldName = 'id_cfop_venda_externa'
       ProviderFlags = [pfInUpdate]
-    end
-    object dstProdutoobservacao: TMemoField
-      FieldName = 'observacao'
-      ProviderFlags = [pfInUpdate]
-      BlobType = ftMemo
     end
     object dstProdutoid_usuario_cadastro: TIntegerField
       FieldName = 'id_usuario_cadastro'
@@ -1506,10 +1488,6 @@ object dmDados: TdmDados
       ProviderFlags = [pfInUpdate]
       Size = 10
     end
-    object cdsProdutoid_cor: TIntegerField
-      FieldName = 'id_cor'
-      ProviderFlags = [pfInUpdate]
-    end
     object cdsProdutoid_grade: TIntegerField
       FieldName = 'id_grade'
       ProviderFlags = [pfInUpdate]
@@ -1640,28 +1618,6 @@ object dmDados: TdmDados
       Precision = 6
       Size = 2
     end
-    object cdsProdutoquantidade_minima_atacado: TFMTBCDField
-      FieldName = 'quantidade_minima_atacado'
-      ProviderFlags = [pfInUpdate]
-      Precision = 8
-      Size = 3
-    end
-    object cdsProdutovalor_revenda: TFMTBCDField
-      FieldName = 'valor_revenda'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 8
-    end
-    object cdsProdutovalor_revenda_anterior: TFMTBCDField
-      FieldName = 'valor_revenda_anterior'
-      ProviderFlags = [pfInUpdate]
-      Precision = 15
-      Size = 8
-    end
-    object cdsProdutoid_usuario_reajuste: TIntegerField
-      FieldName = 'id_usuario_reajuste'
-      ProviderFlags = [pfInUpdate]
-    end
     object cdsProdutoid_tributacao: TIntegerField
       FieldName = 'id_tributacao'
       ProviderFlags = [pfInUpdate]
@@ -1707,11 +1663,6 @@ object dmDados: TdmDados
     object cdsProdutoid_cfop_venda_externa: TIntegerField
       FieldName = 'id_cfop_venda_externa'
       ProviderFlags = [pfInUpdate]
-    end
-    object cdsProdutoobservacao: TMemoField
-      FieldName = 'observacao'
-      ProviderFlags = [pfInUpdate]
-      BlobType = ftMemo
     end
     object cdsProdutoid_usuario_cadastro: TIntegerField
       FieldName = 'id_usuario_cadastro'
