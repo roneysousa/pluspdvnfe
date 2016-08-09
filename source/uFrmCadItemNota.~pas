@@ -53,7 +53,7 @@ type
     dbeValorIcms: TDBEdit;
     tsbSimples: TTabSheet;
     Label15: TLabel;
-    DBLookupComboBox3: TDBLookupComboBox;
+    cmbSimples: TDBLookupComboBox;
     Label16: TLabel;
     cmbOrigem2: TDBLookupComboBox;
     Label18: TLabel;
@@ -110,6 +110,15 @@ type
     dbeOutrosValores: TDBEdit;
     Label39: TLabel;
     dbeValorFrete: TDBEdit;
+    gbxICMSSimples: TGroupBox;
+    Label40: TLabel;
+    Label41: TLabel;
+    Label42: TLabel;
+    Label43: TLabel;
+    dbeBCIcmsSimples: TDBEdit;
+    edtAliquotaICMSSimples: TDBEdit;
+    dbeValorIcmsSimples: TDBEdit;
+    dbePercReducaoSimples: TDBEdit;
     procedure btnCancelaClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure edtCodigo1KeyPress(Sender: TObject; var Key: Char);
@@ -159,12 +168,23 @@ type
     procedure dbeValorFreteKeyPress(Sender: TObject; var Key: Char);
     procedure cmbCstICMSKeyPress(Sender: TObject; var Key: Char);
     procedure cmbOrigem1KeyPress(Sender: TObject; var Key: Char);
+    procedure cmbSimplesExit(Sender: TObject);
+    procedure dbeBCIcmsSimplesExit(Sender: TObject);
+    procedure edtAliquotaICMSSimplesExit(Sender: TObject);
+    procedure dbePercReducaoSimplesExit(Sender: TObject);
+    procedure dbePercReducaoSimplesKeyPress(Sender: TObject;
+      var Key: Char);
+    procedure dbeBCIcmsSimplesKeyPress(Sender: TObject; var Key: Char);
+    procedure edtAliquotaICMSSimplesKeyPress(Sender: TObject;
+      var Key: Char);
   private
     { Private declarations }
     procedure Calcular;
     Function ValidarDataVct(): Boolean;
     Procedure CamposReducaoICMS(bStatus : Boolean);
     Procedure VerificaCST_ICMS_Reducao();
+    procedure CNSON_Campos(aCodigo : String);
+    procedure Tributacao_simples();    
   public
     { Public declarations }
   end;
@@ -229,12 +249,12 @@ begin
      //  Regime Simples
      if (uFrmPlusPdvNfe.iCodRegimeTributario = 1) Then
       begin
-            if uFuncoes.Empty(DBLookupComboBox3.Text) Then
+            if uFuncoes.Empty(cmbSimples.Text) Then
             begin
                  Application.MessageBox('Selecione a situação tributário do simples nacional.','ATENÇÃO',
                      MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                  PageControl1.ActivePage := tsbSimples;
-                 DBLookupComboBox3.SetFocus;
+                 cmbSimples.SetFocus;
                  Exit;
             End;
             //
@@ -580,7 +600,6 @@ begin
      //  Valor Icms
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
       begin
-
           if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) Then
            begin
                if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
@@ -592,8 +611,24 @@ begin
                  End
                Else
                    dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
-           End;
-
+           End
+           Else
+           begin
+                if (tsbSimples.TabVisible) Then
+                begin
+                     If (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0) Then
+                          fPercReducaoBC_ICMS := dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat;
+                     //
+                     if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsString)
+                       and (dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsInteger = 900) then
+                     begin
+                          if (fPercReducaoBC_ICMS > 0) Then
+                              dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := uFuncoes.Arredondar(M_VLSUBT - (M_VLSUBT * (fPercReducaoBC_ICMS/100)),2)
+                          Else
+                              dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := M_VLSUBT;
+                     End;
+                End;
+           end;
           //
           dsCadastroItem.DataSet.FieldByName('CDS_VLICMS').AsFloat := uFuncoes.Arredondar(uFuncoes.Gerapercentual(dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat, dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat),2);
           //
@@ -612,7 +647,10 @@ begin
            End;
       End
      Else
+     begin
+         dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat := 0;
          dsCadastroItem.DataSet.FieldByName('CDS_VLICMS').AsFloat := 0;
+     End;    
      // Valor IPI
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQIPI').AsFloat > 0) Then
       begin
@@ -929,6 +967,7 @@ end;
 
 procedure TFrmCadItemNota.FormShow(Sender: TObject);
 begin
+     KeyPreview := True;
      dmDados.RefreshCDS(dmDados.cdsConfig);
      //
      dmNFe.CarregarlistaCST_ICMS();
@@ -951,6 +990,9 @@ begin
      if (uFrmPlusPdvNfe.iCodRegimeTributario = 1) Then
      begin
           tsbSimples.TabVisible := True;
+          if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsString) Then
+               CNSON_Campos(dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsString);
+          //
           tsbICMS.TabVisible    := False;
           //
           if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
@@ -958,22 +1000,30 @@ begin
              If (aTipoOperacao  = 'S') Then
              begin
                  // IPI
-                 dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 53;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsString) Then
+                    dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 53;
                  // PIS
-                 dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 99;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsString) Then
+                    dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 99;
                  // Cofins
-                 dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 99;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsString) Then
+                    dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 99;
              End
              Else
              begin
                  // IPI
-                 dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 49;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsString) Then
+                    dsCadastroItem.DataSet.FieldByName('CDS_IPI_CST').AsInteger := 49;
                  // PIS
-                 dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 98;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsString) Then
+                     dsCadastroItem.DataSet.FieldByName('CDS_CST_PIS').AsInteger := 98;
                  // Cofins
-                 dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 98;
+                 if uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsString) Then
+                     dsCadastroItem.DataSet.FieldByName('CDS_CST_COFINS').AsInteger := 98;
              End;
           End;
+          //
+          Tributacao_simples();
           //
           PageControl1.ActivePageIndex := 1;
      End
@@ -1021,7 +1071,7 @@ end;
 procedure TFrmCadItemNota.dbeBCIcmsExit(Sender: TObject);
 begin
     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
-        Calcular;
+         Calcular;
 end;
 
 procedure TFrmCadItemNota.edtAliquotaICMSExit(Sender: TObject);
@@ -1149,13 +1199,21 @@ end;
 
 procedure TFrmCadItemNota.VerificaCST_ICMS_Reducao;
 begin
-     CamposReducaoICMS(false);
-     if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
-          CamposReducaoICMS(True)
-     Else
-         if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit])
-            and (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0)  Then
-                dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat := 0;
+     if (tsbICMS.tabVisible) then
+     begin
+         CamposReducaoICMS(false);   // aqui
+         if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
+              CamposReducaoICMS(True)
+         Else
+             if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit])
+                and (dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat > 0)  Then
+                    dsCadastroItem.DataSet.FieldByName('CDS_PEREDUCAO').AsFloat := 0;
+     End;
+     //
+     if (tsbSimples.tabVisible) then
+     begin
+
+     End;
 end;
 
 procedure TFrmCadItemNota.dbeReducaoICMSExit(Sender: TObject);
@@ -1383,6 +1441,7 @@ end;
 procedure TFrmCadItemNota.dbeValorFreteKeyPress(Sender: TObject;
   var Key: Char);
 begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
       If (key = #13) Then
        begin
             key := #0;
@@ -1393,17 +1452,100 @@ end;
 procedure TFrmCadItemNota.cmbCstICMSKeyPress(Sender: TObject;
   var Key: Char);
 begin
-      If (key = #13) and not ufuncoes.Empty(cmbCstICMS.Text) Then
+    if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        If (key = #13) Then  // and not ufuncoes.Empty(cmbCstICMS.Text)
+         begin
+            key := #0;
+            Perform(Wm_NextDlgCtl,0,0);
+         End;
+end;
+
+procedure TFrmCadItemNota.cmbOrigem1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+        If (key = #13) Then  // and not ufuncoes.Empty(cmbOrigem1.Text)
+         begin
+              key := #0;
+              Perform(Wm_NextDlgCtl,0,0);
+         End;
+end;
+
+procedure TFrmCadItemNota.CNSON_Campos(aCodigo: String);
+begin
+     gbxICMSSimples.Visible := False;
+     if (aCodigo = '900') Then
+         gbxICMSSimples.Visible := True;
+end;
+
+procedure TFrmCadItemNota.cmbSimplesExit(Sender: TObject);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) then
+      begin
+          CNSON_Campos(dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsString);
+          Tributacao_simples();
+      End;
+end;
+
+procedure TFrmCadItemNota.Tributacao_simples;
+begin
+     If (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) then
+     begin
+          if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsString)
+             and (dsCadastroItem.DataSet.FieldByName('CDS_CSOSN').AsInteger <> 900) Then
+          begin
+              dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat := 0;
+              dsCadastroItem.DataSet.FieldByName('CDS_BCICMS').AsFloat   := 0;
+              dsCadastroItem.DataSet.FieldByName('CDS_VLICMS').AsFloat   := 0;
+          End;
+     End;
+end;
+
+procedure TFrmCadItemNota.dbeBCIcmsSimplesExit(Sender: TObject);
+begin
+     If (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) then
+        Calcular;
+end;
+
+procedure TFrmCadItemNota.edtAliquotaICMSSimplesExit(Sender: TObject);
+begin
+     If (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) then
+        Calcular;
+end;
+
+procedure TFrmCadItemNota.dbePercReducaoSimplesExit(Sender: TObject);
+begin
+     If (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) then
+         Calcular;
+end;
+
+procedure TFrmCadItemNota.dbePercReducaoSimplesKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+      If (key = #13) Then
        begin
             key := #0;
             Perform(Wm_NextDlgCtl,0,0);
        End;
 end;
 
-procedure TFrmCadItemNota.cmbOrigem1KeyPress(Sender: TObject;
+procedure TFrmCadItemNota.dbeBCIcmsSimplesKeyPress(Sender: TObject;
   var Key: Char);
 begin
-      If (key = #13) and not ufuncoes.Empty(cmbOrigem1.Text) Then
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+      If (key = #13) Then
+       begin
+            key := #0;
+            Perform(Wm_NextDlgCtl,0,0);
+       End;
+end;
+
+procedure TFrmCadItemNota.edtAliquotaICMSSimplesKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     if (dsCadastroItem.DataSet.State in [dsInsert, dsEdit]) Then
+      If (key = #13) Then
        begin
             key := #0;
             Perform(Wm_NextDlgCtl,0,0);

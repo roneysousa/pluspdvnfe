@@ -425,7 +425,7 @@ object FrmCadItemNota: TFrmCadItemNota
       Top = 1
       Width = 732
       Height = 303
-      ActivePage = tsbICMS
+      ActivePage = tsbSimples
       Align = alClient
       TabOrder = 0
       object tsbICMS: TTabSheet
@@ -755,7 +755,7 @@ object FrmCadItemNota: TFrmCadItemNota
           Width = 118
           Height = 13
           Caption = 'Situa'#231#227'o Tribut'#225'ria *'
-          FocusControl = DBLookupComboBox3
+          FocusControl = cmbSimples
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -777,7 +777,7 @@ object FrmCadItemNota: TFrmCadItemNota
           Font.Style = [fsBold]
           ParentFont = False
         end
-        object DBLookupComboBox3: TDBLookupComboBox
+        object cmbSimples: TDBLookupComboBox
           Left = 16
           Top = 32
           Width = 600
@@ -785,6 +785,7 @@ object FrmCadItemNota: TFrmCadItemNota
           DataField = 'CST_SIMPLES'
           DataSource = dsCadastroItem
           TabOrder = 0
+          OnExit = cmbSimplesExit
         end
         object cmbOrigem2: TDBLookupComboBox
           Left = 16
@@ -794,6 +795,113 @@ object FrmCadItemNota: TFrmCadItemNota
           DataField = 'CDS_DESC_ORIGEM_PRODUTO'
           DataSource = dsCadastroItem
           TabOrder = 1
+        end
+        object gbxICMSSimples: TGroupBox
+          Left = 0
+          Top = 104
+          Width = 321
+          Height = 172
+          Caption = '[ ICMS ] '
+          TabOrder = 2
+          Visible = False
+          object Label40: TLabel
+            Left = 19
+            Top = 53
+            Width = 60
+            Height = 13
+            Caption = '* BC ICMS'
+            FocusControl = dbeBCIcmsSimples
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Transparent = True
+          end
+          object Label41: TLabel
+            Left = 19
+            Top = 90
+            Width = 108
+            Height = 13
+            Caption = '* Aliquota de ICMS'
+            FocusControl = edtAliquotaICMSSimples
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Transparent = True
+          end
+          object Label42: TLabel
+            Left = 19
+            Top = 126
+            Width = 40
+            Height = 13
+            Caption = '* ICMS'
+            FocusControl = dbeValorIcmsSimples
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Transparent = True
+          end
+          object Label43: TLabel
+            Left = 19
+            Top = 15
+            Width = 114
+            Height = 13
+            Caption = '% redu'#231#227'o da BC ICMS '
+            FocusControl = dbePercReducaoSimples
+            Transparent = True
+          end
+          object dbeBCIcmsSimples: TDBEdit
+            Left = 19
+            Top = 67
+            Width = 134
+            Height = 21
+            DataField = 'CDS_BCICMS'
+            DataSource = dsCadastroItem
+            TabOrder = 1
+            OnExit = dbeBCIcmsSimplesExit
+            OnKeyPress = dbeBCIcmsSimplesKeyPress
+          end
+          object edtAliquotaICMSSimples: TDBEdit
+            Left = 19
+            Top = 104
+            Width = 134
+            Height = 21
+            DataField = 'CDS_ALIQICMS'
+            DataSource = dsCadastroItem
+            TabOrder = 2
+            OnExit = edtAliquotaICMSSimplesExit
+            OnKeyPress = edtAliquotaICMSSimplesKeyPress
+          end
+          object dbeValorIcmsSimples: TDBEdit
+            Left = 19
+            Top = 141
+            Width = 134
+            Height = 21
+            Color = clSilver
+            DataField = 'CDS_VLICMS'
+            DataSource = dsCadastroItem
+            ReadOnly = True
+            TabOrder = 3
+          end
+          object dbePercReducaoSimples: TDBEdit
+            Left = 19
+            Top = 31
+            Width = 134
+            Height = 21
+            DataField = 'CDS_PEREDUCAO'
+            DataSource = dsCadastroItem
+            TabOrder = 0
+            OnExit = dbePercReducaoSimplesExit
+            OnKeyPress = dbePercReducaoSimplesKeyPress
+          end
         end
       end
       object tsbIPI: TTabSheet

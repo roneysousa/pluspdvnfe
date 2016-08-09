@@ -2824,10 +2824,14 @@ begin
             if not (dmNFe.cdsListaNT_Ref.IsEmpty) Then
             begin
                  If not (dmNFe.ExcluiRegistroNotaReferencia(dmNFe.cdsNotaFiscalid.AsInteger)) Then
-                  begin
-                       raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
-                  End;
+                    raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
             End;
+            //
+            If (dsCadastro.DataSet.fieldByName('finalidade').AsInteger = 4) Then
+             begin
+                 If not (dmNFe.ExcluiRegistroNotaReferencia(dmNFe.cdsNotaFiscalid.AsInteger)) Then
+                    raise Exception.Create('Erro ao tentar gravar nota(s) de referências.');
+             End;
             //
             pnlTotalItens.Caption := FormatFloat('#,###,##0.#0', dmNFe.cdsNotaFiscalvalor_total_nota.AsFloat);
             //

@@ -932,7 +932,7 @@ var
 
 implementation
 
-uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus;
+uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus, pcnNFe;
 
 {$R *.dfm}
 
@@ -4035,7 +4035,7 @@ Var
     aMsgCupomFiscal, aMsgBuscaCupomFiscal, aMsgPartilhaICMS : String;
     FDIFAL, FPercPartilhaDestinatario, FPercPartilhaRemetente, FAliquotaDestino, FAliquotaOrigem : Double;
     FValor_PartilhaOrigem, FValor_PartilhaDestino : Double;
-    FTotal_vICMSUFDest, FTotal_vICMSUFRemet  : Double;
+    FTotal_vICMSUFDest, FTotal_vICMSUFRemet, FBaseICMSSimples, FValorICMSSimples : Double;
 begin
       Result := False;
       bNatVenda := false;
@@ -4048,6 +4048,8 @@ begin
       FPercPartilhaRemetente    := 0;
       FTotal_vICMSUFDest  := 0;
       FTotal_vICMSUFRemet := 0;
+      FBaseICMSSimples := 0;
+      FValorICMSSimples  := 0;
       //
       bSpedPisCofins := False;
       // Nota Fiscal
@@ -4716,23 +4718,30 @@ begin
                                                          //
                                                          if (Emit.CRT = crtSimplesNacional) Then
                                                          begin
-                                                              ICMS.vICMS := 0;
-                                                              ICMS.vBC   := 0;
-                                                         End;
-                                                         //
-                                                         {if (Emit.CRT = crtRegimeNormal) and (cdsNotaFiscalItensaliquota_icms.AsFloat = 0)
-                                                           and (CST = cst00) Then
-                                                           begin
-                                                                CST        := cst60;
-                                                                ICMS.vICMS := 0;
-                                                                ICMS.vBC   := 0;
-                                                           End;}
-                                                           //
-                                                           {if (Emit.CRT = crtRegimeNormal) and (CST = cst40) Then
-                                                            begin
-                                                                 vICMSDeson := 0;
-                                                                 motDesICMS := mdiProdutorAgropecuario;
-                                                            End;}
+                                                              // Devolução simples com destaque ICMS
+                                                              if (cdsNotaFiscalItenscsosn.AsInteger = 900) Then
+                                                              begin
+                                                                  if (cdsNotaFiscalItensaliquota_icms.AsFloat > 0)
+                                                                    and (cdsNotaFiscalItensvalor_bc_icms.AsFloat > 0) Then
+                                                                    begin
+                                                                        ICMS.modBC := dbiValorOperacao;
+                                                                        if (cdsNotaFiscalItenspercentual_reducao_icms.asFloat > 0) then
+                                                                           ICMS.pRedBC := cdsNotaFiscalItenspercentual_reducao_icms.asFloat;
+
+                                                                        ICMS.vBC   := cdsNotaFiscalItensvalor_bc_icms.AsFloat;
+                                                                        ICMS.pICMS := cdsNotaFiscalItensaliquota_icms.AsFloat;
+                                                                        ICMS.vICMS := cdsNotaFiscalItensvalor_icms.AsFloat;
+                                                                        //
+                                                                        FBaseICMSSimples  := FBaseICMSSimples + ICMS.vBC;
+                                                                        FValorICMSSimples := FValorICMSSimples + ICMS.vICMS;
+                                                                   End;
+                                                              End
+                                                              Else
+                                                              begin
+                                                                  ICMS.vICMS := 0;
+                                                                  ICMS.vBC   := 0;
+                                                              end;
+                                                         End;      // if (Emit.CRT = crtSimplesNacional) Then
                                                     End;    // With ICMS do
                                                     //
                                                     {Em relação ao CST do IPI a ser colocado nas NF-es emitidas por empresa optante pelo Simples Nacional,
@@ -5128,8 +5137,25 @@ begin
                 End;    // With cdsItensNota do
                 //
                 FPercentualImposto := 0;
-                Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
-                Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                if (Emit.CRT = crtSimplesNacional) Then
+                begin
+                     if (FBaseICMSSimples > 0) and (FValorICMSSimples > 0) then
+                     begin
+                          Total.ICMSTot.vBC   := FBaseICMSSimples;
+                          Total.ICMSTot.vICMS := FValorICMSSimples;
+                     End
+                     Else
+                     begin
+                          Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
+                          Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                     End;
+                End;
+                //
+                if (Emit.CRT = crtRegimeNormal) Then
+                begin
+                    Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
+                    Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                End;
                 //
                 // Verificar : Operações interestaduais para consumidor final contribuinte
                 if (udmDados.bICMS_PARTILHA) then

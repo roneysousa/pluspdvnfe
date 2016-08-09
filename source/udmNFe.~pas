@@ -163,7 +163,6 @@ type
     cdsNotaFiscalItensvalor_frete: TFMTBCDField;
     cdsNotaFiscalItensvalor_seguro: TFMTBCDField;
     cdsNotaFiscalItensvalor_outrasdespesas: TFMTBCDField;
-    cdsNotaFiscalItensicms_simples_nacional: TIntegerField;
     cdsNotaFiscalItensaliquota_icms: TFMTBCDField;
     cdsNotaFiscalItensvalor_icms: TFMTBCDField;
     cdsNotaFiscalItensvalor_bc_icms: TFMTBCDField;
@@ -687,7 +686,6 @@ type
     dstNotaFiscalItensvalor_frete: TFMTBCDField;
     dstNotaFiscalItensvalor_seguro: TFMTBCDField;
     dstNotaFiscalItensvalor_outrasdespesas: TFMTBCDField;
-    dstNotaFiscalItensicms_simples_nacional: TIntegerField;
     dstNotaFiscalItensaliquota_icms: TFMTBCDField;
     dstNotaFiscalItensvalor_icms: TFMTBCDField;
     dstNotaFiscalItensvalor_bc_icms: TFMTBCDField;
@@ -782,6 +780,8 @@ type
     cdsListaAliquotaPart: TClientDataSet;
     cdsListaAliquotaPartCDS_ANO: TIntegerField;
     cdsListaAliquotaPartCDS_ALIQUOTA_DESTINO: TFloatField;
+    dstNotaFiscalItenscsosn: TIntegerField;
+    cdsNotaFiscalItenscsosn: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsVendaItensNFECalcFields(DataSet: TDataSet);
     procedure cdsItemsNotaFiscalCalcFields(DataSet: TDataSet);
@@ -932,7 +932,7 @@ var
 
 implementation
 
-uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus;
+uses udmDados, uFuncoes, uFrmPlusPdvNfe, ufrmStatus, pcnNFe;
 
 {$R *.dfm}
 
@@ -1305,8 +1305,8 @@ begin
                        cdsItemsNotaFiscalCDS_ALIQ_COFINS.AsFloat := FieldByName('aliquota_cofins').AsFloat;
                        cdsItemsNotaFiscalCDS_VALOR_COFINS.AsFloat := FieldByName('valor_cofins').AsFloat;
                        //
-                       if not uFuncoes.Empty(FieldByName('icms_simples_nacional').AsString) Then
-                           cdsItemsNotaFiscalCDS_CSOSN.AsString := FieldByName('icms_simples_nacional').AsString;
+                       if not uFuncoes.Empty(FieldByName('csosn').AsString) Then
+                           cdsItemsNotaFiscalCDS_CSOSN.AsString := FieldByName('csosn').AsString;
                        //
                        if (FieldByName('valor_bc_icms_st').AsFloat > 0 ) Then
                        begin
@@ -3036,12 +3036,12 @@ begin
                        and (uFrmPlusPdvNfe.iCodRegimeTributario <> 3) Then
                         Begin
                            if not uFuncoes.Empty(FieldByName('CDS_CSOSN').AsString) Then
-                              cdsNotaFiscalItensicms_simples_nacional.AsString := FieldByName('CDS_CSOSN').AsString
+                              cdsNotaFiscalItenscsosn.AsString := FieldByName('CDS_CSOSN').AsString
                            Else
-                              cdsNotaFiscalItensicms_simples_nacional.AsInteger := 102;
+                              cdsNotaFiscalItenscsosn.AsInteger := 102;
                         End
                         Else
-                            cdsNotaFiscalItensicms_simples_nacional.Clear;
+                            cdsNotaFiscalItenscsosn.Clear;
                      // substituição tributária 
                      If (FieldByName('CDS_BCICMS_ST').AsFloat > 0) Then
                      begin
@@ -4035,7 +4035,7 @@ Var
     aMsgCupomFiscal, aMsgBuscaCupomFiscal, aMsgPartilhaICMS : String;
     FDIFAL, FPercPartilhaDestinatario, FPercPartilhaRemetente, FAliquotaDestino, FAliquotaOrigem : Double;
     FValor_PartilhaOrigem, FValor_PartilhaDestino : Double;
-    FTotal_vICMSUFDest, FTotal_vICMSUFRemet  : Double;
+    FTotal_vICMSUFDest, FTotal_vICMSUFRemet, FBaseICMSSimples, FValorICMSSimples : Double;
 begin
       Result := False;
       bNatVenda := false;
@@ -4048,6 +4048,8 @@ begin
       FPercPartilhaRemetente    := 0;
       FTotal_vICMSUFDest  := 0;
       FTotal_vICMSUFRemet := 0;
+      FBaseICMSSimples := 0;
+      FValorICMSSimples  := 0;
       //
       bSpedPisCofins := False;
       // Nota Fiscal
@@ -4569,8 +4571,8 @@ begin
                                                          //
                                                          if (Emit.CRT = crtSimplesNacional) Then
                                                          begin
-                                                              if not uFuncoes.Empty(cdsNotaFiscalItensicms_simples_nacional.AsString) Then
-                                                                  M_CSOSN := cdsNotaFiscalItensicms_simples_nacional.asInteger
+                                                              if not uFuncoes.Empty(cdsNotaFiscalItenscsosn.AsString) Then
+                                                                  M_CSOSN := cdsNotaFiscalItenscsosn.asInteger
                                                               Else
                                                                   M_CSOSN := 102;
                                                               //
@@ -4716,23 +4718,27 @@ begin
                                                          //
                                                          if (Emit.CRT = crtSimplesNacional) Then
                                                          begin
-                                                              ICMS.vICMS := 0;
-                                                              ICMS.vBC   := 0;
-                                                         End;
-                                                         //
-                                                         {if (Emit.CRT = crtRegimeNormal) and (cdsNotaFiscalItensaliquota_icms.AsFloat = 0)
-                                                           and (CST = cst00) Then
-                                                           begin
-                                                                CST        := cst60;
-                                                                ICMS.vICMS := 0;
-                                                                ICMS.vBC   := 0;
-                                                           End;}
-                                                           //
-                                                           {if (Emit.CRT = crtRegimeNormal) and (CST = cst40) Then
-                                                            begin
-                                                                 vICMSDeson := 0;
-                                                                 motDesICMS := mdiProdutorAgropecuario;
-                                                            End;}
+                                                              // Devolução simples com destaque ICMS
+                                                              if (cdsNotaFiscalItenscsosn.AsInteger = 900) Then
+                                                              begin
+                                                                  if (cdsNotaFiscalItensaliquota_icms.AsFloat > 0)
+                                                                    and (cdsNotaFiscalItensvalor_bc_icms.AsFloat > 0) Then
+                                                                    begin
+                                                                        ICMS.modBC := dbiValorOperacao;
+                                                                        ICMS.vBC   := cdsNotaFiscalItensvalor_bc_icms.AsFloat;
+                                                                        ICMS.pICMS := cdsNotaFiscalItensaliquota_icms.AsFloat;
+                                                                        ICMS.vICMS := cdsNotaFiscalItensvalor_icms.AsFloat;
+                                                                        //
+                                                                        FBaseICMSSimples  := FBaseICMSSimples + ICMS.vBC;
+                                                                        FValorICMSSimples := FValorICMSSimples + ICMS.vICMS;
+                                                                   End;
+                                                              End
+                                                              Else
+                                                              begin
+                                                                  ICMS.vICMS := 0;
+                                                                  ICMS.vBC   := 0;
+                                                              end;
+                                                         End;      // if (Emit.CRT = crtSimplesNacional) Then
                                                     End;    // With ICMS do
                                                     //
                                                     {Em relação ao CST do IPI a ser colocado nas NF-es emitidas por empresa optante pelo Simples Nacional,
@@ -5128,8 +5134,25 @@ begin
                 End;    // With cdsItensNota do
                 //
                 FPercentualImposto := 0;
-                Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
-                Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                if (Emit.CRT = crtSimplesNacional) Then
+                begin
+                     if (FBaseICMSSimples > 0) and (FValorICMSSimples > 0) then
+                     begin
+                          Total.ICMSTot.vBC   := FBaseICMSSimples;
+                          Total.ICMSTot.vICMS := FValorICMSSimples;
+                     End
+                     Else
+                     begin
+                          Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
+                          Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                     End;
+                End;
+                //
+                if (Emit.CRT = crtRegimeNormal) Then
+                begin
+                    Total.ICMSTot.vBC   := M_VALOR_TOTAL_BC_ICMS;
+                    Total.ICMSTot.vICMS := M_TOTAL_ICMS_ITEMS;
+                End;
                 //
                 // Verificar : Operações interestaduais para consumidor final contribuinte
                 if (udmDados.bICMS_PARTILHA) then

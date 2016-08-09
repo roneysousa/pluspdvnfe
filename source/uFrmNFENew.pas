@@ -479,7 +479,7 @@ type
     Procedure FormatarCampoCPF_CNPJ();
     Procedure LimparCamposDestinatario();
     Procedure LancarItem();
-    Procedure LancarItemEdit();    
+    Procedure LancarItemEdit();
   public
     { Public declarations }
 
