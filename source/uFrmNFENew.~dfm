@@ -1,6 +1,6 @@
 object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
-  Left = 230
-  Top = 80
+  Left = 188
+  Top = 127
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Emiss'#227'o de Nota Fiscal Eletr'#244'nica'
@@ -585,6 +585,25 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
           ParentFont = False
           ReadOnly = True
           TabOrder = 0
+        end
+        object dbeDescricaoNaturezas: TDBEdit
+          Left = 728
+          Top = 183
+          Width = 233
+          Height = 21
+          CharCase = ecUpperCase
+          Color = clSilver
+          DataField = 'descricao_natureza_operacao'
+          DataSource = dsCadastro
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 21
+          Visible = False
         end
       end
       object pnlDados: TPanel

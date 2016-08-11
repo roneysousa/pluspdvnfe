@@ -4057,7 +4057,8 @@ begin
       If not (cdsNotaFiscal.IsEmpty) Then
        begin
             bNatVenda := GetNaturezaVenda(cdsNotaFiscalnatureza_operacao.AsInteger);
-            aDescricaoNatureza := dmDados.GetDescricaoNaturezaOperacao(cdsNotaFiscalnatureza_operacao.AsInteger);
+            aDescricaoNatureza := cdsNotaFiscaldescricao_natureza_operacao.asString;
+            // dmDados.GetDescricaoNaturezaOperacao(cdsNotaFiscalnatureza_operacao.AsInteger);
             // Emitente
             DMDados.FilterCDS(DMDados.cdsEmpresa, fsInteger, dmNFe.cdsNotaFiscalid_empresa.AsString);
            //

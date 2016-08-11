@@ -334,6 +334,7 @@ type
     Label48: TLabel;
     cmbUFVeiculo: TDBLookupComboBox;
     spDescValor: TSpeedButton;
+    dbeDescricaoNaturezas: TDBEdit;
     procedure BtSairClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BtAdicionarClick(Sender: TObject);
@@ -480,6 +481,7 @@ type
     Procedure LimparCamposDestinatario();
     Procedure LancarItem();
     Procedure LancarItemEdit();
+    Procedure VerificarNatureza();
   public
     { Public declarations }
 
@@ -581,6 +583,8 @@ begin
              dmNFe.AbrirListaCidadeUF(dmNFe.cdsNotaFiscalUF_TRANSPORTE.AsString, dmNFe.cdsTransportadoraCidade);   // transporte_uf
          End;
          //
+         VerificarNatureza;
+         //
          DetalhesNota;
       End;
      //
@@ -594,6 +598,12 @@ Var
 begin
     If (dsCadastro.DataSet.State in [dsBrowse]) Then
      begin
+          if not (cmbNatureza.Visible) Then
+           begin
+                cmbNatureza.Visible := True;
+                dbeDescricaoNaturezas.Visible := False;
+           End;
+
           edtNomeEmpresa.Clear;
           //
           PageControl1.ActivePageIndex := 0;
@@ -692,8 +702,7 @@ procedure TFrmNotaFiscalEletronicaNovo.AbrirDetalhesNota(iCodigo: Integer);
 begin
      dmNFe.CarregarItensNota(iCodigo, dsCadastro.DataSet.FieldByName('emitente_uf').AsString);
      CalcularTotalItens(dmNFe.cdsItemsNotaFiscal);
-     dmNFe.AbrirVolumesNota(iCodigo);
-
+     dmNFe.AbrirVolumesNota(iCodigo); 
      //
      DMdados.RefreshCDS(dmNFe.cdsListaNT_Ref);
      dmNFe.cdsListaNT_Ref.EmptyDataSet;
@@ -884,13 +893,11 @@ begin
      iModelo := uFuncoes.ConverterModeloDocumento(55);
      //
      M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', InttoStr(iModelo));
-     // uFuncoes.mvcodigomax('id','nota_fiscal');
      //
      If (M_CODIGO > 0) Then
      begin
-           //
-           dmdados.FilterCDS(dmNFe.cdsNotaFiscal, fsInteger, InttoStr(M_CODIGO));
-           //
+          dmdados.FilterCDS(dmNFe.cdsNotaFiscal, fsInteger, InttoStr(M_CODIGO));
+          //
           if (dmNFe.cdsNotaFiscaldestinatario_tipopessoa.AsString = 'F') Then
            begin
                 cmbTipoPessoa.ItemIndex := 0;
@@ -928,6 +935,8 @@ begin
          dmNFe.AbrirListaCidadeUF(dsCadastro.DataSet.fieldByName('UF_EMITENTE_RET').AsString, dmNFe.cdsRetiradaCidade);
      if not uFuncoes.Empty(dsCadastro.DataSet.fieldByName('destinatario_entrega_uf').AsString) then
          dmNFe.AbrirListaCidadeUF(dsCadastro.DataSet.fieldByName('UF_DESTINATARIO_ENTREGA').AsString, dmNFe.cdsEntregaCidade);
+     //
+     VerificarNatureza;
      // Transportes
      if not ufuncoes.Empty(dmNFe.cdsNotaFiscaltransporte_uf.AsString) Then
          dmNFe.AbrirListaCidadeUF(dmNFe.cdsNotaFiscalUF_TRANSPORTE.AsString, dmNFe.cdsTransportadoraCidade);   // transporte_uf
@@ -1496,6 +1505,7 @@ begin
             CalcularTotalDuplicata(dmNFe.cdsListaDuplicatas);
     End;
     //
+    VerificarNatureza;
     PageControl1.ActivePageIndex := 0;
 end;
 
@@ -2641,7 +2651,8 @@ begin
      Else
          dmNFe.cdsNotaFiscaldestinatario_tipopessoa.AsString := 'J';
      // nome natureza
-     dmNFe.cdsNotaFiscaldescricao_natureza_operacao.AsString := cmbNatureza.Text;
+     if (cmbNatureza.Visible) Then
+        dmNFe.cdsNotaFiscaldescricao_natureza_operacao.AsString := cmbNatureza.Text;
      //
      M_CDCIDRET := dmNFe.cdsNotaFiscalemitente_municipio_ibge.AsInteger;
      //
@@ -3228,6 +3239,7 @@ begin
                          tratabotoes;
                          bFluxoEdicao := true;
                          dsCadastro.DataSet.Edit;
+                         VerificarNatureza;
                          Exit;
                     End
                     Else
@@ -3240,6 +3252,7 @@ begin
                 bFluxoEdicao := true;
                 dsCadastro.DataSet.Edit;
                 dsCadastro.DataSet.FieldByName('data_saida_entrada').AsDateTime := Date();
+                VerificarNatureza;
                 //
                 dmNFe.LimparListaVenda; 
            End
@@ -3274,6 +3287,7 @@ begin
                 dsCadastro.DataSet.FieldByName('emitente_nome_municipio').AsString := dmDados.GetNomeCidade( dmDados.cdsEmpresaid_cidade.AsInteger );
                 dsCadastro.DataSet.FieldByName('emitente_municipio_ibge').AsInteger := dmDados.GetCodigoIBEGCidade(dmDados.cdsEmpresaid_cidade.AsInteger);
                 dsCadastro.DataSet.FieldByName('emitente_telefone').AsString       := dmDados.cdsEmpresafone.AsString;
+                VerificarNatureza;
            End;
       End;
 end;
@@ -5443,6 +5457,19 @@ begin
      Finally
           FrmDescontoValor.Free;
      End;
+end;
+
+procedure TFrmNotaFiscalEletronicaNovo.VerificarNatureza;
+begin
+     cmbNatureza.Visible := true;
+     dbeDescricaoNaturezas.Visible := False;
+     if (cmbNatureza.Text <> dbeDescricaoNaturezas.Text) then
+      begin
+           cmbNatureza.Visible := False;
+           dbeDescricaoNaturezas.Left := cmbNatureza.Left;
+           dbeDescricaoNaturezas.Top  := cmbNatureza.Top;
+           dbeDescricaoNaturezas.Visible := True;
+      End;
 end;
 
 end.

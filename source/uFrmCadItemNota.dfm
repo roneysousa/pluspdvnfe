@@ -1,6 +1,6 @@
 object FrmCadItemNota: TFrmCadItemNota
   Left = 262
-  Top = 56
+  Top = 96
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Produto'

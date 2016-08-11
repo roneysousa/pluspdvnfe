@@ -344,6 +344,8 @@ type
     cdsListaNfeporVendadestinatario_uf: TIntegerField;
     cdsConsultaUF_EMITENTE: TStringField;
     cdsConsultaUF_DESTINATARIO: TStringField;
+    dstConsultadescricao_natureza_operacao: TStringField;
+    cdsConsultadescricao_natureza_operacao: TStringField;
     procedure FormShow(Sender: TObject);
     procedure btnConsultarClick(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
@@ -410,7 +412,6 @@ type
     Procedure DesabilitarBotoes;
     procedure MostraStatus();
     procedure LoadConsulta201(XML: string);
-    Function VerificarOutlook(): Boolean;
     Function GeraPDF(iNota : Integer): String;
     Procedure Enviar_Email_PDF_XML(iNota : Integer; aNomeArquivo : String);
     Procedure Enviar_Email_PDF(aNomePasta : String; aCdsListaArquivos : TClientDataSet);
@@ -432,7 +433,7 @@ type
 
 var
   FrmGerenciarNotas: TFrmGerenciarNotas;
-  aCaminho1, aCaminho2, aCaminho3, NomeDoLista : String;
+  NomeDoLista : String;
   bFluxoArquivo : Boolean;
 
 implementation
@@ -526,9 +527,6 @@ begin
     pnlMensagem.Caption := '';
     mnuPDFItem.Enabled := false;
     //
-    aCaminho1 := 'C:\Arquivos de programas\Microsoft Office\Office12\OUTLOOK.EXE';
-    aCaminho2 := 'C:\Program Files\Microsoft Office\Office12\OUTLOOK.EXE';
-    aCaminho3 := 'C:\Program Files (x86)\Microsoft Office\Office12\OUTLOOK.EXE';
 end;
 
 function TFrmGerenciarNotas.Consultar: Boolean;
@@ -553,7 +551,7 @@ begin
         M_DTFINA := edtDTFINA.Date;
      //
      M_TEXTO := 'Select  nf.id, nf.numero_nota_fiscal, nf.serie, nf.data_hora_emissao, nf.emitente_cnpj, ';
-     M_TEXTO := M_TEXTO +' nf.id_empresa, nf.id_cliente, nf.id_fornecedor, nf.tipo_emis, nf.natureza_operacao, ';
+     M_TEXTO := M_TEXTO +' nf.id_empresa, nf.id_cliente, nf.id_fornecedor, nf.tipo_emis, nf.natureza_operacao, nf.descricao_natureza_operacao, ';
      M_TEXTO := M_TEXTO +' nf.valor_total_nota, nf.valor_itens, nf.chave_acesso, nf.numero_protocolo, nf.data_protocolo, nf.emitente_uf, ';
      M_TEXTO := M_TEXTO +' nf.destinatario_cnpjcpf, nf.situacao, nf.destinatario_razaosocial, nf.destinatario_tipopessoa, ';
      M_TEXTO := M_TEXTO +' nf.destinatario_uf, nf.destinatario_email, nf.num_protocolo_cancelamento, nf.justificativa_cancelamento, nf.data_cancelamento, ';
@@ -788,14 +786,14 @@ begin
      //
      if not (cdsConsulta.IsEmpty) Then
       begin
-          If (DMDados.cdsEmpresaambiente_nfe.AsInteger = 1) and
+           {If (DMDados.cdsEmpresaambiente_nfe.AsInteger = 1) and
               not (dmNFe.GetVerificaExisteClienteNFe(iNotaFiscal)) Then
             begin
                  Application.MessageBox(PChar('NF-e sem Destinatário/Remetente cadastrado!!!'+#13+
                      'Edite a NF-e, e cadastre o Destinatário/Remetente da nota.'),
                      'ATENÇÃO', MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
                  Exit;
-            End;
+            End;}
           //
         pnlBotoes.Enabled := false;
         try
@@ -1376,10 +1374,9 @@ begin
                                    dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taProducao;
                                    
                                 If (dmDados.cdsEmpresaambiente_nfe.AsInteger = 2) Then
-                                 begin
                                     dmNFe.ACBrNFe1.Configuracoes.WebServices.Ambiente  := taHomologacao;
-
-                                 End;
+                                //
+                                Application.ProcessMessages;
                                 //
                                 dmNFe.ACBrNFe1.WebServices.Inutiliza(aCNPJ, Justificativa, StrToInt(Ano), StrToInt(Modelo), StrToInt(Serie), StrToInt(NumeroInicial), StrToInt(NumeroFinal));
                                 MemoResp.Lines.Text :=  UTF8Encode(dmNFe.ACBrNFe1.WebServices.Inutilizacao.RetWS);
@@ -1824,12 +1821,6 @@ Var
     aFile, Dir : String;
     idCliente, idRegistro : Integer;
 begin
-    {if not (VerificarOutlook) Then
-      begin
-           Application.MessageBox(PChar('Modulo não concluído!!!'),
-                    'ATENÇÃO', MB_OK+MB_ICONSTOP+MB_APPLMODAL);
-           Exit;   }
-      // End;
       //
       if not (DMDados.VerificarDadosEmail()) Then
        begin
@@ -1897,30 +1888,6 @@ begin
              if not (cdsConsulta.IsEmpty) Then
                 cdsConsulta.Locate('id', idRegistro, []);
       End;
-end;
-
-function TFrmGerenciarNotas.VerificarOutlook: Boolean;
-Var
-   aChou : Boolean;
-begin
-     aChou := True;
-     //
-     if not FileExists(aCaminho1) Then
-     begin
-         aChou := False;
-         if not FileExists(aCaminho2) Then
-          begin
-              aChou := False;
-              if not FileExists(aCaminho3) Then
-                 aChou   := False
-              Else
-                 aChou := True;
-          End
-          Else
-             aChou := True;
-     End;
-     //
-     Result := aChou;
 end;
 
 function TFrmGerenciarNotas.GeraPDF(iNota: Integer): String;

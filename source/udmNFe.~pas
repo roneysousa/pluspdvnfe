@@ -4725,6 +4725,9 @@ begin
                                                                     and (cdsNotaFiscalItensvalor_bc_icms.AsFloat > 0) Then
                                                                     begin
                                                                         ICMS.modBC := dbiValorOperacao;
+                                                                        if (cdsNotaFiscalItenspercentual_reducao_icms.asFloat > 0) then
+                                                                           ICMS.pRedBC := cdsNotaFiscalItenspercentual_reducao_icms.asFloat;
+
                                                                         ICMS.vBC   := cdsNotaFiscalItensvalor_bc_icms.AsFloat;
                                                                         ICMS.pICMS := cdsNotaFiscalItensaliquota_icms.AsFloat;
                                                                         ICMS.vICMS := cdsNotaFiscalItensvalor_icms.AsFloat;

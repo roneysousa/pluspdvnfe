@@ -334,6 +334,7 @@ type
     Label48: TLabel;
     cmbUFVeiculo: TDBLookupComboBox;
     spDescValor: TSpeedButton;
+    dbeDescricaoNaturezas: TDBEdit;
     procedure BtSairClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BtAdicionarClick(Sender: TObject);
@@ -479,7 +480,8 @@ type
     Procedure FormatarCampoCPF_CNPJ();
     Procedure LimparCamposDestinatario();
     Procedure LancarItem();
-    Procedure LancarItemEdit();    
+    Procedure LancarItemEdit();
+    Procedure VerificarNatureza();
   public
     { Public declarations }
 
@@ -692,8 +694,7 @@ procedure TFrmNotaFiscalEletronicaNovo.AbrirDetalhesNota(iCodigo: Integer);
 begin
      dmNFe.CarregarItensNota(iCodigo, dsCadastro.DataSet.FieldByName('emitente_uf').AsString);
      CalcularTotalItens(dmNFe.cdsItemsNotaFiscal);
-     dmNFe.AbrirVolumesNota(iCodigo);
-
+     dmNFe.AbrirVolumesNota(iCodigo); 
      //
      DMdados.RefreshCDS(dmNFe.cdsListaNT_Ref);
      dmNFe.cdsListaNT_Ref.EmptyDataSet;
@@ -884,13 +885,11 @@ begin
      iModelo := uFuncoes.ConverterModeloDocumento(55);
      //
      M_CODIGO := uFuncoes.mvcodigomaxNFeModelo('0', InttoStr(iModelo));
-     // uFuncoes.mvcodigomax('id','nota_fiscal');
      //
      If (M_CODIGO > 0) Then
      begin
-           //
-           dmdados.FilterCDS(dmNFe.cdsNotaFiscal, fsInteger, InttoStr(M_CODIGO));
-           //
+          dmdados.FilterCDS(dmNFe.cdsNotaFiscal, fsInteger, InttoStr(M_CODIGO));
+          //
           if (dmNFe.cdsNotaFiscaldestinatario_tipopessoa.AsString = 'F') Then
            begin
                 cmbTipoPessoa.ItemIndex := 0;
@@ -5443,6 +5442,19 @@ begin
      Finally
           FrmDescontoValor.Free;
      End;
+end;
+
+procedure TFrmNotaFiscalEletronicaNovo.VerificarNatureza;
+begin
+     cmbNatureza.Visible := true;
+     dbeDescricaoNaturezas.Visible := False;
+     if (cmbNatureza.Text <> dbeDescricaoNaturezas.Text) then
+      begin
+           cmbNatureza.Visible := False;
+           dbeDescricaoNaturezas.Left := cmbNatureza.Left;
+           dbeDescricaoNaturezas.Top  := cmbNatureza.Top;
+           dbeDescricaoNaturezas.Visible := True;
+      End;
 end;
 
 end.

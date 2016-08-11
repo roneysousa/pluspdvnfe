@@ -600,7 +600,7 @@ begin
      //  Valor Icms
      if (dsCadastroItem.DataSet.FieldByName('CDS_ALIQICMS').AsFloat > 0) Then
       begin
-          if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) Then
+          if not uFuncoes.Empty(dsCadastroItem.DataSet.FieldByName('CDS_CST').AsString) and (tsbICMS.tabVisible) Then
            begin
                if (dsCadastroItem.DataSet.FieldByName('CDS_CST').AsInteger = 20) Then
                  begin

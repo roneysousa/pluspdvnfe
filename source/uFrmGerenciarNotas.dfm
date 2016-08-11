@@ -1422,8 +1422,10 @@ object FrmGerenciarNotas: TFrmGerenciarNotas
           Visible = True
         end
         item
+          Alignment = taCenter
           Expanded = False
           FieldName = 'serie'
+          Title.Alignment = taCenter
           Title.Caption = 'S'#233'rie'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -1504,7 +1506,7 @@ object FrmGerenciarNotas: TFrmGerenciarNotas
         end
         item
           Expanded = False
-          FieldName = 'NTF_NOME_NATUREZA'
+          FieldName = 'descricao_natureza_operacao'
           Title.Alignment = taCenter
           Title.Caption = 'Natureza Opera'#231#227'o'
           Title.Font.Charset = ANSI_CHARSET
@@ -2138,16 +2140,16 @@ object FrmGerenciarNotas: TFrmGerenciarNotas
     CommandText = 
       'Select nf.id, nf.numero_nota_fiscal, nf.serie, nf.data_hora_emis' +
       'sao, nf.emitente_cnpj,'#13#10'nf.id_empresa, nf.id_cliente, nf.id_forn' +
-      'ecedor, nf.tipo_emis, nf.natureza_operacao,'#13#10'nf.valor_total_nota' +
-      ', nf.valor_itens, nf.chave_acesso, nf.numero_protocolo, nf.emite' +
-      'nte_uf, nf.data_protocolo,'#13#10'nf.destinatario_cnpjcpf, nf.situacao' +
-      ', nf.destinatario_razaosocial, nf.destinatario_tipopessoa, '#13#10'nf.' +
-      'destinatario_uf, nf.destinatario_email, nf.num_protocolo_cancela' +
-      'mento, nf.justificativa_cancelamento, nf.data_cancelamento,'#13#10'nf.' +
-      'id_usuario_cadastro, nf.data_cadastro, nf.id_usuario_alteracao, ' +
-      'nf.id_usuario_enviou, nf.num_lote_evento'#13#10'from nota_fiscal nf'#13#10'i' +
-      'nner join empresas e on nf.id_empresa = e.id'#13#10'order by nf.numero' +
-      '_nota_fiscal'#13#10
+      'ecedor, nf.tipo_emis, nf.natureza_operacao, nf.descricao_naturez' +
+      'a_operacao,'#13#10'nf.valor_total_nota, nf.valor_itens, nf.chave_acess' +
+      'o, nf.numero_protocolo, nf.emitente_uf, nf.data_protocolo,'#13#10'nf.d' +
+      'estinatario_cnpjcpf, nf.situacao, nf.destinatario_razaosocial, n' +
+      'f.destinatario_tipopessoa, '#13#10'nf.destinatario_uf, nf.destinatario' +
+      '_email, nf.num_protocolo_cancelamento, nf.justificativa_cancelam' +
+      'ento, nf.data_cancelamento,'#13#10'nf.id_usuario_cadastro, nf.data_cad' +
+      'astro, nf.id_usuario_alteracao, nf.id_usuario_enviou, nf.num_lot' +
+      'e_evento'#13#10'from nota_fiscal nf'#13#10'inner join empresas e on nf.id_em' +
+      'presa = e.id'#13#10'order by nf.numero_nota_fiscal'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = dmDados.sqlConexao
@@ -2286,6 +2288,10 @@ object FrmGerenciarNotas: TFrmGerenciarNotas
       FieldName = 'natureza_operacao'
       ProviderFlags = [pfInUpdate]
     end
+    object dstConsultadescricao_natureza_operacao: TStringField
+      FieldName = 'descricao_natureza_operacao'
+      Size = 60
+    end
   end
   object dspConsulta: TDataSetProvider
     DataSet = dstConsulta
@@ -2402,6 +2408,10 @@ object FrmGerenciarNotas: TFrmGerenciarNotas
       FieldName = 'justificativa_cancelamento'
       ProviderFlags = [pfInUpdate]
       Size = 80
+    end
+    object cdsConsultadescricao_natureza_operacao: TStringField
+      FieldName = 'descricao_natureza_operacao'
+      Size = 60
     end
     object cdsConsultadata_cancelamento: TSQLTimeStampField
       FieldName = 'data_cancelamento'
