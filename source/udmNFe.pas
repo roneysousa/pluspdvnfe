@@ -4059,6 +4059,12 @@ begin
             bNatVenda := GetNaturezaVenda(cdsNotaFiscalnatureza_operacao.AsInteger);
             aDescricaoNatureza := cdsNotaFiscaldescricao_natureza_operacao.asString;
             // dmDados.GetDescricaoNaturezaOperacao(cdsNotaFiscalnatureza_operacao.AsInteger);
+            if uFuncoes.Empty(uFuncoes.removeChar(cdsNotaFiscalemitente_cep.asString)) Then
+             begin
+                  Application.MessageBox('Campo cep do emissor está vazio.','ATENÇÃO',
+                      MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);
+                  Exit;
+             End;
             // Emitente
             DMDados.FilterCDS(DMDados.cdsEmpresa, fsInteger, dmNFe.cdsNotaFiscalid_empresa.AsString);
            //
@@ -4066,6 +4072,7 @@ begin
            begin
                 M_EMCNPJ := DmDados.CdsEmpresacnpj.AsString;
                 M_UFEMIT := dmDados.GetUFEmitente(dmNFe.cdsNotaFiscalid_empresa.AsInteger) ;
+                //
            End;
            // Cliente
            if not uFuncoes.Empty(dmNFe.cdsNotaFiscalid_cliente.AsString) Then

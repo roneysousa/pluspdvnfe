@@ -2,8 +2,8 @@ object dmDados: TdmDados
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Left = 316
-  Top = 133
+  Left = 342
+  Top = 131
   Height = 401
   Width = 640
   object sqlConexao: TSQLConnection

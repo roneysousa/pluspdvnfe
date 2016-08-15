@@ -1,6 +1,6 @@
 object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
-  Left = 188
-  Top = 127
+  Left = 184
+  Top = 63
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Emiss'#227'o de Nota Fiscal Eletr'#244'nica'
@@ -4596,7 +4596,7 @@ object FrmNotaFiscalEletronicaNovo: TFrmNotaFiscalEletronicaNovo
         1B1C010303030303031A1A1A1A1A1A1A0303011A1A1A1A1A1A1A}
     end
     object BtEditar: TBitBtn
-      Left = 88
+      Left = 96
       Top = 8
       Width = 75
       Height = 25

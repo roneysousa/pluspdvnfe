@@ -587,6 +587,8 @@ begin
          //
          DetalhesNota;
       End;
+      //
+      edtNomeEmpresa.Text := dmDados.GetRazaoSocialEmpresa(uFrmPlusPdvNfe.idEmpresa);
      //
      If (dmNFe.cdsNotaFiscal.IsEmpty) Then
           BtAdicionarClick(Sender);
@@ -691,6 +693,10 @@ begin
                  //
                  dmNFe.cdsNotaFiscaltipo_emis.AsInteger := 1;
                  dmNFe.cdsNotaFiscalfinalidade.AsInteger  := 1;
+                 // Habilitar campos
+                 cmbTipoPessoa.Enabled := True;
+                 dbeCNPJCPF.Enabled    := True;
+                 spLocCliente.Enabled  := True;
                  //
                  dbeCNPJCPF.SetFocus;
             End;
@@ -1088,6 +1094,15 @@ begin
                MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
              PageControl1.ActivePageIndex := 1;
              dbeCidadeEmissor.SetFocus;
+             Exit;
+        End;
+     //
+     If uFuncoes.Empty(dbeCepEmitente.Text) Then
+        begin
+             Application.MessageBox('Digite o cep do emissor.','ATENÇÃO',
+               MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+             PageControl1.ActivePageIndex := 1;
+             dbeCepEmitente.SetFocus;
              Exit;
         End;
      //   Destinatário
@@ -2221,6 +2236,8 @@ begin
                 End;
           End;
         // dbeCNPJCPF.Text;
+        if not (dbeCNPJCPF.Enabled) Then
+            Exit;
         //
         if not uFuncoes.Empty(aCNPJCPF) Then
           begin
@@ -3265,19 +3282,19 @@ begin
            End;
            //
            if uFuncoes.Empty(edtNomeEmpresa.Text) Then
-           begin
                 edtNomeEmpresa.Text := dmDados.GetRazaoSocialEmpresa(uFrmPlusPdvNfe.idEmpresa);
+           // Dados do emitente
                 dmDados.FilterCDS(dmDados.cdsEmpresa, fsInteger, inttostr(uFrmPlusPdvNfe.idEmpresa));
                 dsCadastro.DataSet.FieldByName('emitente_cnpj').AsString     := dmDados.cdsEmpresacnpj.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_razao').AsString    := dmDados.cdsEmpresarazao_social.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_fantasia').AsString := dmDados.cdsEmpresanome_fantasia.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_ie').AsString       := dmDados.cdsEmpresainsc_estadual.AsString;
                 //
-                dsCadastro.DataSet.FieldByName('emitente_end_logradouro').AsString := dmDados.cdsEmpresalogradouro.AsString;
-                dsCadastro.DataSet.FieldByName('emitente_end_numero').AsString     := dmDados.cdsEmpresanumero.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_end_logradouro').AsString  := dmDados.cdsEmpresalogradouro.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_end_numero').AsString      := dmDados.cdsEmpresanumero.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_end_complemento').AsString := dmDados.cdsEmpresacomplemento.AsString;
-                dsCadastro.DataSet.FieldByName('emintente_end_bairro').AsString    := dmDados.cdsEmpresaid_bairro.AsString;
-                dsCadastro.DataSet.FieldByName('emitente_cep').AsString            := dmDados.cdsEmpresacep.AsString;
+                dsCadastro.DataSet.FieldByName('emintente_end_bairro').AsString     := dmDados.cdsEmpresaid_bairro.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_cep').AsString             := dmDados.cdsEmpresacep.AsString;
                 aUF := dmDados.GetUFCidade(dmDados.cdsEmpresaid_cidade.AsInteger);
                 If (dmNFe.cdsListaUFDestinatario.Locate('EUF_SIGLA', aUF,[])) Then
                  begin
@@ -3288,7 +3305,6 @@ begin
                 dsCadastro.DataSet.FieldByName('emitente_municipio_ibge').AsInteger := dmDados.GetCodigoIBEGCidade(dmDados.cdsEmpresaid_cidade.AsInteger);
                 dsCadastro.DataSet.FieldByName('emitente_telefone').AsString       := dmDados.cdsEmpresafone.AsString;
                 VerificarNatureza;
-           End;
       End;
 end;
 
@@ -5463,12 +5479,20 @@ procedure TFrmNotaFiscalEletronicaNovo.VerificarNatureza;
 begin
      cmbNatureza.Visible := true;
      dbeDescricaoNaturezas.Visible := False;
+     cmbTipoPessoa.Enabled := True;
+     dbeCNPJCPF.Enabled    := True;
+     spLocCliente.Enabled  := True;
+     //
      if (cmbNatureza.Text <> dbeDescricaoNaturezas.Text) then
       begin
            cmbNatureza.Visible := False;
            dbeDescricaoNaturezas.Left := cmbNatureza.Left;
            dbeDescricaoNaturezas.Top  := cmbNatureza.Top;
            dbeDescricaoNaturezas.Visible := True;
+           //
+           cmbTipoPessoa.Enabled := False;
+           dbeCNPJCPF.Enabled    := False;
+           spLocCliente.Enabled  := False;
       End;
 end;
 
