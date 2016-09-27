@@ -47,7 +47,7 @@ inherited FrmLocalizarNCM: TFrmLocalizarNCM
       'r by descricao'
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'pNOME'
         ParamType = ptInput
       end>

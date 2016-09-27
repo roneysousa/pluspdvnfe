@@ -16,6 +16,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure PesquisarNCM(aDescricao : String);
   end;
 
 var
@@ -32,15 +33,44 @@ begin
   inherited;
   If not uFuncoes.Empty(edtConsultar.Text) Then
     begin
-        with cdsConsultar do
+       with cdsConsultar do
         begin
             Close;
             Params[0].AsString := edtConsultar.Text+'%';
             Open;
         end;
+        //PesquisarNCM(edtConsultar.Text);
    End
    Else
        cdsConsultar.Close;
+end;
+
+procedure TFrmLocalizarNCM.PesquisarNCM(aDescricao: String);
+var qraux : TSQLquery;
+    texto, aDescricaoNCM : string;
+begin
+    texto := 'Select id, descricao from ncm where (descricao like :pdescricao) ';
+    QrAux := TSqlquery.Create(nil);
+    with QrAux do
+     try
+       SQLConnection := dmDados.sqlConexao;
+       sql.Add(texto);
+       Params[0].AsString := aDescricao+'%';
+       Open;
+       //
+       if not (IsEmpty) Then
+          begin
+               first;
+               While not (Eof) do
+               begin
+                   aDescricaoNCM := Utf8ToAnsi(FieldByName('descricao').AsString);
+                   //
+                   Next;
+               End;
+          End;
+       finally
+         free;
+       end;
 end;
 
 end.

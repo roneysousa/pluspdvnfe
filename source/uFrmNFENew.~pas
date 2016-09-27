@@ -3290,11 +3290,11 @@ begin
                 dsCadastro.DataSet.FieldByName('emitente_fantasia').AsString := dmDados.cdsEmpresanome_fantasia.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_ie').AsString       := dmDados.cdsEmpresainsc_estadual.AsString;
                 //
-                dsCadastro.DataSet.FieldByName('emitente_end_logradouro').AsString := dmDados.cdsEmpresalogradouro.AsString;
-                dsCadastro.DataSet.FieldByName('emitente_end_numero').AsString     := dmDados.cdsEmpresanumero.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_end_logradouro').AsString  := dmDados.cdsEmpresalogradouro.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_end_numero').AsString      := dmDados.cdsEmpresanumero.AsString;
                 dsCadastro.DataSet.FieldByName('emitente_end_complemento').AsString := dmDados.cdsEmpresacomplemento.AsString;
-                dsCadastro.DataSet.FieldByName('emintente_end_bairro').AsString    := dmDados.cdsEmpresaid_bairro.AsString;
-                dsCadastro.DataSet.FieldByName('emitente_cep').AsString            := dmDados.cdsEmpresacep.AsString;
+                dsCadastro.DataSet.FieldByName('emintente_end_bairro').AsString     := dmDados.cdsEmpresaid_bairro.AsString;
+                dsCadastro.DataSet.FieldByName('emitente_cep').AsString             := dmDados.cdsEmpresacep.AsString;
                 aUF := dmDados.GetUFCidade(dmDados.cdsEmpresaid_cidade.AsInteger);
                 If (dmNFe.cdsListaUFDestinatario.Locate('EUF_SIGLA', aUF,[])) Then
                  begin
@@ -3564,7 +3564,7 @@ begin
                                         if uFuncoes.Empty(dmDados.cdsImpEcfnum_caixa.AsString) or
                                             (dmDados.cdsImpEcfnum_caixa.AsInteger = 0) then
                                         begin
-                                             Raise Exception.Create('Número do vazio ou inválido!!!'+#13+'Valor Atual Campo : '+dmDados.cdsImpEcfnum_caixa.AsString);
+                                             Raise Exception.Create('Número do ECF vazio ou inválido!!!'+#13+'Valor Atual Campo : '+dmDados.cdsImpEcfnum_caixa.AsString);
                                         End;
                                         dmNFe.cdsNotaFiscalnum_ecf.AsString     := dmDados.cdsImpEcfnum_caixa.AsString;
                                         if not uFuncoes.Empty(dmDados.cdsImpEcftipo_cupom.AsString) Then

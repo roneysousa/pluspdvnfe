@@ -692,6 +692,7 @@ Begin
                // Params.Values['UseUnicode'] := 'True';
                Params.Values['PostgreSQL.UseUnicode'] := 'True';
                Params.Values['Charset'] := 'WIN1252';
+               //Params.Values['Charset'] := 'UTF8';
           End;
           //
           ZConnection1.Connected := False;

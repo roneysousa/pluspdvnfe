@@ -1,4 +1,6 @@
 inherited FrmLocalizarNCM: TFrmLocalizarNCM
+  Left = 307
+  Top = 162
   Caption = 'Localizar NCM'
   OldCreateOrder = True
   PixelsPerInch = 96
@@ -14,7 +16,7 @@ inherited FrmLocalizarNCM: TFrmLocalizarNCM
         item
           Alignment = taCenter
           Expanded = False
-          FieldName = 'NCM_CODIGO'
+          FieldName = 'id'
           Title.Alignment = taCenter
           Title.Caption = 'C'#243'digo'
           Title.Font.Charset = ANSI_CHARSET
@@ -27,21 +29,22 @@ inherited FrmLocalizarNCM: TFrmLocalizarNCM
         end
         item
           Expanded = False
-          FieldName = 'NCM_DESCRICAO'
+          FieldName = 'descricao'
           Title.Caption = 'Descri'#231#227'o'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -11
           Title.Font.Name = 'Verdana'
           Title.Font.Style = [fsBold]
+          Width = 400
           Visible = True
         end>
     end
   end
   inherited dstConsultar: TSQLDataSet
     CommandText = 
-      'select NCM_CODIGO, NCM_DESCRICAO from NCM where (NCM_DESCRICAO l' +
-      'ike :pNOME) order by NCM_DESCRICAO'
+      'select id, descricao from NCM where (descricao like :pNOME) orde' +
+      'r by descricao'
     Params = <
       item
         DataType = ftString
@@ -57,15 +60,12 @@ inherited FrmLocalizarNCM: TFrmLocalizarNCM
         Name = 'pNOME'
         ParamType = ptInput
       end>
-    object cdsConsultarNCM_CODIGO: TStringField
-      FieldName = 'NCM_CODIGO'
-      Required = True
-      FixedChar = True
-      Size = 8
+    object cdsConsultarid: TStringField
+      FieldName = 'id'
+      Size = 10
     end
-    object cdsConsultarNCM_DESCRICAO: TStringField
-      FieldName = 'NCM_DESCRICAO'
-      Required = True
+    object cdsConsultardescricao: TStringField
+      FieldName = 'descricao'
       Size = 120
     end
   end

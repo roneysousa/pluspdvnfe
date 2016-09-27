@@ -9,8 +9,8 @@ uses
 
 type
   TFrmLocalizarNCM = class(TfrmLocPadraoNFe)
-    cdsConsultarNCM_CODIGO: TStringField;
-    cdsConsultarNCM_DESCRICAO: TStringField;
+    cdsConsultarid: TStringField;
+    cdsConsultardescricao: TStringField;
     procedure edtConsultarChange(Sender: TObject);
   private
     { Private declarations }

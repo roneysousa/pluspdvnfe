@@ -3564,7 +3564,7 @@ begin
                                         if uFuncoes.Empty(dmDados.cdsImpEcfnum_caixa.AsString) or
                                             (dmDados.cdsImpEcfnum_caixa.AsInteger = 0) then
                                         begin
-                                             Raise Exception.Create('Número do vazio ou inválido!!!'+#13+'Valor Atual Campo : '+dmDados.cdsImpEcfnum_caixa.AsString);
+                                             Raise Exception.Create('Número do ECF vazio ou inválido!!!'+#13+'Valor Atual Campo : '+dmDados.cdsImpEcfnum_caixa.AsString);
                                         End;
                                         dmNFe.cdsNotaFiscalnum_ecf.AsString     := dmDados.cdsImpEcfnum_caixa.AsString;
                                         if not uFuncoes.Empty(dmDados.cdsImpEcftipo_cupom.AsString) Then
